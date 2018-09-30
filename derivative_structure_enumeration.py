@@ -46,27 +46,13 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
         for R in list_rotation_matrix:
             RBj_inv = np.linalg.inv(np.dot(R.astype(np.float), Bj.astype(np.float)))
             H = np.dot(RBj_inv, Bi.astype(np.float))
-            if np.array_equal(np.remainder(H, 1), np.zeros_like(H)):
+            Bi_rcn = np.dot(R, np.dot(Bj, H.astype(np.int)))
+            if np.array_equal(Bi_rcn, Bi):
                 return True
         return False
 
     list_reduced_HNF = []
 
-    """
-    for i in range(len(list_HNF)):
-        equiv = False
-        for R in list_rotation_matrix:
-            RBinv = np.linalg.inv(np.dot(R, list_HNF[i].astype(np.float)))
-            for j in range(i + 1, len(list_HNF)):
-                H = np.dot(RBinv, list_HNF[j].astype(np.float))
-                if np.array_equal(np.remainder(H, 1), np.zeros_like(H)):
-                    equiv = True
-                    break
-            if equiv:
-                break
-        if not equiv:
-            list_reduced_HNF.append(list_HNF[i])
-    """
     for i in range(len(list_HNF)):
         unique = True
         for B in list_reduced_HNF:
@@ -75,6 +61,5 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
                 break
         if unique:
             list_reduced_HNF.append(list_HNF[i])
-    print(list_reduced_HNF)
 
     return list_reduced_HNF
