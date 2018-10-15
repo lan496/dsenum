@@ -9,7 +9,7 @@ from derivative_structure_enumeration import (
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
 
-from smf import smith_normal_form
+from snf import smith_normal_form
 
 
 class TestDerivativeStructureEnumeration(unittest.TestCase):
@@ -51,7 +51,7 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
             }
         }
-        obj = None
+        obj = {}
 
         for name, dct in obj.items():
             for index, expected in zip(range(1, len(dct['num_expected'])), dct['num_expected']):
@@ -98,20 +98,45 @@ class TestSmithNormalForm(unittest.TestCase):
             np.array([
                 [2, 0],
                 [1, 4]
+            ]),
+            np.array([
+                [2, 4, 4],
+                [-6, 6, 12],
+                [10, -4, -16]
+            ]),
+            np.array([
+                [8, 4, 8],
+                [4, 8, 4]
+            ]),
+            np.array([
+                [-6, 111, -36, 6],
+                [5, -672, 210, 74],
+                [0, -255, 81, 24],
+                [-7, 255, -81, -10]
+            ]),
+            np.array([
+                [3, -1, -1],
+                [-1, 3, -1],
+                [-1, -1, 3]
             ])
         ]
         list_expected = [
+            np.diag([1, 8]),
+            np.diag([2, 6, 12]),
             np.array([
-                [1, 0],
-                [0, 8]
-            ])
+                [4, 0, 0],
+                [0, 12, 0]
+            ]),
+            np.diag([1, 3, 21, 0]),
+            np.diag([1, 4, 4])
         ]
 
         for M, expected in zip(list_matrix, list_expected):
             D, L, R = smith_normal_form(M)
-            self.assertEqual(np.linalg.det(L) ** 2, 1)
-            self.assertEqual(np.linalg.det(R) ** 2, 1)
-            self.assertTrue(np.array_equal(np.dot(L, np.dot(D, R)), M))
+            D_re = np.dot(L, np.dot(M, R))
+            self.assertAlmostEqual(np.linalg.det(L) ** 2, 1)
+            self.assertAlmostEqual(np.linalg.det(R) ** 2, 1)
+            self.assertTrue(np.array_equal(D_re, D))
 
 
 if __name__ == '__main__':

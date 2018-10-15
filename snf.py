@@ -65,7 +65,9 @@ def get_nextentry(M, s):
 
 
 def _smf(M, L, R, s):
-    if (s >= M.shape[0] - 1) or (s >= M.shape[1] - 1):
+    if (s == M.shape[0] - 1) or (s == M.shape[1] - 1):
+        if M[s, s] < 0:
+            M, L = change_sign_row(M, s), change_sign_row(L, s)
         return M, L, R
     if is_lone(M, s):
         return _smf(M, L, R, s + 1)
@@ -74,24 +76,21 @@ def _smf(M, L, R, s):
     M, L = swap_rows(M, s, col), swap_rows(L, s, col)
     M, R = swap_columns(M, s, row), swap_columns(R, s, row)
 
-    print(M)
     for i in range(s + 1, M.shape[0]):
         if M[i, s] != 0:
             k = M[i, s] // M[s, s]
             M, L = add_to_row(M, i, s, -k), add_to_row(L, i, s, -k)
-    print(M)
 
     for j in range(s + 1, M.shape[1]):
         if M[s, j] != 0:
             k = M[s, j] // M[s, s]
             M, R = add_to_column(M, j, s, -k), add_to_column(R, j, s, -k)
-    print(M)
 
     if is_lone(M, s):
         res = get_nextentry(M, s)
         if res:
             i, j = res
-            M, L = add_to_row(M, s, i, 1), add_to_column(L, s, i, 1)
+            M, L = add_to_row(M, s, i, 1), add_to_row(L, s, i, 1)
         elif M[s, s] < 0:
             M, L = change_sign_row(M, s), change_sign_row(L, s)
         return _smf(M, L, R, s + 1)
@@ -100,6 +99,10 @@ def _smf(M, L, R, s):
 
 
 def smith_normal_form(M):
+    """
+    D = np.dot(L, np.dot(M, R))
+    L, R are unimodular.
+    """
     MM = np.copy(M)
     L = np.eye(M.shape[0], dtype=int)
     R = np.eye(M.shape[1], dtype=int)
