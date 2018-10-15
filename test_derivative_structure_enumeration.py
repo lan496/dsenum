@@ -9,6 +9,8 @@ from derivative_structure_enumeration import (
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
 
+from smf import smith_normal_form
+
 
 class TestDerivativeStructureEnumeration(unittest.TestCase):
 
@@ -49,6 +51,8 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
             }
         }
+        obj = None
+
         for name, dct in obj.items():
             for index, expected in zip(range(1, len(dct['num_expected'])), dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
@@ -85,6 +89,29 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
         latt = Lattice(np.diag([1, 1, 1.2]))
         struct = Structure(latt, ['Po'], [[0, 0, 0]])
         return struct
+
+
+class TestSmithNormalForm(unittest.TestCase):
+
+    def test_smf(self):
+        list_matrix = [
+            np.array([
+                [2, 0],
+                [1, 4]
+            ])
+        ]
+        list_expected = [
+            np.array([
+                [1, 0],
+                [0, 8]
+            ])
+        ]
+
+        for M, expected in zip(list_matrix, list_expected):
+            D, L, R = smith_normal_form(M)
+            self.assertEqual(np.linalg.det(L) ** 2, 1)
+            self.assertEqual(np.linalg.det(R) ** 2, 1)
+            self.assertTrue(np.array_equal(np.dot(L, np.dot(D, R)), M))
 
 
 if __name__ == '__main__':
