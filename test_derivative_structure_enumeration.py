@@ -9,7 +9,7 @@ from derivative_structure_enumeration import (
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
 
-from snf import smith_normal_form
+from smith_normal_form import smith_normal_form
 
 
 class TestDerivativeStructureEnumeration(unittest.TestCase):
