@@ -30,13 +30,15 @@ def generate_all_superlattices(index):
     return list_HNF
 
 
-def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
+def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix, lattice_vector):
     """
     Parameters
     ----------
     list_HNF: list of matrices, each element is Hermite normal form
     list_rotation_matrix: list of matrices
         each element represents the symmetry of parent lattice
+    lattice_vector: array, (3, 3)
+        lattice_vector[:, i] is the i-th lattice vector.
 
     Returns
     -------
@@ -44,8 +46,8 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     """
     def is_equivalent(Bi, Bj):
         for R in list_rotation_matrix:
-            RBj_inv = np.linalg.inv(np.dot(R.astype(np.float), Bj.astype(np.float)))
-            H = np.dot(RBj_inv, Bi.astype(np.float))
+            RBj_inv = np.linalg.inv(np.dot(R.astype(np.float), Bj))
+            H = np.dot(RBj_inv, Bi)
             Bi_rcn = np.dot(R, np.dot(Bj, H.astype(np.int)))
             if np.array_equal(Bi_rcn, Bi):
                 return True
@@ -54,9 +56,11 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     list_reduced_HNF = []
 
     for i in range(len(list_HNF)):
+        Bi = np.dot(lattice_vector, list_HNF[i])
         unique = True
-        for B in list_reduced_HNF:
-            if is_equivalent(list_HNF[i], B):
+        for H in list_reduced_HNF:
+            Bj = np.dot(lattice_vector, H)
+            if is_equivalent(Bi, Bj):
                 unique = False
                 break
         if unique:

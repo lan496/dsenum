@@ -63,15 +63,20 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 list_HNF = generate_all_superlattices(index)
                 sp = SpacegroupAnalyzer(dct['structure'])
                 list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
+                lattice_vector = dct['structure'].lattice.matrix
 
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix)
+                list_reduced_HNF = \
+                    reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
+                                                               list_rotation_matrix,
+                                                               lattice_vector)
                 print('#' * 20)
                 print('{}, index {}: superlattices {} {}'.format(name, index,
                                                                  len(list_reduced_HNF),
                                                                  expected))
-                # for hnf in list_reduced_HNF:
-                #    print(hnf)
-                # self.assertEqual(len(list_reduced_HNF), expected)
+                for hnf in list_reduced_HNF:
+                    print(hnf)
+                    print()
+                self.assertEqual(len(list_reduced_HNF), expected)
 
     def get_simple_cubic(self):
         latt = Lattice(np.eye(3))
@@ -166,14 +171,9 @@ class TestSmithNormalForm(unittest.TestCase):
             list_SNF = set()
             for hnf in list_HNF:
                 snf, _, _ = smith_normal_form(hnf)
-                # dag = tuple(sorted(list(snf.diagonal())))
                 dag = tuple(snf.diagonal())
                 list_SNF.add(dag)
-                # print(hnf)
-                # print(snf)
-                # print()
 
-            print(list_SNF)
             self.assertEqual(len(list_SNF), snf_expected)
 
 
