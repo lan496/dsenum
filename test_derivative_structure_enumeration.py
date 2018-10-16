@@ -51,18 +51,26 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
             }
         }
-        obj = {}
+        obj = {
+            'fcc': {
+                'structure': self.get_face_centered_cubic(),
+                'num_expected': [1, 2, 3, 7, ]
+            },
+        }
 
         for name, dct in obj.items():
-            for index, expected in zip(range(1, len(dct['num_expected'])), dct['num_expected']):
+            for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
                 sp = SpacegroupAnalyzer(dct['structure'])
                 list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
 
                 list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix)
+                print('#' * 20)
                 print('{}, index {}: superlattices {} {}'.format(name, index,
                                                                  len(list_reduced_HNF),
                                                                  expected))
+                # for hnf in list_reduced_HNF:
+                #    print(hnf)
                 # self.assertEqual(len(list_reduced_HNF), expected)
 
     def get_simple_cubic(self):
@@ -118,7 +126,12 @@ class TestSmithNormalForm(unittest.TestCase):
                 [3, -1, -1],
                 [-1, 3, -1],
                 [-1, -1, 3]
-            ])
+            ]),
+            np.array([
+                [1, 0, 0],
+                [1, 2, 0],
+                [0, 0, 2]
+            ]),
         ]
         list_expected = [
             np.diag([1, 8]),
@@ -128,7 +141,8 @@ class TestSmithNormalForm(unittest.TestCase):
                 [0, 12, 0]
             ]),
             np.diag([1, 3, 21, 0]),
-            np.diag([1, 4, 4])
+            np.diag([1, 4, 4]),
+            np.diag([1, 2, 2])
         ]
 
         for M, expected in zip(list_matrix, list_expected):
@@ -137,6 +151,30 @@ class TestSmithNormalForm(unittest.TestCase):
             self.assertAlmostEqual(np.linalg.det(L) ** 2, 1)
             self.assertAlmostEqual(np.linalg.det(R) ** 2, 1)
             self.assertTrue(np.array_equal(D_re, D))
+
+    def test_number_of_snf(self):
+        num_hnf_expected = [1, 7, 13, 35, 31, 91, 57, 155, 130, 217,
+                            133, 455, 183, 399, 403, 651]
+        num_snf_expected = [1, 1, 1, 2, 1, 1, 1, 3, 2, 1,
+                            1, 2, 1, 1, 1, 4]
+        max_index = len(num_hnf_expected)
+
+        for index, hnf_expected, snf_expected in zip(range(1, max_index + 1), num_hnf_expected, num_snf_expected):
+            list_HNF = generate_all_superlattices(index)
+            self.assertEqual(len(list_HNF), hnf_expected)
+
+            list_SNF = set()
+            for hnf in list_HNF:
+                snf, _, _ = smith_normal_form(hnf)
+                # dag = tuple(sorted(list(snf.diagonal())))
+                dag = tuple(snf.diagonal())
+                list_SNF.add(dag)
+                # print(hnf)
+                # print(snf)
+                # print()
+
+            print(list_SNF)
+            self.assertEqual(len(list_SNF), snf_expected)
 
 
 if __name__ == '__main__':

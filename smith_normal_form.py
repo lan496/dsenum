@@ -15,8 +15,9 @@ def swap_columns(M, i, j):
 
 
 def add_to_row(M, i, j, k):
-    M[i, :] += M[j] * k
-    return M
+    ret = M.copy()
+    ret[i, :] += M[j, :] * k
+    return ret
 
 
 def add_to_column(M, i, j, k):
@@ -39,10 +40,10 @@ def change_sign_column(M, i):
 
 def get_min_abs(M, s):
     ret = (s, s)
-    valmin = np.max(np.abs(M[s:, s:]))
+    valmin = np.max(np.abs(M[s:, s:])) + 1
     for i in range(s, M.shape[0]):
         for j in range(s, M.shape[1]):
-            if (M[i, j] != 0) and abs(M[i, j]) <= valmin:
+            if (M[i, j] != 0) and abs(M[i, j]) < valmin:
                 ret = i, j
                 valmin = abs(M[i, j])
     return ret
@@ -69,8 +70,6 @@ def _smf(M, L, R, s):
         if M[s, s] < 0:
             M, L = change_sign_row(M, s), change_sign_row(L, s)
         return M, L, R
-    if is_lone(M, s):
-        return _smf(M, L, R, s + 1)
 
     col, row = get_min_abs(M, s)
     M, L = swap_rows(M, s, col), swap_rows(L, s, col)
@@ -91,6 +90,7 @@ def _smf(M, L, R, s):
         if res:
             i, j = res
             M, L = add_to_row(M, s, i, 1), add_to_row(L, s, i, 1)
+            return _smf(M, L, R, s)
         elif M[s, s] < 0:
             M, L = change_sign_row(M, s), change_sign_row(L, s)
         return _smf(M, L, R, s + 1)
@@ -108,3 +108,13 @@ def smith_normal_form(M):
     R = np.eye(M.shape[1], dtype=int)
     D, L, R = _smf(MM, L, R, s=0)
     return D, L, R
+
+
+if __name__ == '__main__':
+    M = np.array([
+        [2, 0, 0],
+        [0, 1, 0],
+        [2, 1, 3]
+    ])
+    D, _, _ = smith_normal_form(M)
+    print(D)
