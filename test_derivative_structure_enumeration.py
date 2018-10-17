@@ -28,6 +28,39 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
             list_HNF = generate_all_superlattices(index)
             self.assertEqual(len(list_HNF), expected)
 
+    def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc(self):
+        lst_num = [1, 2, 3, 7, 5, 10, 7, 20, 14, 18,
+                   11, 41, 15, 28, 31, 58, 21, 60, 25, 77,
+                   49, 54, 33, 144, 50, 72, 75, 123, 49, 158,
+                   55, 177, 97, 112, 99, 268, 75, 136, 129, 286,
+                   89, 268, 97, 249, 218, 190, 113, 496, 146, 280]
+        obj = {
+            'fcc': {
+                'structure': self.get_face_centered_cubic(),
+                'num_expected': lst_num
+            },
+            'bcc': {
+                'structure': self.get_body_centered_cubic(),
+                'num_expected': lst_num
+            }
+        }
+        obj = {}
+
+        for name, dct in obj.items():
+            print('#' * 40)
+            for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
+                list_HNF = generate_all_superlattices(index)
+                sp = SpacegroupAnalyzer(dct['structure'])
+                list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
+
+                list_reduced_HNF = \
+                    reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
+                                                               list_rotation_matrix)
+                print('{}, index {}: superlattices {} {}'.format(name, index,
+                                                                 len(list_reduced_HNF),
+                                                                 expected))
+                self.assertEqual(len(list_reduced_HNF), expected)
+
     def test_reduce_HNF_list_by_parent_lattice_symmetry(self):
         obj = {
             'fcc': {
@@ -51,31 +84,22 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
             }
         }
-        obj = {
-            'fcc': {
-                'structure': self.get_face_centered_cubic(),
-                'num_expected': [1, 2, 3, 7, ]
-            },
-        }
+
+        obj = {}
 
         for name, dct in obj.items():
+            print('#' * 40)
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
                 sp = SpacegroupAnalyzer(dct['structure'])
                 list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
-                lattice_vector = dct['structure'].lattice.matrix
 
                 list_reduced_HNF = \
                     reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                               list_rotation_matrix,
-                                                               lattice_vector)
-                print('#' * 20)
+                                                               list_rotation_matrix)
                 print('{}, index {}: superlattices {} {}'.format(name, index,
                                                                  len(list_reduced_HNF),
                                                                  expected))
-                for hnf in list_reduced_HNF:
-                    print(hnf)
-                    print()
                 self.assertEqual(len(list_reduced_HNF), expected)
 
     def get_simple_cubic(self):
@@ -95,7 +119,7 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
 
     def get_hexagonal(self):
         latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
-        struct = Structure(latt, ['Zn'] * 2, [[0, 0, 0], [1 / 3, 1 / 3, 0.5]])
+        struct = Structure(latt, ['Zn'], [[0, 0, 0]])
         return struct
 
     def get_tetragonal(self):
