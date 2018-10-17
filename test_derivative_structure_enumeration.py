@@ -29,6 +29,7 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
             self.assertEqual(len(list_HNF), expected)
 
     def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc(self):
+        # https://oeis.org/A045790
         lst_num = [1, 2, 3, 7, 5, 10, 7, 20, 14, 18,
                    11, 41, 15, 28, 31, 58, 21, 60, 25, 77,
                    49, 54, 33, 144, 50, 72, 75, 123, 49, 158,
@@ -62,6 +63,7 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 self.assertEqual(len(list_reduced_HNF), expected)
 
     def test_reduce_HNF_list_by_parent_lattice_symmetry(self):
+        # confirm table 4
         obj = {
             'fcc': {
                 'structure': self.get_face_centered_cubic(),
@@ -85,8 +87,6 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
             }
         }
 
-        obj = {}
-
         for name, dct in obj.items():
             print('#' * 40)
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
@@ -94,12 +94,15 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 sp = SpacegroupAnalyzer(dct['structure'])
                 list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
 
+                from time import time
+                start = time()
                 list_reduced_HNF = \
                     reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
                                                                list_rotation_matrix)
                 print('{}, index {}: superlattices {} {}'.format(name, index,
                                                                  len(list_reduced_HNF),
                                                                  expected))
+                print(time() - start, 'sec')
                 self.assertEqual(len(list_reduced_HNF), expected)
 
     def get_simple_cubic(self):
@@ -182,6 +185,7 @@ class TestSmithNormalForm(unittest.TestCase):
             self.assertTrue(np.array_equal(D_re, D))
 
     def test_number_of_snf(self):
+        # confirm table-3
         num_hnf_expected = [1, 7, 13, 35, 31, 91, 57, 155, 130, 217,
                             133, 455, 183, 399, 403, 651]
         num_snf_expected = [1, 1, 1, 2, 1, 1, 1, 3, 2, 1,
