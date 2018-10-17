@@ -56,7 +56,8 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
 
                 list_reduced_HNF = \
                     reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                               list_rotation_matrix)
+                                                               list_rotation_matrix,
+                                                               n_jobs=-1)
                 print('{}, index {}: superlattices {} {}'.format(name, index,
                                                                  len(list_reduced_HNF),
                                                                  expected))

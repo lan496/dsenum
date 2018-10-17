@@ -30,7 +30,7 @@ def generate_all_superlattices(index):
     return list_HNF
 
 
-def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
+def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix, n_jobs=1):
     """
     Parameters
     ----------
@@ -54,11 +54,11 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     list_reduced_HNF = []
     list_RBj_inv = []
 
-    for i in range(len(list_HNF)):
-        if not is_equivalent(list_HNF[i], list_RBj_inv):
-            list_reduced_HNF.append(list_HNF[i])
-            list_RBj_inv.extend([
-                np.linalg.solve(np.dot(R, list_HNF[i]), np.identity(R.shape[0]))
-                for R in list_rotation_matrix])
+    for Bi in list_HNF:
+        if not is_equivalent(Bi, list_RBj_inv):
+            list_reduced_HNF.append(Bi)
+            preinv = [np.linalg.solve(np.dot(R, Bi), np.identity(R.shape[0])) for R
+                      in list_rotation_matrix]
+            list_RBj_inv.extend(preinv)
 
     return list_reduced_HNF
