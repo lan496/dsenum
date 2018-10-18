@@ -29,7 +29,6 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                 'num_expected': lst_num
             }
         }
-        obj = {}
 
         for name, dct in obj.items():
             print('#' * 40)
