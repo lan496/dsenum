@@ -7,13 +7,16 @@ from permutation import Permutation
 
 class Labeling(object):
 
-    def __init__(self, hnf, num_type):
+    def __init__(self, hnf, num_type, list_rotations=None):
         self.hnf = hnf
         self.num_type = num_type
         self.num_site = np.prod(self.hnf.diagonal())
 
         self.permutation = Permutation(self.hnf)
         self.list_prm = self.permutation.get_permutation_list()
+
+        self.list_rotations = list_rotations
+        self.list_rotations_prm = self.per
 
     def act_permutation(self, labeling, prm):
         ret = tuple([labeling[prm[i]] for i in range(self.num_site)])
@@ -78,8 +81,10 @@ class Labeling(object):
 
         return list_reduced_labelings
 
-    def remove_rotation_symmetry(self):
-        pass
+    def remove_rotation_symmetry(self, list_labelings):
+        flags = [True for _ in list_labelings]
+        list_reduced_labelings = []
+        for i, labeling in enumerate(list_labelings):
 
 
 if __name__ == '__main__':
