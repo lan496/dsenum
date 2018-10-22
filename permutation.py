@@ -65,6 +65,7 @@ class Permutation(object):
                              np.array(self.shapes)[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shapes)
             list_permutations.append(tuple(raveled_factors.tolist()))
+        assert self.validate_permutations(list_permutations)
         return list_permutations
 
     def get_rotation_permutations(self):
@@ -72,13 +73,17 @@ class Permutation(object):
         if not self.rotations:
             return list_permutations
 
-        for R in self.rotations:
-            R = np.around(R)
+        sgn = (np.linalg.det(self.rotations) == 1)
+        rotations = self.rotations[sgn, ...]
+
+        for R in rotations:
+            R = np.around(R).astype(np.int)
             r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
             factors = np.mod(np.dot(r_tmp, self.factors_e),
                              np.array(self.shapes)[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shapes)
             list_permutations.append(tuple(raveled_factors.tolist()))
+        assert self.validate_permutations(list_permutations)
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
@@ -90,6 +95,7 @@ class Permutation(object):
         list_permutations = [self.product_permutations(pr, pt)
                              for pr, pt
                              in itertools.product(prm_r, prm_t)]
+        assert self.validate_permutations(list_permutations)
         return list_permutations
 
     def product_permutations(self, prm1, prm2):
@@ -97,6 +103,21 @@ class Permutation(object):
         for i in range(self.num):
             ret[i] = prm2[prm1[i]]
         return tuple(ret)
+
+    def validate_permutations(self, permutations):
+        for prm in permutations:
+            if len(set(prm)) != self.num:
+                return False
+
+        if len(set(permutations)) != len(permutations):
+            return False
+
+        for prm1, prm2 in itertools.product(permutations, repeat=2):
+            prm_tmp = self.product_permutations(prm1, prm2)
+            if prm_tmp not in permutations:
+                return False
+
+        return True
 
 
 # https://repl.it/@smichr/msp

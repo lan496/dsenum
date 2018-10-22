@@ -56,10 +56,13 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix, n
     list_reduced_HNF = []
     list_RBj_inv = None
 
+    sgn = (np.linalg.det(list_rotation_matrix) == 1)
+    rotations = list_rotation_matrix[sgn, ...]
+
     for Bi in list_HNF:
         if not is_equivalent(Bi, list_RBj_inv):
             list_reduced_HNF.append(Bi)
-            preinv = np.linalg.solve(np.dot(list_rotation_matrix, Bi),
+            preinv = np.linalg.solve(np.dot(rotations, Bi),
                                      np.identity(Bi.shape[0])[None, ...])
             if list_RBj_inv is None:
                 list_RBj_inv = preinv

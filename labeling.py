@@ -53,12 +53,12 @@ class Labeling(object):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     idx = labelings.index(operated_lbl_ex)
+                    assert flags[idx] == "unvisited"
                     flags[idx] = "duplicate"
 
             flags[i] = "distinct"
             unique_labelings.append(lbl)
 
-        print(flags)
         return unique_labelings
 
     def get_inequivalent_labelings(self):
