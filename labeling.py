@@ -13,10 +13,9 @@ class Labeling(object):
         self.num_site = np.prod(self.hnf.diagonal())
 
         self.permutation = Permutation(self.hnf)
-        self.list_prm = self.permutation.get_permutation_list()
-
-        self.list_rotations = list_rotations
-        self.list_rotations_prm = self.per
+        # assuming that the 0-th element of permutaions is identity operation
+        self.prm_t = self.permutation.get_translation_permutations()
+        self.prm_all = self.permutation.get_symmetry_operation_permutaions()
 
     def act_permutation(self, labeling, prm):
         ret = tuple([labeling[prm[i]] for i in range(self.num_site)])
@@ -31,73 +30,45 @@ class Labeling(object):
 
         return list_labelings
 
-    def remove_translation_symmetry(self, list_labelings):
-        # remove translation and super-periodic duplicates
-        flags = [True for _ in list_labelings]
-        list_reduced_labelings = []
-        for i, labeling in enumerate(list_labelings):
+    def remove_duplicates(self, labelings):
+        unique_labelings = []
+        flags = [True for _ in labelings]
+        for i, lbl in enumerate(labelings):
             if not flags[i]:
                 continue
 
-            is_superperiodic = False
-            # assuming that self.list_prm[0] is identity operation
-            for prm in self.list_prm[1:]:
-                prm_labeling = self.act_permutation(labeling, prm)
-                if prm_labeling == labeling:
-                    is_superperiodic = True
-                    break
-
-                idx = list_labelings.index(prm_labeling)
-                flags[idx] = False
-
-            if is_superperiodic:
+            # remove superperiodic
+            if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
+                flags[i] = False
                 continue
 
-            list_reduced_labelings.append(labeling)
-
-        return list_reduced_labelings
-
-    def remove_label_exchange_symmetry(self, list_labelings):
-        flags = [True for _ in list_labelings]
-        list_reduced_labelings = []
-        for i, labeling in enumerate(list_labelings):
-            if not flags[i]:
-                continue
-            list_reduced_labelings.append(labeling)
-
-            for type_prm in itertools.permutations(range(self.num_site)):
-                if type_prm == range(self.num_site):
-                    continue
-
-                labeling_ex = [type_prm[e] for e in labeling]
-                for prm in self.list_prm[1:]:
-                    labeling_ex_prm = self.act_permutation(labeling_ex,
-                                                           prm)
-                    try:
-                        idx = list_labelings.index(labeling_ex_prm)
-                        flags[idx] = False
-                    except ValueError:
+            # remove symmetry operation and exchanging duplicates
+            for type_prm in itertools.permutations(range(self.num_type)):
+                lbl_ex = [type_prm[e] for e in lbl]
+                for prm in self.prm_all:
+                    if (lbl_ex == lbl) and (prm == range(self.num_site)):
                         continue
+                    operated_lbl_ex = self.act_permutation(lbl_ex, prm)
+                    idx = labelings.index(operated_lbl_ex)
+                    flags[idx] = False
 
-        return list_reduced_labelings
+            flags[i] = True
+            unique_labelings.append(lbl)
 
-    def remove_rotation_symmetry(self, list_labelings):
-        flags = [True for _ in list_labelings]
-        list_reduced_labelings = []
-        for i, labeling in enumerate(list_labelings):
+        return unique_labelings
 
 
 if __name__ == '__main__':
     hnf = np.array([[4]])
     num_type = 2
     labelings = Labeling(hnf, num_type)
+
     list_labelings = labelings.generate_possible_labelings()
-    print(len(list_labelings))
-    print(list_labelings)
-    list_labelings = labelings.remove_translation_symmetry(list_labelings)
-    print(len(list_labelings))
-    print(list_labelings)
-    list_labelings = labelings.remove_label_exchange_symmetry(list_labelings)
+    print('generate possible labelings')
     print(len(list_labelings))
     print(list_labelings)
 
+    list_labelings = labelings.remove_duplicates(list_labelings)
+    print('remove duplicates')
+    print(len(list_labelings))
+    print(list_labelings)

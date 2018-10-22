@@ -61,7 +61,6 @@ class Permutation(object):
         list_permutations = []
         for i in range(self.num):
             di = self.factors_e[:, i]
-            # import pdb; pdb.set_trace()
             factors = np.mod(self.factors_e + di[:, np.newaxis],
                              np.array(self.shapes)[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shapes)
@@ -84,6 +83,9 @@ class Permutation(object):
 
     def get_symmetry_operation_permutaions(self):
         prm_t = self.get_translation_permutations()
+        if not self.rotations:
+            return prm_t
+
         prm_r = self.get_rotation_permutations()
         list_permutations = [self.product_permutations(pr, pt)
                              for pr, pt
