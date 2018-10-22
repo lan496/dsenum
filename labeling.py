@@ -1,8 +1,11 @@
 import itertools
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  # noqa
 import numpy as np
 
 from permutation import Permutation
+from smith_normal_form import smith_normal_form
 
 
 class Labeling(object):
@@ -32,14 +35,14 @@ class Labeling(object):
 
     def remove_duplicates(self, labelings):
         unique_labelings = []
-        flags = [True for _ in labelings]
+        flags = ["unvisited" for _ in labelings]
         for i, lbl in enumerate(labelings):
-            if not flags[i]:
+            if flags[i] != "unvisited":
                 continue
 
             # remove superperiodic
             if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
-                flags[i] = False
+                flags[i] = "superperiodic"
                 continue
 
             # remove symmetry operation and exchanging duplicates
@@ -50,12 +53,50 @@ class Labeling(object):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     idx = labelings.index(operated_lbl_ex)
-                    flags[idx] = False
+                    assert flags[idx] != "distinct"
+                    flags[idx] = "duplicate"
 
-            flags[i] = True
+            flags[i] = "distinct"
             unique_labelings.append(lbl)
 
+        print(flags)
         return unique_labelings
+
+    def get_inequivalent_labelings(self):
+        labelings = self.generate_possible_labelings()
+        labelings = self.remove_duplicates(labelings)
+        return labelings
+
+
+class DerivativeStructure(object):
+
+    def __init__(self, hnf, num_type, lattice_vectors, labeling):
+        self.hnf = hnf
+        self.num_type = num_type
+        self.lattice_vectors = lattice_vectors
+        self.labelings = labeling
+
+        D, L, R = smith_normal_form(self.hnf)
+        self.snf = D
+        self.left = L
+        self.right = R
+
+    def draw(self, ax=None):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        for indices in itertools.product(*[range(e + 1) for e in self.hnf.diagonal().tolist()]):
+            src = np.dot(self.lattice_vectors, np.array(indices))
+            for i in range(3):
+                directions = np.eye(3)
+                dst = src + directions[:, i]
+                tmp = np.concatenate([src, dst]).reshape(2, 3).T
+                ax.plot(tmp[0], tmp[1], tmp[2])
+
+        superlattice_vectors = np.dot(self.lattice_vectors, self.hnf)
+        for i in range(3):
+            origin = [0, 0, 0]
+            ax.quiver(*origin, *superlattice_vectors[:, i].tolist(), arrow_length_ratio=0)
 
 
 if __name__ == '__main__':

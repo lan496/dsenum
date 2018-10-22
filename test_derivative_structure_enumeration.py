@@ -1,5 +1,6 @@
 import unittest
 
+import matplotlib.pyplot as plt
 import numpy as np
 from pymatgen.core import Structure, Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -10,6 +11,8 @@ from derivative_structure_enumeration import (
 )
 
 from smith_normal_form import smith_normal_form
+
+from labeling import Labeling, DerivativeStructure
 
 
 class TestDerivativeStructureEnumeration(unittest.TestCase):
@@ -32,23 +35,23 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
         # confirm table 4
         obj = {
             'fcc': {
-                'structure': self.get_face_centered_cubic(),
+                'structure': get_face_centered_cubic(),
                 'num_expected': [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]
             },
             'bcc': {
-                'structure': self.get_body_centered_cubic(),
+                'structure': get_body_centered_cubic(),
                 'num_expected': [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]
             },
             'sc': {
-                'structure': self.get_simple_cubic(),
+                'structure': get_simple_cubic(),
                 'num_expected': [1, 3, 3, 9, 5, 13, 7, 24, 14, 23]
             },
             'hex': {
-                'structure': self.get_hexagonal(),
+                'structure': get_hexagonal(),
                 'num_expected': [1, 3, 5, 11, 7, 19, 11, 34, 23, 33]
             },
             'tetragonal': {
-                'structure': self.get_tetragonal(),
+                'structure': get_tetragonal(),
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
             }
         }
@@ -70,31 +73,6 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                                                                  expected))
                 print(time() - start, 'sec')
                 self.assertEqual(len(list_reduced_HNF), expected)
-
-    def get_simple_cubic(self):
-        latt = Lattice(np.eye(3))
-        struct = Structure(latt, ['Po'], [[0, 0, 0]])
-        return struct
-
-    def get_face_centered_cubic(self):
-        latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-        struct = Structure(latt, ['Al'], [[0, 0, 0]])
-        return struct
-
-    def get_body_centered_cubic(self):
-        latt = Lattice(np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]]))
-        struct = Structure(latt, ['Fe'], [[0, 0, 0]])
-        return struct
-
-    def get_hexagonal(self):
-        latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
-        struct = Structure(latt, ['Zn'], [[0, 0, 0]])
-        return struct
-
-    def get_tetragonal(self):
-        latt = Lattice(np.diag([1, 1, 1.2]))
-        struct = Structure(latt, ['Po'], [[0, 0, 0]])
-        return struct
 
 
 class TestSmithNormalForm(unittest.TestCase):
@@ -169,6 +147,99 @@ class TestSmithNormalForm(unittest.TestCase):
                 list_SNF.add(dag)
 
             self.assertEqual(len(list_SNF), snf_expected)
+
+
+class TestUniqueLabeling(unittest.TestCase):
+
+    def test_labelings(self):
+        obj = {
+            'fcc': {
+                'structure': get_face_centered_cubic(),
+                'num_type': 2,
+                'indices': range(1, 23 + 1),
+                'num_expected': [0, 2, 3, 12, 14, 50, 52, 229, 252, 685,
+                                 682, 3875, 2624, 9628, 16584,
+                                 49764, 42135, 212612, 174104, 867893,
+                                 1120708, 2628180, 3042732]
+            },
+            'sc': {
+                'structure': get_simple_cubic(),
+                'num_type': 2,
+                'indices': range(1, 4 + 1),
+                'num_expected': [0, 3, 3, 15]
+            },
+            'fcc_ternary': {
+                'structure': get_face_centered_cubic(),
+                'num_type': 3,
+                'indices': range(1, 10 + 1),
+                'num_expected': [0, 0, 3, 13, 23, 130, 197, 1267, 2322, 9332]
+            },
+            'fcc_quaternary': {
+                'structure': get_face_centered_cubic(),
+                'num_type': 4,
+                'indices': range(1, 10 + 1),
+                'num_expected': [0, 0, 0, 7, 9, 110, 211, 2110, 5471, 32362]
+            }
+        }
+
+        obj = {
+            'fcc': {
+                'structure': get_face_centered_cubic(),
+                'num_type': 2,
+                'indices': [5],
+                'num_expected': [14]
+            }
+        }
+
+        for name, dct in obj.items():
+            for index, expected in zip(dct['indices'], dct['num_expected']):
+                list_HNF = generate_all_superlattices(index)
+                sp = SpacegroupAnalyzer(dct['structure'])
+                list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
+
+                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix)
+                lbls = []
+                for hnf in list_reduced_HNF:
+                    labeling = Labeling(hnf, dct['num_type'], list_rotation_matrix)
+                    lbls_tmp = labeling.get_inequivalent_labelings()
+                    lbls.extend(lbls_tmp)
+                    print(hnf)
+                    print(lbls_tmp)
+                    print()
+
+                print('{}, index {}, labelings {} (expected {})'.format(name, index,
+                                                                        len(lbls), expected))
+                self.assertEqual(len(lbls), expected)
+
+
+def get_simple_cubic():
+    latt = Lattice(np.eye(3))
+    struct = Structure(latt, ['Po'], [[0, 0, 0]])
+    return struct
+
+
+def get_face_centered_cubic():
+    latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
+    struct = Structure(latt, ['Al'], [[0, 0, 0]])
+    return struct
+
+
+def get_body_centered_cubic():
+    latt = Lattice(np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]]))
+    struct = Structure(latt, ['Fe'], [[0, 0, 0]])
+    return struct
+
+
+def get_hexagonal():
+    latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
+    struct = Structure(latt, ['Zn'], [[0, 0, 0]])
+    return struct
+
+
+def get_tetragonal():
+    latt = Lattice(np.diag([1, 1, 1.2]))
+    struct = Structure(latt, ['Po'], [[0, 0, 0]])
+    return struct
 
 
 if __name__ == '__main__':
