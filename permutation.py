@@ -64,7 +64,7 @@ class Permutation(object):
             factors = np.mod(self.factors_e + di[:, np.newaxis],
                              np.array(self.shapes)[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shapes)
-            list_permutations.append(raveled_factors.tolist())
+            list_permutations.append(tuple(raveled_factors.tolist()))
         return list_permutations
 
     def get_rotation_permutations(self):
@@ -78,7 +78,7 @@ class Permutation(object):
             factors = np.mod(np.dot(r_tmp, self.factors_e),
                              np.array(self.shapes)[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shapes)
-            list_permutations.append(raveled_factors.tolist())
+            list_permutations.append(tuple(raveled_factors.tolist()))
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
@@ -96,7 +96,7 @@ class Permutation(object):
         ret = [0 for _ in prm1]
         for i in range(self.num):
             ret[i] = prm2[prm1[i]]
-        return ret
+        return tuple(ret)
 
 
 # https://repl.it/@smichr/msp

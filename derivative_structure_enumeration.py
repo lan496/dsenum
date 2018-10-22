@@ -45,20 +45,25 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix, n
     list_reduced_HNF: list of matrices, unique by symmetry
     """
     def is_equivalent(Bi, list_RBj_inv):
-        for RBj_inv in list_RBj_inv:
-            H = np.dot(RBj_inv, Bi)
-            if np.allclose(H, np.around(H)):
-                return True
+        if list_RBj_inv is None:
+            return False
+        list_H = np.dot(list_RBj_inv, Bi)
+        close = np.isclose(list_H, np.around(list_H))
+        if np.any(np.all(close, axis=(1, 2)), axis=-1):
+            return True
         return False
 
     list_reduced_HNF = []
-    list_RBj_inv = []
+    list_RBj_inv = None
 
     for Bi in list_HNF:
         if not is_equivalent(Bi, list_RBj_inv):
             list_reduced_HNF.append(Bi)
-            preinv = [np.linalg.solve(np.dot(R, Bi), np.identity(R.shape[0])) for R
-                      in list_rotation_matrix]
-            list_RBj_inv.extend(preinv)
+            preinv = np.linalg.solve(np.dot(list_rotation_matrix, Bi),
+                                     np.identity(Bi.shape[0])[None, ...])
+            if list_RBj_inv is None:
+                list_RBj_inv = preinv
+            else:
+                list_RBj_inv = np.concatenate([list_RBj_inv, preinv])
 
     return list_reduced_HNF

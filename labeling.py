@@ -53,7 +53,6 @@ class Labeling(object):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     idx = labelings.index(operated_lbl_ex)
-                    assert flags[idx] != "distinct"
                     flags[idx] = "duplicate"
 
             flags[i] = "distinct"
@@ -65,7 +64,23 @@ class Labeling(object):
     def get_inequivalent_labelings(self):
         labelings = self.generate_possible_labelings()
         labelings = self.remove_duplicates(labelings)
+        assert self.check_uniqueness(labelings)
         return labelings
+
+    def check_uniqueness(self, labelings):
+        for i, lbl in enumerate(labelings):
+            for type_prm in itertools.permutations(range(self.num_type)):
+                lbl_ex = [type_prm[e] for e in lbl]
+                for prm in self.prm_all:
+                    operated_lbl_ex = self.act_permutation(lbl_ex, prm)
+                    try:
+                        idx = labelings.index(operated_lbl_ex)
+                    except:
+                        continue
+
+                    if idx != i:
+                        return False
+        return True
 
 
 class DerivativeStructure(object):
