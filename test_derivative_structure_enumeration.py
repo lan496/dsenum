@@ -186,8 +186,8 @@ class TestUniqueLabeling(unittest.TestCase):
             'fcc': {
                 'structure': get_face_centered_cubic(),
                 'num_type': 2,
-                'indices': [5],
-                'num_expected': [14]
+                'indices': [2, 3, 4, 5],
+                'num_expected': [2, 3, 12, 14]
             }
         }
 
@@ -205,6 +205,10 @@ class TestUniqueLabeling(unittest.TestCase):
                     lbls.extend(lbls_tmp)
                     print(hnf)
                     print(lbls_tmp)
+                    print('translation')
+                    print(labeling.prm_t)
+                    print('affine')
+                    print(labeling.prm_all)
                     print()
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,

@@ -15,7 +15,7 @@ class Labeling(object):
         self.num_type = num_type
         self.num_site = np.prod(self.hnf.diagonal())
 
-        self.permutation = Permutation(self.hnf)
+        self.permutation = Permutation(self.hnf, list_rotations)
         # assuming that the 0-th element of permutaions is identity operation
         self.prm_t = self.permutation.get_translation_permutations()
         self.prm_all = self.permutation.get_symmetry_operation_permutaions()
@@ -53,7 +53,6 @@ class Labeling(object):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     idx = labelings.index(operated_lbl_ex)
-                    assert flags[idx] == "unvisited"
                     flags[idx] = "duplicate"
 
             flags[i] = "distinct"

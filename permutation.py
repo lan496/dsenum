@@ -42,7 +42,7 @@ class Permutation(object):
         D, L, R = smith_normal_form(self.hnf)
         self.snf = D
         self.left = L
-        self.left_inv = np.around(np.linalg.inv(self.left))
+        self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
         self.right = R
 
         self.shapes = tuple(self.snf.diagonal())
@@ -70,7 +70,7 @@ class Permutation(object):
 
     def get_rotation_permutations(self):
         list_permutations = []
-        if not self.rotations:
+        if self.rotations is None:
             return list_permutations
 
         sgn = (np.linalg.det(self.rotations) == 1)
@@ -81,14 +81,17 @@ class Permutation(object):
             r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
             factors = np.mod(np.dot(r_tmp, self.factors_e),
                              np.array(self.shapes)[:, np.newaxis])
-            raveled_factors = np.ravel_multi_index(factors, self.shapes)
-            list_permutations.append(tuple(raveled_factors.tolist()))
+            raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
+            if len(set(raveled_factors)) != self.num:
+                continue
+            if raveled_factors not in list_permutations:
+                list_permutations.append(raveled_factors)
         assert self.validate_permutations(list_permutations)
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
         prm_t = self.get_translation_permutations()
-        if not self.rotations:
+        if self.rotations is None:
             return prm_t
 
         prm_r = self.get_rotation_permutations()
@@ -188,13 +191,27 @@ def msp(items):
 if __name__ == '__main__':
     hnf = np.array([
         [2, 0],
-        [1, 4]
+        [2, 4]
     ])
 
-    permutation = Permutation(hnf)
+    rotations = np.array([
+        [[1, 0], [0, 1]],
+        [[0, -1], [1, 0]],
+        [[-1, 0], [0, -1]],
+        [[0, 1], [-1, 0]],
+    ])
+
+    permutation = Permutation(hnf, rotations)
     prm_t = permutation.get_translation_permutations()
-    print(permutation.shapes)
+
     print(permutation.snf)
     print(permutation.left)
     print(permutation.right)
-    print(prm_t)
+    print()
+
+    print('factors_e')
+    print(permutation.factors_e)
+    print('images_e')
+    print(permutation.images_e)
+    prm_r = permutation.get_rotation_permutations()
+    print(prm_r)
