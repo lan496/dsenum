@@ -28,10 +28,26 @@ class Labeling(object):
         list_labelings = []
 
         for labeling in itertools.product(range(self.num_type), repeat=self.num_site):
-            if len(set(labeling)) == self.num_type:
-                list_labelings.append(labeling)
+            if len(set(labeling)) != self.num_type:
+                continue
 
+            list_labelings.append(labeling)
+
+
+        expected_cnt = self.num_type ** self.num_site - self.num_type * (self.num_type - 1) ** self.num_site
+        assert len(list_labelings) == expected_cnt
         return list_labelings
+
+    def is_representative_coloring(self, labeling):
+        colors = []
+        for e in labeling:
+            if e not in colors:
+                colors.append(e)
+
+        if colors == sorted(colors):
+            return True
+        else:
+            return False
 
     def remove_duplicates(self, labelings):
         unique_labelings = []
@@ -53,11 +69,14 @@ class Labeling(object):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     idx = labelings.index(operated_lbl_ex)
+                    assert flags[idx] != "distinct"
+                    assert flags[idx] != "superperiodic"
                     flags[idx] = "duplicate"
 
             flags[i] = "distinct"
             unique_labelings.append(lbl)
 
+        assert self.check_uniqueness(unique_labelings)
         return unique_labelings
 
     def get_inequivalent_labelings(self):

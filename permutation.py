@@ -86,7 +86,10 @@ class Permutation(object):
                 continue
             if raveled_factors not in list_permutations:
                 list_permutations.append(raveled_factors)
-        assert self.validate_permutations(list_permutations)
+        try:
+            assert self.validate_permutations(list_permutations)
+        except:
+            import pdb; pdb.set_trace()
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
@@ -118,6 +121,8 @@ class Permutation(object):
         for prm1, prm2 in itertools.product(permutations, repeat=2):
             prm_tmp = self.product_permutations(prm1, prm2)
             if prm_tmp not in permutations:
+                print('incomplete list')
+                print(prm_tmp)
                 return False
 
         return True
