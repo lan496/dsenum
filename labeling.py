@@ -69,20 +69,19 @@ class Labeling(object):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     idx = labelings.index(operated_lbl_ex)
-                    assert flags[idx] != "distinct"
                     assert flags[idx] != "superperiodic"
                     flags[idx] = "duplicate"
 
             flags[i] = "distinct"
             unique_labelings.append(lbl)
 
-        assert self.check_uniqueness(unique_labelings)
+        # assert self.check_uniqueness(unique_labelings)
         return unique_labelings
 
     def get_inequivalent_labelings(self):
         labelings = self.generate_possible_labelings()
         labelings = self.remove_duplicates(labelings)
-        assert self.check_uniqueness(labelings)
+        # assert self.check_uniqueness(labelings)
         return labelings
 
     def check_uniqueness(self, labelings):
