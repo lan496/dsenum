@@ -1,4 +1,3 @@
-import itertools
 import numpy as np
 
 from smith_normal_form import smith_normal_form
@@ -60,7 +59,7 @@ class Permutation(object):
     def get_translation_permutations(self):
         list_permutations = []
         for i in range(self.num):
-            di = self.factors_e[:, i]
+            di = np.dot(self.left, self.factors_e[:, i])
             factors = np.mod(self.factors_e + di[:, np.newaxis],
                              np.array(self.shapes)[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shapes)
@@ -86,44 +85,33 @@ class Permutation(object):
                 continue
             if raveled_factors not in list_permutations:
                 list_permutations.append(raveled_factors)
-        assert self.validate_rotation_permutations(list_permutations)
+        assert self.validate_permutations(list_permutations)
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
-        prm_t = self.get_translation_permutations()
         if self.rotations is None:
             return prm_t
 
-        prm_r = self.get_rotation_permutations()
-        list_permutations = [self.product_permutations(pr, pt)
-                             for pr, pt
-                             in itertools.product(prm_r, prm_t)]
-        assert self.validate_rotation_permutations(list_permutations)
+        list_rprm = self.get_rotation_permutations()
+        list_permutations = []
+
+        for i in range(self.num):
+            for rprm in list_rprm:
+                di = np.dot(self.left, self.factors_e[:, i])
+                unraveled_rprm = np.array(np.unravel_index(rprm, self.shapes))
+                factors = np.mod(unraveled_rprm + di[:, np.newaxis],
+                                 np.array(self.shapes)[:, np.newaxis])
+                raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
+                print(raveled_factors)
+                list_permutations.append(raveled_factors)
+            print()
+        print(len(list_permutations))
+        print('#' * 20)
+
+        assert self.validate_permutations(list_permutations)
         return list_permutations
 
-    def product_permutations(self, prm1, prm2):
-        ret = [0 for _ in prm1]
-        for i in range(self.num):
-            ret[i] = prm2[prm1[i]]
-        return tuple(ret)
-
     def validate_permutations(self, permutations):
-        for prm in permutations:
-            if len(set(prm)) != self.num:
-                return False
-
-        if len(set(permutations)) != len(permutations):
-            return False
-
-        for prm1, prm2 in itertools.product(permutations, repeat=2):
-            prm_tmp = self.product_permutations(prm1, prm2)
-            if prm_tmp not in permutations:
-                print(prm_tmp)
-                return False
-
-        return True
-
-    def validate_rotation_permutations(self, permutations):
         for prm in permutations:
             if len(set(prm)) != self.num:
                 return False

@@ -182,7 +182,6 @@ class TestUniqueLabeling(unittest.TestCase):
             }
         }
 
-        """
         obj = {
             'fcc': {
                 'structure': get_face_centered_cubic(),
@@ -191,7 +190,6 @@ class TestUniqueLabeling(unittest.TestCase):
                 'num_expected': [2, 3, 12, 14]
             }
         }
-        """
 
         for name, dct in obj.items():
             for index, expected in zip(dct['indices'], dct['num_expected']):
@@ -215,7 +213,7 @@ class TestUniqueLabeling(unittest.TestCase):
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(lbls), expected))
-                # self.assertEqual(len(lbls), expected)
+                self.assertEqual(len(lbls), expected)
 
 
 def get_simple_cubic():

@@ -33,7 +33,6 @@ class Labeling(object):
 
             list_labelings.append(labeling)
 
-
         expected_cnt = self.num_type ** self.num_site - self.num_type * (self.num_type - 1) ** self.num_site
         assert len(list_labelings) == expected_cnt
         return list_labelings
@@ -49,7 +48,7 @@ class Labeling(object):
         else:
             return False
 
-    def remove_duplicates(self, labelings):
+    def remove_translation_and_exchanging_duplicates(self, labelings):
         unique_labelings = []
         flags = ["unvisited" for _ in labelings]
         for i, lbl in enumerate(labelings):
@@ -61,21 +60,50 @@ class Labeling(object):
                 flags[i] = "superperiodic"
                 continue
 
-            # remove symmetry operation and exchanging duplicates
+            # remove translation and exchanging duplicates
             for type_prm in itertools.permutations(range(self.num_type)):
                 lbl_ex = [type_prm[e] for e in lbl]
-                for prm in self.prm_all:
+                for prm in self.prm_t:
                     if (lbl_ex == lbl) and (prm == range(self.num_site)):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
-                    idx = labelings.index(operated_lbl_ex)
+                    try:
+                        idx = labelings.index(operated_lbl_ex)
+                    except ValueError:
+                        pass
+                    assert flags[idx] != "distinct"
                     assert flags[idx] != "superperiodic"
                     flags[idx] = "duplicate"
 
             flags[i] = "distinct"
             unique_labelings.append(lbl)
+        return unique_labelings
 
-        # assert self.check_uniqueness(unique_labelings)
+    def remove_rotation_duplicates(self, labelings):
+        unique_labelings = []
+        flags = ["unvisited" for _ in labelings]
+        for i, lbl in enumerate(labelings):
+            if flags[i] != "unvisited":
+                continue
+
+            for prm in self.prm_all:
+                if prm == range(self.num_site):
+                    continue
+                operated_lbl = self.act_permutation(lbl, prm)
+                try:
+                    idx = labelings.index(operated_lbl)
+                except ValueError:
+                    pass
+                flags[idx] = "duplicate"
+
+            flags[i] = "distinct"
+            unique_labelings.append(lbl)
+
+        return unique_labelings
+
+    def remove_duplicates(self, labelings):
+        unique_labelings = self.remove_translation_and_exchanging_duplicates(labelings)
+        unique_labelings = self.remove_rotation_duplicates(unique_labelings)
         return unique_labelings
 
     def get_inequivalent_labelings(self):
@@ -92,7 +120,7 @@ class Labeling(object):
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
                     try:
                         idx = labelings.index(operated_lbl_ex)
-                    except:
+                    except ValueError:
                         continue
 
                     if idx != i:
