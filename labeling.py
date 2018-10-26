@@ -1,11 +1,8 @@
 import itertools
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D  # noqa
 import numpy as np
 
 from permutation import Permutation
-from smith_normal_form import smith_normal_form
 
 
 class Labeling(object):
@@ -126,37 +123,6 @@ class Labeling(object):
                     if idx != i:
                         return False
         return True
-
-
-class DerivativeStructure(object):
-
-    def __init__(self, hnf, num_type, lattice_vectors, labeling):
-        self.hnf = hnf
-        self.num_type = num_type
-        self.lattice_vectors = lattice_vectors
-        self.labelings = labeling
-
-        D, L, R = smith_normal_form(self.hnf)
-        self.snf = D
-        self.left = L
-        self.right = R
-
-    def draw(self, ax=None):
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-
-        for indices in itertools.product(*[range(e + 1) for e in self.hnf.diagonal().tolist()]):
-            src = np.dot(self.lattice_vectors, np.array(indices))
-            for i in range(3):
-                directions = np.eye(3)
-                dst = src + directions[:, i]
-                tmp = np.concatenate([src, dst]).reshape(2, 3).T
-                ax.plot(tmp[0], tmp[1], tmp[2])
-
-        superlattice_vectors = np.dot(self.lattice_vectors, self.hnf)
-        for i in range(3):
-            origin = [0, 0, 0]
-            ax.quiver(*origin, *superlattice_vectors[:, i].tolist(), arrow_length_ratio=0)
 
 
 if __name__ == '__main__':

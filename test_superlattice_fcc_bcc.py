@@ -4,7 +4,7 @@ import numpy as np
 from pymatgen.core import Structure, Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
-from derivative_structure_enumeration import (
+from superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry,
 )

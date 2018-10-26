@@ -1,18 +1,16 @@
 import unittest
 
-import matplotlib.pyplot as plt
 import numpy as np
 from pymatgen.core import Structure, Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
-from derivative_structure_enumeration import (
+from superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
-
 from smith_normal_form import smith_normal_form
-
-from labeling import Labeling, DerivativeStructure
+from labeling import Labeling
+from derivative_structure import DerivativeStructure, unique_structures
 
 
 class TestDerivativeStructureEnumeration(unittest.TestCase):
@@ -182,17 +180,11 @@ class TestUniqueLabeling(unittest.TestCase):
             }
         }
 
-        obj = {
-            'fcc': {
-                'structure': get_face_centered_cubic(),
-                'num_type': 2,
-                'indices': [2, 3, 4, 5],
-                'num_expected': [2, 3, 12, 14]
-            }
-        }
-
         for name, dct in obj.items():
             for index, expected in zip(dct['indices'], dct['num_expected']):
+                num_type = dct['num_type']
+                A = dct['structure'].lattice.matrix.T
+
                 list_HNF = generate_all_superlattices(index)
                 sp = SpacegroupAnalyzer(dct['structure'])
                 list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
@@ -203,13 +195,13 @@ class TestUniqueLabeling(unittest.TestCase):
                     labeling = Labeling(hnf, dct['num_type'], list_rotation_matrix)
                     lbls_tmp = labeling.get_inequivalent_labelings()
                     lbls.extend(lbls_tmp)
-                    # print(hnf)
-                    # print(lbls_tmp)
-                    # print('translation')
-                    # print(labeling.prm_t)
-                    # print('affine')
-                    # print(labeling.prm_all)
-                    # print()
+
+                    dstruct_all = [DerivativeStructure(hnf, num_type, A, lbl)
+                                   for lbl in labeling.remove_translation_and_exchanging_duplicates(labeling.generate_possible_labelings())]
+                    dstruct_rdc = [DerivativeStructure(hnf, num_type, A, lbl)
+                                   for lbl in labeling.get_inequivalent_labelings()]
+                    dstruct_rdc_mg = unique_structures([e.struct for e in dstruct_all])
+                    print(len(dstruct_all), len(dstruct_rdc), len(dstruct_rdc_mg))
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(lbls), expected))

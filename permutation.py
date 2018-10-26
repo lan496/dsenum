@@ -92,21 +92,23 @@ class Permutation(object):
         if self.rotations is None:
             return prm_t
 
-        list_rprm = self.get_rotation_permutations()
+        sgn = (np.linalg.det(self.rotations) == 1)
+        rotations = self.rotations[sgn, ...]
+        rotations_sl = [r for r in rotations
+                        if is_same_lattice(np.dot(r, self.hnf), self.hnf)]
+
         list_permutations = []
 
         for i in range(self.num):
-            for rprm in list_rprm:
-                di = np.dot(self.left, self.factors_e[:, i])
-                unraveled_rprm = np.array(np.unravel_index(rprm, self.shapes))
-                factors = np.mod(unraveled_rprm + di[:, np.newaxis],
+            for R in rotations_sl:
+                R = np.around(R).astype(np.int)
+                r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
+                di = self.factors_e[:, i]
+                factors = np.mod(np.dot(r_tmp, self.factors_e) + di[:, np.newaxis],
                                  np.array(self.shapes)[:, np.newaxis])
                 raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
-                print(raveled_factors)
-                list_permutations.append(raveled_factors)
-            print()
-        print(len(list_permutations))
-        print('#' * 20)
+                if raveled_factors not in list_permutations:
+                    list_permutations.append(raveled_factors)
 
         assert self.validate_permutations(list_permutations)
         return list_permutations
@@ -120,6 +122,15 @@ class Permutation(object):
             return False
 
         return True
+
+
+def is_same_lattice(H1, H2):
+    M = np.linalg.solve(H1, H2)
+    M_re = np.around(M).astype(np.int)
+    if np.array_equal(np.dot(H1, M_re), H2):
+        return True
+    else:
+        return False
 
 
 # https://repl.it/@smichr/msp
