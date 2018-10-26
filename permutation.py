@@ -94,14 +94,13 @@ class Permutation(object):
 
         sgn = (np.linalg.det(self.rotations) == 1)
         rotations = self.rotations[sgn, ...]
-        rotations_sl = [r for r in rotations
+        rotations_sl = [r.astype(np.int) for r in rotations
                         if is_same_lattice(np.dot(r, self.hnf), self.hnf)]
 
         list_permutations = []
 
         for i in range(self.num):
             for R in rotations_sl:
-                R = np.around(R).astype(np.int)
                 r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
                 di = self.factors_e[:, i]
                 factors = np.mod(np.dot(r_tmp, self.factors_e) + di[:, np.newaxis],

@@ -9,6 +9,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
 
 from smith_normal_form import smith_normal_form
+from permutation import is_same_lattice
 
 
 class DerivativeStructure(object):
@@ -83,3 +84,14 @@ def unique_structures(structures):
             uniqued.append(struct)
 
     return uniqued
+
+
+def check_valid_rotations(dstruct, rotations):
+    rotations_sl = [r.astype(np.int) for r in rotations
+                    if is_same_lattice(np.dot(r, dstruct.hnf), dstruct.hnf)]
+    rotations_spglib = SpacegroupAnalyzer(dstruct.struct).get_symmetry_dataset()['rotations']
+    print(len(rotations_sl), len(rotations_spglib))
+    if len(rotations_sl) == len(rotations_spglib):
+        return True
+    else:
+        return False

@@ -10,7 +10,7 @@ from superlattice import (
 )
 from smith_normal_form import smith_normal_form
 from labeling import Labeling
-from derivative_structure import DerivativeStructure, unique_structures
+from derivative_structure import DerivativeStructure, unique_structures, check_valid_rotations
 
 
 class TestDerivativeStructureEnumeration(unittest.TestCase):
@@ -180,6 +180,15 @@ class TestUniqueLabeling(unittest.TestCase):
             }
         }
 
+        obj = {
+            'fcc': {
+                'structure': get_face_centered_cubic(),
+                'num_type': 2,
+                'indices': [4, 5, 6, 7],
+                'num_expected': [12, 14, 50, 52]
+            }
+        }
+
         for name, dct in obj.items():
             for index, expected in zip(dct['indices'], dct['num_expected']):
                 num_type = dct['num_type']
@@ -201,6 +210,9 @@ class TestUniqueLabeling(unittest.TestCase):
                     dstruct_rdc = [DerivativeStructure(hnf, num_type, A, lbl)
                                    for lbl in labeling.get_inequivalent_labelings()]
                     dstruct_rdc_mg = unique_structures([e.struct for e in dstruct_all])
+                    for dstruct in dstruct_all:
+                        print(dstruct.struct)
+                        assert check_valid_rotations(dstruct, list_rotation_matrix)
                     print(len(dstruct_all), len(dstruct_rdc), len(dstruct_rdc_mg))
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
