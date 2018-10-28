@@ -59,17 +59,6 @@ class Permutation(object):
 
     def _get_rigid_transformations(self, rotations):
         valid_rotations = []
-        """
-        for R in rotations:
-            images_e_sp = np.dot(self.hnf_inv, self.images_e)
-            images_sp = np.dot(self.hnf_inv, np.dot(R, self.images_e))
-            images_sp = np.remainder(images_sp, 1.0)
-            eql = np.isclose(images_sp[:, :, np.newaxis],
-                             images_e_sp[:, np.newaxis, :])
-            eql_each = np.sum(np.all(eql, axis=0), axis=0)
-            if np.sum(eql_each == 1) == self.num:
-                valid_rotations.append(R)
-        """
         for R in rotations:
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue

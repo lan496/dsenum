@@ -83,15 +83,18 @@ class Labeling(object):
             if flags[i] != "unvisited":
                 continue
 
-            for prm in self.prm_all:
-                if prm == range(self.num_site):
-                    continue
-                operated_lbl = self.act_permutation(lbl, prm)
-                try:
-                    idx = labelings.index(operated_lbl)
-                except ValueError:
-                    pass
-                flags[idx] = "duplicate"
+            for type_prm in itertools.permutations(range(self.num_type)):
+                lbl_ex = [type_prm[e] for e in lbl]
+                for prm in self.prm_all:
+                    if (lbl_ex == lbl) and (prm == range(self.num_site)):
+                        continue
+                    operated_lbl_ex = self.act_permutation(lbl_ex, prm)
+                    try:
+                        idx = labelings.index(operated_lbl_ex)
+                    except ValueError:
+                        pass
+                    assert flags[idx] != "superperiodic"
+                    flags[idx] = "duplicate"
 
             flags[i] = "distinct"
             unique_labelings.append(lbl)
@@ -106,7 +109,7 @@ class Labeling(object):
     def get_inequivalent_labelings(self):
         labelings = self.generate_possible_labelings()
         labelings = self.remove_duplicates(labelings)
-        # assert self.check_uniqueness(labelings)
+        assert self.check_uniqueness(labelings)
         return labelings
 
     def check_uniqueness(self, labelings):

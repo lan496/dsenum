@@ -112,7 +112,7 @@ def unique_structures(structures):
         for r, t in zip(sym_dataset['rotations'], sym_dataset['translations']):
             new_frac_coords = np.dot(r, struct.frac_coords.T) + t[:, np.newaxis]
             struct_tmp = Structure(struct.lattice, struct.species, new_frac_coords.T)
-            if any([stm.fit_anonymous(struct_tmp, unique_struct) for unique_struct in uniqued]):
+            if any([stm.fit(struct_tmp, unique_struct) for unique_struct in uniqued]):
                 is_unique = False
                 break
 

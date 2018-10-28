@@ -11,7 +11,7 @@ from superlattice import (
 from smith_normal_form import smith_normal_form
 from labeling import Labeling
 from permutation import Permutation
-from derivative_structure import DerivativeStructure, SuperLattice
+from derivative_structure import DerivativeStructure, SuperLattice, unique_structures
 
 
 class TestEnumerateSuperlattice(unittest.TestCase):
@@ -196,16 +196,13 @@ class TestPermutation(unittest.TestCase):
                     sym = SpacegroupAnalyzer(sl.struct)\
                         .get_symmetry_dataset()
                     expected = np.unique(sym['rotations'], axis=0)
-                    try:
-                        self.assertEqual(len(actual), len(expected))
-                    except:
-                        import pdb; pdb.set_trace()
+                    self.assertEqual(len(actual), len(expected))
 
 
 class TestUniqueLabeling(unittest.TestCase):
 
-    def test_labelings(self):
-        obj = {
+    def setUp(self):
+        self.obj = {
             'fcc': {
                 'structure': get_face_centered_cubic(),
                 'num_type': 2,
@@ -235,7 +232,8 @@ class TestUniqueLabeling(unittest.TestCase):
             }
         }
 
-        obj = {
+        """
+        self.obj = {
             'fcc': {
                 'structure': get_face_centered_cubic(),
                 'num_type': 2,
@@ -243,20 +241,35 @@ class TestUniqueLabeling(unittest.TestCase):
                 'num_expected': [12, 14, 50, 52]
             }
         }
+        """
 
-        for name, dct in obj.items():
+    def test_labelings(self):
+        for name, dct in self.obj.items():
+            structure = dct['structure']
+            A = structure.lattice.matrix.T
+            num_type = dct['num_type']
             for index, expected in zip(dct['indices'], dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
-                sp = SpacegroupAnalyzer(dct['structure'])
-                list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
-                translations = sp.get_symmetry_dataset()['translations']
+                sym_dataset = SpacegroupAnalyzer(structure)\
+                    .get_symmetry_dataset()
+                rotations = sym_dataset['rotations']
+                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
 
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix)
                 lbls = []
                 for hnf in list_reduced_HNF:
-                    labeling = Labeling(hnf, dct['num_type'], list_rotation_matrix, translations)
+                    labeling = Labeling(hnf, num_type, rotations)
                     lbls_tmp = labeling.get_inequivalent_labelings()
                     lbls.extend(lbls_tmp)
+
+                    """
+                    list_lbl = labeling.generate_possible_labelings()
+                    list_lbl = labeling.remove_translation_and_exchanging_duplicates(list_lbl)
+                    list_ds = [DerivativeStructure(hnf, num_type, A, lbl)
+                               for lbl in list_lbl]
+                    list_unique_ds = unique_structures([e.struct for e in list_ds])
+                    print(len(list_lbl),
+                          len(lbls_tmp), len(list_unique_ds))
+                    """
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(lbls), expected))
