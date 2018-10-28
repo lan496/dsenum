@@ -30,8 +30,6 @@ class Labeling(object):
 
             list_labelings.append(labeling)
 
-        expected_cnt = self.num_type ** self.num_site - self.num_type * (self.num_type - 1) ** self.num_site
-        assert len(list_labelings) == expected_cnt
         return list_labelings
 
     def is_representative_coloring(self, labeling):
