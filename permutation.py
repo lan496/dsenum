@@ -59,6 +59,8 @@ class Permutation(object):
 
     def _get_rigid_transformations(self, rotations):
         valid_rotations = []
+        self.rotation_factors = []
+
         for R in rotations:
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue
@@ -67,7 +69,7 @@ class Permutation(object):
             factors = np.dot(r_tmp, self.factors_e)
             factors = np.mod(factors,
                              np.array(self.shapes)[:, np.newaxis])
-            raveled_factors = np.ravel_multi_index(factors, self.shapes)
+            self.rotation_factors.append(factors)
             valid_rotations.append(R)
 
         return valid_rotations
@@ -87,16 +89,12 @@ class Permutation(object):
         if self.rotations is None:
             return prm_t
 
-        # sgn = (np.linalg.det(self.rotations) == 1)
-        # rotations = self.rotations[sgn, ...]
-
         list_permutations = []
 
         for i in range(self.num):
-            for R in self.rotations:
-                r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
+            for factors_r in self.rotation_factors:
                 di = self.factors_e[:, i]
-                factors = np.mod(np.dot(r_tmp, self.factors_e) + di[:, np.newaxis],
+                factors = np.mod(factors_r + di[:, np.newaxis],
                                  np.array(self.shapes)[:, np.newaxis])
                 raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
                 if raveled_factors in list_permutations:

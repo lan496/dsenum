@@ -21,15 +21,14 @@ class Labeling(object):
         ret = tuple([labeling[prm[i]] for i in range(self.num_site)])
         return ret
 
+    def convert_base(self, labeling):
+        ret = np.sum([e * (self.num_type ** i)
+                      for i, e in enumerate(labeling)])
+        return ret
+
     def generate_possible_labelings(self):
-        list_labelings = []
-
-        for labeling in itertools.product(range(self.num_type), repeat=self.num_site):
-            if len(set(labeling)) != self.num_type:
-                continue
-
-            list_labelings.append(labeling)
-
+        list_labelings = [lbl for lbl in itertools.product(range(self.num_type), repeat=self.num_site) if len(set(lbl)) == self.num_type]
+        self.valid_flags = [True for _ in range(self.num_type ** self.num_site)]
         return list_labelings
 
     def is_representative_coloring(self, labeling):
@@ -45,14 +44,14 @@ class Labeling(object):
 
     def remove_translation_and_exchanging_duplicates(self, labelings):
         unique_labelings = []
-        flags = ["unvisited" for _ in labelings]
-        for i, lbl in enumerate(labelings):
-            if flags[i] != "unvisited":
+        for lbl in labelings:
+            idx = self.convert_base(lbl)
+            if not self.valid_flags[idx]:
                 continue
 
             # remove superperiodic
             if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
-                flags[i] = "superperiodic"
+                self.valid_flags[idx] = False
                 continue
 
             # remove translation and exchanging duplicates
@@ -62,23 +61,18 @@ class Labeling(object):
                     if (lbl_ex == lbl) and (prm == range(self.num_site)):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
-                    try:
-                        idx = labelings.index(operated_lbl_ex)
-                    except ValueError:
-                        pass
-                    assert flags[idx] != "distinct"
-                    assert flags[idx] != "superperiodic"
-                    flags[idx] = "duplicate"
+                    idx_lbl_ex = self.convert_base(operated_lbl_ex)
+                    self.valid_flags[idx_lbl_ex] = False
 
-            flags[i] = "distinct"
+            self.valid_flags[idx] = True
             unique_labelings.append(lbl)
         return unique_labelings
 
     def remove_rotation_duplicates(self, labelings):
         unique_labelings = []
-        flags = ["unvisited" for _ in labelings]
-        for i, lbl in enumerate(labelings):
-            if flags[i] != "unvisited":
+        for lbl in labelings:
+            idx = self.convert_base(lbl)
+            if not self.valid_flags[idx]:
                 continue
 
             for type_prm in itertools.permutations(range(self.num_type)):
@@ -87,14 +81,10 @@ class Labeling(object):
                     if (lbl_ex == lbl) and (prm == range(self.num_site)):
                         continue
                     operated_lbl_ex = self.act_permutation(lbl_ex, prm)
-                    try:
-                        idx = labelings.index(operated_lbl_ex)
-                    except ValueError:
-                        pass
-                    assert flags[idx] != "superperiodic"
-                    flags[idx] = "duplicate"
+                    idx_lbl_ex = self.convert_base(operated_lbl_ex)
+                    self.valid_flags[idx_lbl_ex] = False
 
-            flags[i] = "distinct"
+            self.valid_flags[idx] = True
             unique_labelings.append(lbl)
 
         return unique_labelings
@@ -107,7 +97,7 @@ class Labeling(object):
     def get_inequivalent_labelings(self):
         labelings = self.generate_possible_labelings()
         labelings = self.remove_duplicates(labelings)
-        assert self.check_uniqueness(labelings)
+        # assert self.check_uniqueness(labelings)
         return labelings
 
     def check_uniqueness(self, labelings):

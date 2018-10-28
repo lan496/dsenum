@@ -48,7 +48,7 @@ class TestUniqueLabeling(unittest.TestCase):
             structure = dct['structure']
             num_type = dct['num_type']
             for index, expected in zip(dct['indices'], dct['num_expected']):
-                if index > 10:
+                if index > 8:
                     continue
                 list_HNF = generate_all_superlattices(index)
                 sym_dataset = SpacegroupAnalyzer(structure)\

@@ -186,7 +186,6 @@ class TestPermutation(unittest.TestCase):
                 rotations = sp.get_symmetry_dataset()['rotations']
 
                 for hnf in list_HNF:
-                    # print('        hnf: {}'.format(hnf.tolist()))
                     permutation = Permutation(hnf, rotations)
                     actual = permutation.rotations
 
@@ -194,6 +193,8 @@ class TestPermutation(unittest.TestCase):
                     sym = SpacegroupAnalyzer(sl.struct)\
                         .get_symmetry_dataset()
                     expected = np.unique(sym['rotations'], axis=0)
+                    # sgn = (np.linalg.det(expected) > 0)
+                    # expected = expected[sgn]
                     self.assertEqual(len(actual), len(expected))
 
 
