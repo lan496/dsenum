@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-from pymatgen.core import Structure, Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from superlattice import (
@@ -9,9 +8,8 @@ from superlattice import (
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
 from smith_normal_form import smith_normal_form
-from labeling import Labeling
 from permutation import Permutation
-from derivative_structure import DerivativeStructure, SuperLattice, unique_structures
+from derivative_structure import Superlattice, get_lattice
 
 
 class TestEnumerateSuperlattice(unittest.TestCase):
@@ -34,23 +32,23 @@ class TestEnumerateSuperlattice(unittest.TestCase):
         # confirm table 4
         obj = {
             'fcc': {
-                'structure': get_face_centered_cubic(),
+                'structure': get_lattice('fcc'),
                 'num_expected': [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]
             },
             'bcc': {
-                'structure': get_body_centered_cubic(),
+                'structure': get_lattice('bcc'),
                 'num_expected': [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]
             },
             'sc': {
-                'structure': get_simple_cubic(),
+                'structure': get_lattice('sc'),
                 'num_expected': [1, 3, 3, 9, 5, 13, 7, 24, 14, 23]
             },
             'hex': {
-                'structure': get_hexagonal(),
+                'structure': get_lattice('hex'),
                 'num_expected': [1, 3, 5, 11, 7, 19, 11, 34, 23, 33]
             },
             'tetragonal': {
-                'structure': get_tetragonal(),
+                'structure': get_lattice('tet'),
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
             }
         }
@@ -153,24 +151,24 @@ class TestPermutation(unittest.TestCase):
     def setUp(self):
         self.obj = {
             'fcc': {
-                'structure': get_face_centered_cubic(),
+                'structure': get_lattice('fcc'),
                 'num_type': 2,
-                'indices': range(1, 23 + 1),
+                'indices': range(1, 10 + 1),
             },
             'bcc': {
-                'structure': get_body_centered_cubic(),
+                'structure': get_lattice('bcc'),
                 'indices': range(1, 10 + 1)
             },
             'sc': {
-                'structure': get_simple_cubic(),
+                'structure': get_lattice('sc'),
                 'indices': range(1, 10 + 1),
             },
             'hex': {
-                'structure': get_hexagonal(),
+                'structure': get_lattice('hex'),
                 'indices': range(1, 10 + 1),
             },
             'tetragonal': {
-                'structure': get_tetragonal(),
+                'structure': get_lattice('tet'),
                 'indices': range(1, 10 + 1),
             }
         }
@@ -192,118 +190,11 @@ class TestPermutation(unittest.TestCase):
                     permutation = Permutation(hnf, rotations)
                     actual = permutation.rotations
 
-                    sl = SuperLattice(hnf, A)
+                    sl = Superlattice(hnf, A)
                     sym = SpacegroupAnalyzer(sl.struct)\
                         .get_symmetry_dataset()
                     expected = np.unique(sym['rotations'], axis=0)
                     self.assertEqual(len(actual), len(expected))
-
-
-class TestUniqueLabeling(unittest.TestCase):
-
-    def setUp(self):
-        self.obj = {
-            'fcc': {
-                'structure': get_face_centered_cubic(),
-                'num_type': 2,
-                'indices': range(1, 23 + 1),
-                'num_expected': [0, 2, 3, 12, 14, 50, 52, 229, 252, 685,
-                                 682, 3875, 2624, 9628, 16584,
-                                 49764, 42135, 212612, 174104, 867893,
-                                 1120708, 2628180, 3042732]
-            },
-            'sc': {
-                'structure': get_simple_cubic(),
-                'num_type': 2,
-                'indices': range(1, 4 + 1),
-                'num_expected': [0, 3, 3, 15]
-            },
-            'fcc_ternary': {
-                'structure': get_face_centered_cubic(),
-                'num_type': 3,
-                'indices': range(1, 10 + 1),
-                'num_expected': [0, 0, 3, 13, 23, 130, 197, 1267, 2322, 9332]
-            },
-            'fcc_quaternary': {
-                'structure': get_face_centered_cubic(),
-                'num_type': 4,
-                'indices': range(1, 10 + 1),
-                'num_expected': [0, 0, 0, 7, 9, 110, 211, 2110, 5471, 32362]
-            }
-        }
-
-        """
-        self.obj = {
-            'fcc': {
-                'structure': get_face_centered_cubic(),
-                'num_type': 2,
-                'indices': [4, 5, 6, 7],
-                'num_expected': [12, 14, 50, 52]
-            }
-        }
-        """
-
-    def test_labelings(self):
-        for name, dct in self.obj.items():
-            structure = dct['structure']
-            A = structure.lattice.matrix.T
-            num_type = dct['num_type']
-            for index, expected in zip(dct['indices'], dct['num_expected']):
-                list_HNF = generate_all_superlattices(index)
-                sym_dataset = SpacegroupAnalyzer(structure)\
-                    .get_symmetry_dataset()
-                rotations = sym_dataset['rotations']
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
-
-                lbls = []
-                for hnf in list_reduced_HNF:
-                    labeling = Labeling(hnf, num_type, rotations)
-                    lbls_tmp = labeling.get_inequivalent_labelings()
-                    lbls.extend(lbls_tmp)
-
-                    """
-                    list_lbl = labeling.generate_possible_labelings()
-                    list_lbl = labeling.remove_translation_and_exchanging_duplicates(list_lbl)
-                    list_ds = [DerivativeStructure(hnf, num_type, A, lbl)
-                               for lbl in list_lbl]
-                    list_unique_ds = unique_structures([e.struct for e in list_ds])
-                    print(len(list_lbl),
-                          len(lbls_tmp), len(list_unique_ds))
-                    """
-
-                print('{}, index {}, labelings {} (expected {})'.format(name, index,
-                                                                        len(lbls), expected))
-                self.assertEqual(len(lbls), expected)
-
-
-def get_simple_cubic():
-    latt = Lattice(np.eye(3))
-    struct = Structure(latt, ['Po'], [[0, 0, 0]])
-    return struct
-
-
-def get_face_centered_cubic():
-    latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-    struct = Structure(latt, ['Al'], [[0, 0, 0]])
-    return struct
-
-
-def get_body_centered_cubic():
-    latt = Lattice(np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]]))
-    struct = Structure(latt, ['Fe'], [[0, 0, 0]])
-    return struct
-
-
-def get_hexagonal():
-    latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
-    struct = Structure(latt, ['Zn'], [[0, 0, 0]])
-    return struct
-
-
-def get_tetragonal():
-    latt = Lattice(np.diag([1, 1, 1.2]))
-    struct = Structure(latt, ['Po'], [[0, 0, 0]])
-    return struct
 
 
 if __name__ == '__main__':

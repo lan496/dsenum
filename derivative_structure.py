@@ -9,7 +9,6 @@ from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
 
 from smith_normal_form import smith_normal_form
-from permutation import is_same_lattice
 
 
 class DerivativeStructure(object):
@@ -64,7 +63,7 @@ class DerivativeStructure(object):
             ax.quiver(*origin, *superlattice_vectors[:, i].tolist(), arrow_length_ratio=0)
 
 
-class SuperLattice(object):
+class Superlattice(object):
 
     def __init__(self, hnf, lattice_vectors):
         self.hnf = hnf
@@ -122,17 +121,19 @@ def unique_structures(structures):
     return uniqued
 
 
-def check_valid_rotations(dstruct, rotations):
-    rotations_sl = [r.astype(np.int) for r in rotations
-                    if is_same_lattice(np.dot(r, dstruct.hnf), dstruct.hnf)]
-    rotations_sl = dstruct.labeling.permutation.rotations
-    rotations_spglib = SpacegroupAnalyzer(dstruct.struct).get_symmetry_dataset()['rotations']
-    print(len(rotations_sl), len(rotations_spglib))
-    if len(rotations_sl) == len(rotations_spglib):
-        return True
+def get_lattice(kind):
+    if kind == 'sc':
+        latt = Lattice(np.eye(3))
+    elif kind == 'fcc':
+        latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
+    elif kind == 'bcc':
+        latt = Lattice(np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]]))
+    elif kind == 'hex':
+        latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
+    elif kind == 'tet':
+        latt = Lattice(np.diag([1, 1, 1.2]))
     else:
-        print('implementation')
-        print(rotations_sl)
-        print('spglib')
-        print(rotations_spglib)
-        return False
+        raise ValueError('unknown system')
+
+    struct = Structure(latt, [DummySpecie('X')], [[0, 0, 0]])
+    return struct
