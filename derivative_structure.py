@@ -64,6 +64,42 @@ class DerivativeStructure(object):
             ax.quiver(*origin, *superlattice_vectors[:, i].tolist(), arrow_length_ratio=0)
 
 
+class SuperLattice(object):
+
+    def __init__(self, hnf, lattice_vectors):
+        self.hnf = hnf
+        self.num_sites = np.prod(self.hnf.diagonal())
+        self.lattice_vectors = lattice_vectors
+        # self.list_species = [DummySpecie(str(i))
+        #                      for i in range(1, self.num_sites + 1)]
+        self.list_species = [DummySpecie('X')
+                             for _ in range(self.num_sites)]
+
+        D, L, R = smith_normal_form(self.hnf)
+        self.snf = D
+        self.left = L
+        self.right = R
+        self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
+
+        self.struct = self._get_structure()
+
+    def _get_structure(self):
+        # (dims, num)
+        factors_e = np.array([
+            np.unravel_index(indices, tuple(self.snf.diagonal()))
+            for indices in range(self.num_sites)]).T
+        # (dims, num)
+        self.points = np.dot(self.lattice_vectors,
+                             np.dot(self.left_inv, factors_e))
+        frac_coords = np.linalg.solve(
+            np.dot(self.lattice_vectors, self.hnf), self.points).T
+        self.frac_coords = np.mod(frac_coords, np.ones(self.hnf.shape[0]))
+
+        lattice = Lattice(np.dot(self.lattice_vectors, self.hnf).T)
+        struct = Structure(lattice, self.list_species, self.frac_coords)
+        return struct
+
+
 def unique_structures(structures):
     uniqued = []
     stm = StructureMatcher()
@@ -89,9 +125,14 @@ def unique_structures(structures):
 def check_valid_rotations(dstruct, rotations):
     rotations_sl = [r.astype(np.int) for r in rotations
                     if is_same_lattice(np.dot(r, dstruct.hnf), dstruct.hnf)]
+    rotations_sl = dstruct.labeling.permutation.rotations
     rotations_spglib = SpacegroupAnalyzer(dstruct.struct).get_symmetry_dataset()['rotations']
     print(len(rotations_sl), len(rotations_spglib))
     if len(rotations_sl) == len(rotations_spglib):
         return True
     else:
+        print('implementation')
+        print(rotations_sl)
+        print('spglib')
+        print(rotations_spglib)
         return False

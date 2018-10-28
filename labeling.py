@@ -7,12 +7,12 @@ from permutation import Permutation
 
 class Labeling(object):
 
-    def __init__(self, hnf, num_type, list_rotations=None):
+    def __init__(self, hnf, num_type, rotations=None):
         self.hnf = hnf
         self.num_type = num_type
         self.num_site = np.prod(self.hnf.diagonal())
 
-        self.permutation = Permutation(self.hnf, list_rotations)
+        self.permutation = Permutation(self.hnf, rotations)
         # assuming that the 0-th element of permutaions is identity operation
         self.prm_t = self.permutation.get_translation_permutations()
         self.prm_all = self.permutation.get_symmetry_operation_permutaions()

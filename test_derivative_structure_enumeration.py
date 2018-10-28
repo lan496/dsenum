@@ -10,10 +10,11 @@ from superlattice import (
 )
 from smith_normal_form import smith_normal_form
 from labeling import Labeling
-from derivative_structure import DerivativeStructure, unique_structures, check_valid_rotations
+from permutation import Permutation
+from derivative_structure import DerivativeStructure, SuperLattice
 
 
-class TestDerivativeStructureEnumeration(unittest.TestCase):
+class TestEnumerateSuperlattice(unittest.TestCase):
 
     def test_generate_all_superlattices(self):
         # https://oeis.org/A001001
@@ -147,6 +148,60 @@ class TestSmithNormalForm(unittest.TestCase):
             self.assertEqual(len(list_SNF), snf_expected)
 
 
+class TestPermutation(unittest.TestCase):
+
+    def setUp(self):
+        self.obj = {
+            'fcc': {
+                'structure': get_face_centered_cubic(),
+                'num_type': 2,
+                'indices': range(1, 23 + 1),
+            },
+            'bcc': {
+                'structure': get_body_centered_cubic(),
+                'indices': range(1, 10 + 1)
+            },
+            'sc': {
+                'structure': get_simple_cubic(),
+                'indices': range(1, 10 + 1),
+            },
+            'hex': {
+                'structure': get_hexagonal(),
+                'indices': range(1, 10 + 1),
+            },
+            'tetragonal': {
+                'structure': get_tetragonal(),
+                'indices': range(1, 10 + 1),
+            }
+        }
+
+    def test_get_superlattice_rotations(self):
+        for name, dct in self.obj.items():
+            print('*' * 40)
+            print(name)
+            structure = dct['structure']
+            A = structure.lattice.matrix.T
+            for index in dct['indices']:
+                print('    index={}'.format(index),)
+                list_HNF = generate_all_superlattices(index)
+                sp = SpacegroupAnalyzer(structure)
+                rotations = sp.get_symmetry_dataset()['rotations']
+
+                for hnf in list_HNF:
+                    # print('        hnf: {}'.format(hnf.tolist()))
+                    permutation = Permutation(hnf, rotations)
+                    actual = permutation.rotations
+
+                    sl = SuperLattice(hnf, A)
+                    sym = SpacegroupAnalyzer(sl.struct)\
+                        .get_symmetry_dataset()
+                    expected = np.unique(sym['rotations'], axis=0)
+                    try:
+                        self.assertEqual(len(actual), len(expected))
+                    except:
+                        import pdb; pdb.set_trace()
+
+
 class TestUniqueLabeling(unittest.TestCase):
 
     def test_labelings(self):
@@ -191,29 +246,17 @@ class TestUniqueLabeling(unittest.TestCase):
 
         for name, dct in obj.items():
             for index, expected in zip(dct['indices'], dct['num_expected']):
-                num_type = dct['num_type']
-                A = dct['structure'].lattice.matrix.T
-
                 list_HNF = generate_all_superlattices(index)
                 sp = SpacegroupAnalyzer(dct['structure'])
                 list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
+                translations = sp.get_symmetry_dataset()['translations']
 
                 list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix)
                 lbls = []
                 for hnf in list_reduced_HNF:
-                    labeling = Labeling(hnf, dct['num_type'], list_rotation_matrix)
+                    labeling = Labeling(hnf, dct['num_type'], list_rotation_matrix, translations)
                     lbls_tmp = labeling.get_inequivalent_labelings()
                     lbls.extend(lbls_tmp)
-
-                    dstruct_all = [DerivativeStructure(hnf, num_type, A, lbl)
-                                   for lbl in labeling.remove_translation_and_exchanging_duplicates(labeling.generate_possible_labelings())]
-                    dstruct_rdc = [DerivativeStructure(hnf, num_type, A, lbl)
-                                   for lbl in labeling.get_inequivalent_labelings()]
-                    dstruct_rdc_mg = unique_structures([e.struct for e in dstruct_all])
-                    for dstruct in dstruct_all:
-                        print(dstruct.struct)
-                        assert check_valid_rotations(dstruct, list_rotation_matrix)
-                    print(len(dstruct_all), len(dstruct_rdc), len(dstruct_rdc_mg))
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(lbls), expected))

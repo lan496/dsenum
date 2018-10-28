@@ -33,7 +33,7 @@ class Permutation(object):
     """
     def __init__(self, hnf, rotations=None):
         self.hnf = hnf
-        self.rotations = rotations
+        self.hnf_inv = np.linalg.inv(self.hnf)
 
         self.num = np.prod(self.hnf.diagonal())
         self.dims = self.hnf.shape[0]
@@ -47,6 +47,7 @@ class Permutation(object):
         self.shapes = tuple(self.snf.diagonal())
 
         self._init_unique_images()
+        self.rotations = self._get_rigid_transformations(rotations)
 
     def _init_unique_images(self):
         # (dims, num)
@@ -55,6 +56,32 @@ class Permutation(object):
             for indices in range(self.num)]).T
         # (dims, num)
         self.images_e = np.dot(self.left_inv, self.factors_e)
+
+    def _get_rigid_transformations(self, rotations):
+        valid_rotations = []
+        """
+        for R in rotations:
+            images_e_sp = np.dot(self.hnf_inv, self.images_e)
+            images_sp = np.dot(self.hnf_inv, np.dot(R, self.images_e))
+            images_sp = np.remainder(images_sp, 1.0)
+            eql = np.isclose(images_sp[:, :, np.newaxis],
+                             images_e_sp[:, np.newaxis, :])
+            eql_each = np.sum(np.all(eql, axis=0), axis=0)
+            if np.sum(eql_each == 1) == self.num:
+                valid_rotations.append(R)
+        """
+        for R in rotations:
+            if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
+                continue
+
+            r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
+            factors = np.dot(r_tmp, self.factors_e)
+            factors = np.mod(factors,
+                             np.array(self.shapes)[:, np.newaxis])
+            raveled_factors = np.ravel_multi_index(factors, self.shapes)
+            valid_rotations.append(R)
+
+        return valid_rotations
 
     def get_translation_permutations(self):
         list_permutations = []
@@ -67,47 +94,27 @@ class Permutation(object):
         assert self.validate_permutations(list_permutations)
         return list_permutations
 
-    def get_rotation_permutations(self):
-        list_permutations = []
-        if self.rotations is None:
-            return list_permutations
-
-        sgn = (np.linalg.det(self.rotations) == 1)
-        rotations = self.rotations[sgn, ...]
-
-        for R in rotations:
-            R = np.around(R).astype(np.int)
-            r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
-            factors = np.mod(np.dot(r_tmp, self.factors_e),
-                             np.array(self.shapes)[:, np.newaxis])
-            raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
-            if len(set(raveled_factors)) != self.num:
-                continue
-            if raveled_factors not in list_permutations:
-                list_permutations.append(raveled_factors)
-        assert self.validate_permutations(list_permutations)
-        return list_permutations
-
     def get_symmetry_operation_permutaions(self):
         if self.rotations is None:
             return prm_t
 
-        sgn = (np.linalg.det(self.rotations) == 1)
-        rotations = self.rotations[sgn, ...]
-        rotations_sl = [r.astype(np.int) for r in rotations
-                        if is_same_lattice(np.dot(r, self.hnf), self.hnf)]
+        # sgn = (np.linalg.det(self.rotations) == 1)
+        # rotations = self.rotations[sgn, ...]
 
         list_permutations = []
 
         for i in range(self.num):
-            for R in rotations_sl:
+            for R in self.rotations:
                 r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
                 di = self.factors_e[:, i]
                 factors = np.mod(np.dot(r_tmp, self.factors_e) + di[:, np.newaxis],
                                  np.array(self.shapes)[:, np.newaxis])
                 raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
-                if raveled_factors not in list_permutations:
-                    list_permutations.append(raveled_factors)
+                if raveled_factors in list_permutations:
+                    continue
+                if len(set(raveled_factors)) != len(raveled_factors):
+                    continue
+                list_permutations.append(raveled_factors)
 
         assert self.validate_permutations(list_permutations)
         return list_permutations
@@ -115,9 +122,13 @@ class Permutation(object):
     def validate_permutations(self, permutations):
         for prm in permutations:
             if len(set(prm)) != self.num:
+                print(prm)
+                print('not permutation')
                 return False
 
         if len(set(permutations)) != len(permutations):
+            print('not unique')
+            print(permutations)
             return False
 
         return True
@@ -126,7 +137,9 @@ class Permutation(object):
 def is_same_lattice(H1, H2):
     M = np.linalg.solve(H1, H2)
     M_re = np.around(M).astype(np.int)
+
     if np.array_equal(np.dot(H1, M_re), H2):
+        assert np.around(np.linalg.det(M_re) ** 2) == 1
         return True
     else:
         return False
@@ -222,5 +235,3 @@ if __name__ == '__main__':
     print(permutation.factors_e)
     print('images_e')
     print(permutation.images_e)
-    prm_r = permutation.get_rotation_permutations()
-    print(prm_r)
