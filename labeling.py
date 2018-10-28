@@ -1,3 +1,4 @@
+from functools import reduce
 import itertools
 
 import numpy as np
@@ -22,8 +23,7 @@ class Labeling(object):
         return ret
 
     def convert_base(self, labeling):
-        ret = np.sum([e * (self.num_type ** i)
-                      for i, e in enumerate(labeling)])
+        ret = reduce(lambda x, y: x * self.num_type + y, labeling)
         return ret
 
     def generate_possible_labelings(self):
