@@ -143,6 +143,27 @@ def get_lattice(kind):
     return struct
 
 
+def get_symmetry_operations(structure, parent_lattice=False):
+    """
+    Parameters
+    ----------
+    structure: pymatgen.core.Structure
+    parent_lattice: bool
+        if True, return symmetry operations of parent lattice of a given structure
+
+    Returns
+    -------
+    rotations: array, (# of symmetry operations, 3, 3)
+    translations: array, (# of symmetry operations, 3)
+    """
+    parent_lattice = Structure(structure.lattice, [DummySpecie('X')],
+                               coords=[[0, 0, 0]])
+    sym_dataset = SpacegroupAnalyzer(parent_lattice).get_symmetry_dataset()
+    rotations = sym_dataset['rotations']
+    translations = sym_dataset['translations']
+    return rotations, translations
+
+
 if __name__ == '__main__':
     hcp = get_lattice('hcp')
     print(hcp)

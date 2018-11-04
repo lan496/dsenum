@@ -1,20 +1,22 @@
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-
 from superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry
 )
 from labeling import Labeling
-from derivative_structure import DerivativeStructure
+from derivative_structure import (
+    DerivativeStructure,
+    get_symmetry_operations
+)
 
 
 def enumerate_derivative_structures(structure, index, num_type):
     A = structure.lattice.matrix.T
     list_HNF = generate_all_superlattices(index)
-    sym_dataset = SpacegroupAnalyzer(structure).get_symmetry_dataset()
-    rotations = sym_dataset['rotations']
+    pl_rotations, _ = get_symmetry_operations(structure,
+                                              parent_lattice=True)
+    rotations, translations = get_symmetry_operations(structure)
     list_reduced_HNF = \
-        reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
+        reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, pl_rotations)
 
     list_ds = []
 

@@ -9,7 +9,11 @@ from superlattice import (
 )
 from smith_normal_form import smith_normal_form
 from permutation import Permutation
-from derivative_structure import Superlattice, get_lattice
+from derivative_structure import (
+    Superlattice,
+    get_lattice,
+    get_symmetry_operations
+)
 
 
 class TestEnumerateSuperlattice(unittest.TestCase):
@@ -59,20 +63,18 @@ class TestEnumerateSuperlattice(unittest.TestCase):
 
         for name, dct in obj.items():
             print('#' * 40)
+            structure = dct['structure']
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
-                sp = SpacegroupAnalyzer(dct['structure'])
-                list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
+                rotations, _ = get_symmetry_operations(structure,
+                                                       parent_lattice=True)
 
-                from time import time
-                start = time()
                 list_reduced_HNF = \
                     reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                               list_rotation_matrix)
+                                                               rotations)
                 print('{}, index {}: superlattices {} {}'.format(name, index,
                                                                  len(list_reduced_HNF),
                                                                  expected))
-                print(time() - start, 'sec')
                 self.assertEqual(len(list_reduced_HNF), expected)
 
 
