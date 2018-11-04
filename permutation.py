@@ -20,6 +20,8 @@ class Permutation(object):
 
     Attributes
     ----------
+    dim : int
+        dimention of lattice
     index: int
         # of parent multilattice in super lattice
     num_site: int
@@ -41,6 +43,7 @@ class Permutation(object):
                  rotations=None, translations=None):
         self.hnf = hnf
         self.hnf_inv = np.linalg.inv(self.hnf)
+        self.dim = self.hnf.shape[0]
         self.index = np.prod(self.hnf.diagonal())
 
         self.num_site_parent = num_site_parent
@@ -80,18 +83,15 @@ class Permutation(object):
         self.rotation_factors = []
 
         for R, tau in zip(rotations, translations):
-            if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
+            # (dim, num_site)
+            parent_frac_coords = np.dot(R, self.parent_frac_coords_e) \
+                + tau[:, np.newaxis]
+            dset = np.fmod(parent_frac_coords,
+                           np.ones(self.dim)[:, np.newaxis])
+            sl_images = np.dot(self.hnf_inv, parent_frac_coords - dset)
+            if not np.array_equal(sl_images, np.around(sl_images)):
                 continue
-            parent_frac_coords = np.dot(R, self.parent_frac_coords_e) + tau
 
-
-            """
-            r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
-            factors = np.dot(r_tmp, self.factors_e)
-            factors = np.mod(factors,
-                             np.array(self.shape)[:, np.newaxis])
-            self.rotation_factors.append(factors)
-            """
             valid_rotations.append(R)
             valid_translations.append(tau)
 

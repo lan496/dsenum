@@ -205,7 +205,11 @@ class TestPermutation(unittest.TestCase):
                     sl = SuperMultilattice(hnf, A, frac_coords.shape[0],
                                            frac_coords)
                     expected, _ = get_symmetry_operations(sl.struct)
-                    self.assertEqual(len(actual), len(expected))
+                    print(len(actual), len(expected))
+                    try:
+                        self.assertEqual(len(actual), len(expected))
+                    except:
+                        import pdb; pdb.set_trace()
 
 
 if __name__ == '__main__':
