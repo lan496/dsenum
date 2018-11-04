@@ -1,7 +1,6 @@
 import unittest
 
 import numpy as np
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from superlattice import (
     generate_all_superlattices,
@@ -10,7 +9,7 @@ from superlattice import (
 from smith_normal_form import smith_normal_form
 from permutation import Permutation
 from derivative_structure import (
-    Superlattice,
+    SuperMultilattice,
     get_lattice,
     get_symmetry_operations
 )
@@ -188,27 +187,24 @@ class TestPermutation(unittest.TestCase):
             print('*' * 40)
             print(name)
             structure = dct['structure']
+            frac_coords = structure.frac_coords
             A = structure.lattice.matrix.T
             for index in dct['indices']:
                 print('    index={}'.format(index),)
                 list_HNF = generate_all_superlattices(index)
                 pl_rotations, pl_translations = \
-                    get_symmetry_operations(structure, parent_lattice=False)
+                    get_symmetry_operations(structure, parent_lattice=True)
 
                 for hnf in list_HNF:
-                    frac_coords = structure.frac_coords
                     permutation = Permutation(hnf, frac_coords.shape[0],
                                               frac_coords,
                                               pl_rotations,
                                               pl_translations)
                     actual = permutation.rotations
 
-                    sl = Superlattice(hnf, A)
-                    sym = SpacegroupAnalyzer(sl.struct)\
-                        .get_symmetry_dataset()
-                    expected = np.unique(sym['rotations'], axis=0)
-                    # sgn = (np.linalg.det(expected) > 0)
-                    # expected = expected[sgn]
+                    sl = SuperMultilattice(hnf, A, frac_coords.shape[0],
+                                           frac_coords)
+                    expected, _ = get_symmetry_operations(sl.struct)
                     self.assertEqual(len(actual), len(expected))
 
 

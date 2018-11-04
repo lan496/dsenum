@@ -1,5 +1,3 @@
-from itertools import zip_longest
-
 import numpy as np
 
 from smith_normal_form import smith_normal_form
@@ -9,33 +7,35 @@ class Permutation(object):
     """
     Parameters
     ----------
-    hnf: array, (dims, dims)
+    hnf: array, (dim, dim)
         Hermite normal form
     num_site_parent: int
         # of atoms in parent multilattice
-    displacement_set: array, (num_site_parent, 3)
+    displacement_set: array, (num_site_parent, dim)
         fractinal coordinates of A in multilattice site
-    rotations: array, (# of symmetry operations, 3, 3)
+    rotations: array, (# of symmetry operations, dim, dim)
         rotations in fractinal coordinations of A
-    translations: array, (# of symmetry operations, 3)
+    translations: array, (# of symmetry operations, dim)
         translations in fractinal coordinations of A
 
     Attributes
     ----------
-    num: int
-        the number of atoms in unit cell of super lattice
+    index: int
+        # of parent multilattice in super lattice
+    num_site: int
+        # of sites in unit cell of superlattice
     shape: tuple of int
-        (num_site_parent, D11, D22, D33)
-    snf: array, (dims, dims)
+        (1 + dim, num_site)
+    snf: array, (dim, dim)
         Smith normal form
-    left: array, (dims, dims)
+    left: array, (dim, dim)
         left unimodular matrix
-    left_inv: array, (dims, dims)
+    left_inv: array, (dim, dim)
         inverse of left matrix
-    right: array, (dims, dims)
+    right: array, (dim, dim)
         right unimodular matrix
-    factors_e: array, (dims, num)
-    images_e: array, (dims, num)
+    factors_e: array, (1 + dim, num_site)
+    parent_frac_coords: array (dim, num_site)
     """
     def __init__(self, hnf, num_site_parent=1, displacement_set=None,
                  rotations=None, translations=None):
@@ -47,7 +47,7 @@ class Permutation(object):
         self.num_site = self.index * self.num_site_parent
 
         if self.num_site_parent == 1:
-            displacement_set = np.array([[0, 0, 0]])
+            self.displacement_set = np.array([[0, 0, 0]])
         else:
             self.displacement_set = displacement_set
             assert self.displacement_set.shape[0] == self.num_site_parent
@@ -61,9 +61,12 @@ class Permutation(object):
         self.shape = tuple([self.num_site_parent]
                            + self.snf.diagonal().tolist())
 
-        # (num_site_parent, D11, D22, D33)
+        # (1 + dim, num_site)
         self.factors_e = np.array([np.unravel_index(indices, self.shape)
                                    for indices in range(self.num_site)]).T
+        # (dim, num_site)
+        self.parent_frac_coords = self.displacement_set[self.factors_e[0, :]].T + np.dot(self.left_inv, self.factors_e[1:, :])
+
         self.rotations, self.translations = \
             self._get_superlattice_symmetry_operations(rotations, translations)
 
@@ -76,7 +79,7 @@ class Permutation(object):
         valid_translations = []
         self.rotation_factors = []
 
-        for R, tau in zip_longest(rotations, translations):
+        for R, tau in zip(rotations, translations):
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue
 
@@ -105,7 +108,7 @@ class Permutation(object):
 
     def get_symmetry_operation_permutaions(self):
         if self.rotations is None:
-            return prm_t
+            return self.prm_t
 
         list_permutations = []
 
@@ -148,95 +151,3 @@ def is_same_lattice(H1, H2):
         return True
     else:
         return False
-
-
-# https://repl.it/@smichr/msp
-def msp(items):
-    '''
-    Yield the permutations of `items` where items is either a list
-    of integers representing the actual items or a list of hashable items.
-    The output are the unique permutations of the items given as a list
-    of integers 0, ..., n-1 that represent the n unique elements in
-    `items`.
-
-    Examples
-    ========
-
-    >>> for i in msp('xoxox'):
-    ...   print(i)
-
-    [1, 1, 1, 0, 0]
-    [0, 1, 1, 1, 0]
-    [1, 0, 1, 1, 0]
-    [1, 1, 0, 1, 0]
-    [0, 1, 1, 0, 1]
-    [1, 0, 1, 0, 1]
-    [0, 1, 0, 1, 1]
-    [0, 0, 1, 1, 1]
-    [1, 0, 0, 1, 1]
-    [1, 1, 0, 0, 1]
-
-    Reference: "An O(1) Time Algorithm for Generating Multiset Permutations", Tadao Takaoka
-    https://pdfs.semanticscholar.org/83b2/6f222e8648a7a0599309a40af21837a0264b.pdf
-    '''
-
-    def visit(head):
-        (rv, j) = ([], head)
-        for i in range(N):
-            (dat, j) = E[j]
-            rv.append(dat)
-        return rv
-
-    u = list(set(items))
-    E = list(reversed(sorted([u.index(i) for i in items])))
-    N = len(E)
-    # put E into linked-list format
-    (val, nxt) = (0, 1)
-    for i in range(N):
-        E[i] = [E[i], i + 1]
-    E[-1][nxt] = None
-    head = 0
-    afteri = N - 1
-    i = afteri - 1
-    yield visit(head)
-    while E[afteri][nxt] is not None or E[afteri][val] < E[head][val]:
-        j = E[afteri][nxt]  # added to algorithm for clarity
-        if j is not None and E[i][val] >= E[j][val]:
-            beforek = afteri
-        else:
-            beforek = i
-        k = E[beforek][nxt]
-        E[beforek][nxt] = E[k][nxt]
-        E[k][nxt] = head
-        if E[k][val] < E[head][val]:
-            i = k
-        afteri = E[i][nxt]
-        head = k
-        yield visit(head)
-
-
-if __name__ == '__main__':
-    hnf = np.array([
-        [2, 0],
-        [2, 4]
-    ])
-
-    rotations = np.array([
-        [[1, 0], [0, 1]],
-        [[0, -1], [1, 0]],
-        [[-1, 0], [0, -1]],
-        [[0, 1], [-1, 0]],
-    ])
-
-    permutation = Permutation(hnf, rotations)
-    prm_t = permutation.get_translation_permutations()
-
-    print(permutation.snf)
-    print(permutation.left)
-    print(permutation.right)
-    print()
-
-    print('factors_e')
-    print(permutation.factors_e)
-    print('images_e')
-    print(permutation.images_e)

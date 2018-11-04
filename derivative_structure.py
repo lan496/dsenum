@@ -5,7 +5,6 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa
 import numpy as np
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
-from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
 
 from smith_normal_form import smith_normal_form
@@ -63,7 +62,7 @@ class DerivativeStructure(object):
             ax.quiver(*origin, *superlattice_vectors[:, i].tolist(), arrow_length_ratio=0)
 
 
-class Superlattice(object):
+class SuperMultilattice(object):
     """
     Parameters
     ----------
@@ -71,6 +70,10 @@ class Superlattice(object):
         Hermite normal form
     lattice_vectors: array, (dim, dim)
         lattice_vectors[:, i] is the i-th lattice vector
+    num_site_parent: int
+        # of atoms in parent multilattice
+    displacement_set: array, (num_site_parent, dim)
+        fractinal coordinates of A in multilattice site
 
     Attributes
     ----------
@@ -78,7 +81,10 @@ class Superlattice(object):
         dimention of lattice
     index: int
         # of parent multilattice in super lattice
-    list_species: list of DummySpecie
+    num_site: int
+        # of sites in unit cell of superlattice
+    shape: tuple of int
+        (1 + dim, num_site)
     snf: array, (dim, dim)
         Smith normal form of hnf
     left: array, (dim, dim)
@@ -87,62 +93,52 @@ class Superlattice(object):
         inverse of left matrix
     right: array, (dim, dim)
         right unimodular matrix
+    struct: pymatgen.core.Structure
     """
 
-    def __init__(self, hnf, lattice_vectors):
+    def __init__(self, hnf, lattice_vectors,
+                 num_site_parent=1, displacement_set=None):
         self.hnf = hnf
         self.dim = self.hnf.shape[0]
         self.index = np.prod(self.hnf.diagonal())
         self.lattice_vectors = lattice_vectors
+
+        self.num_site_parent = num_site_parent
+        if self.num_site_parent == 1:
+            self.displacement_set = np.array([[0, 0, 0]])
+        else:
+            self.displacement_set = displacement_set
+            assert self.displacement_set.shape[0] == self.num_site_parent
+        self.num_site = self.num_site_parent * self.index
+
         D, L, R = smith_normal_form(self.hnf)
         self.snf = D
         self.left = L
         self.right = R
         self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
 
+        self.shape = tuple([self.num_site_parent]
+                           + self.snf.diagonal().tolist())
+
         self.struct = self._get_structure()
 
     def _get_structure(self):
-        # (dim, index)
-        lattice_factors_e = np.array([
-            np.unravel_index(indices, tuple(self.snf.diagonal()))
-            for indices in range(self.index)]).T
-        # (dim, index)
-        self.lattice_points = np.dot(self.lattice_vectors,
-                                     np.dot(self.left_inv,
-                                            lattice_factors_e))
-        frac_coords = np.linalg.solve(self.hnf,
-                                      np.dot(self.left_inv,
-                                             lattice_factors_e)).T
-        frac_coords = np.mod(frac_coords, np.ones(self.dim))
+        # (1 + dim, num_site)
+        factors_e = np.array([np.unravel_index(indices, self.shape)
+                              for indices in range(self.num_site)]).T
+
+        # (dim, num_site)
+        parent_frac_coords = self.displacement_set[factors_e[0, :]].T \
+            + np.dot(self.left_inv, factors_e[1:, :])
+
+        frac_coords = np.linalg.solve(self.hnf, parent_frac_coords).T
+        frac_coords = np.fmod(frac_coords, np.ones(self.dim))
 
         lattice = Lattice(np.dot(self.lattice_vectors, self.hnf).T)
-        list_species = [DummySpecie('X')] * self.index
+        list_species = [DummySpecie('X')] * self.num_site
 
         struct = Structure(lattice, list_species, frac_coords)
         return struct
-
-
-def unique_structures(structures):
-    uniqued = []
-    stm = StructureMatcher()
-
-    for struct in structures:
-        sp = SpacegroupAnalyzer(struct)
-        sym_dataset = sp.get_symmetry_dataset()
-
-        is_unique = True
-        for r, t in zip(sym_dataset['rotations'], sym_dataset['translations']):
-            new_frac_coords = np.dot(r, struct.frac_coords.T) + t[:, np.newaxis]
-            struct_tmp = Structure(struct.lattice, struct.species, new_frac_coords.T)
-            if any([stm.fit(struct_tmp, unique_struct) for unique_struct in uniqued]):
-                is_unique = False
-                break
-
-        if is_unique:
-            uniqued.append(struct)
-
-    return uniqued
 
 
 def get_lattice(kind):
@@ -180,14 +176,13 @@ def get_symmetry_operations(structure, parent_lattice=False):
     rotations: array, (# of symmetry operations, 3, 3)
     translations: array, (# of symmetry operations, 3)
     """
-    parent_lattice = Structure(structure.lattice, [DummySpecie('X')],
-                               coords=[[0, 0, 0]])
-    sym_dataset = SpacegroupAnalyzer(parent_lattice).get_symmetry_dataset()
+    if parent_lattice:
+        struct = Structure(structure.lattice, [DummySpecie('X')],
+                           coords=[[0, 0, 0]])
+    else:
+        struct = structure
+
+    sym_dataset = SpacegroupAnalyzer(struct).get_symmetry_dataset()
     rotations = sym_dataset['rotations']
     translations = sym_dataset['translations']
     return rotations, translations
-
-
-if __name__ == '__main__':
-    hcp = get_lattice('hcp')
-    print(hcp)
