@@ -35,7 +35,7 @@ class Permutation(object):
     right: array, (dim, dim)
         right unimodular matrix
     factors_e: array, (1 + dim, num_site)
-    parent_frac_coords: array (dim, num_site)
+    parent_frac_coords_e: array (dim, num_site)
     """
     def __init__(self, hnf, num_site_parent=1, displacement_set=None,
                  rotations=None, translations=None):
@@ -65,7 +65,7 @@ class Permutation(object):
         self.factors_e = np.array([np.unravel_index(indices, self.shape)
                                    for indices in range(self.num_site)]).T
         # (dim, num_site)
-        self.parent_frac_coords = self.displacement_set[self.factors_e[0, :]].T + np.dot(self.left_inv, self.factors_e[1:, :])
+        self.parent_frac_coords_e = self.displacement_set[self.factors_e[0, :]].T + np.dot(self.left_inv, self.factors_e[1:, :])
 
         self.rotations, self.translations = \
             self._get_superlattice_symmetry_operations(rotations, translations)
@@ -82,6 +82,8 @@ class Permutation(object):
         for R, tau in zip(rotations, translations):
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue
+            parent_frac_coords = np.dot(R, self.parent_frac_coords_e) + tau
+
 
             """
             r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
