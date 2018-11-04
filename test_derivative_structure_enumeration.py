@@ -50,6 +50,10 @@ class TestEnumerateSuperlattice(unittest.TestCase):
             'tetragonal': {
                 'structure': get_lattice('tet'),
                 'num_expected': [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]
+            },
+            'hcp': {
+                'structure': get_lattice('hcp'),
+                'num_expected': [1, 3, 5, 11, 7, 19, 11, 34, 23, 33]
             }
         }
 

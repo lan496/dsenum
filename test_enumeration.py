@@ -40,6 +40,13 @@ class TestUniqueLabeling(unittest.TestCase):
                 'num_type': 4,
                 'indices': range(1, 10 + 1),
                 'num_expected': [0, 0, 0, 7, 9, 110, 211, 2110, 5471, 32362]
+            },
+            'hcp': {
+                'structure': get_lattice('hcp'),
+                'num_type': 2,
+                'indices': range(1, 10 + 1),
+                'num_expected': [0, 7, 30, 163, 366,
+                                 2613, 5268, 42901, 119528, 662193]
             }
         }
 

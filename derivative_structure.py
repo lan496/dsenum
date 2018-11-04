@@ -122,6 +122,12 @@ def unique_structures(structures):
 
 
 def get_lattice(kind):
+    if kind == 'hcp':
+        latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
+        coords = [[0, 0, 0], [0.5, np.sqrt(3) / 2, np.sqrt(6) / 3]]
+    else:
+        coords = [[0, 0, 0]]
+
     if kind == 'sc':
         latt = Lattice(np.eye(3))
     elif kind == 'fcc':
@@ -132,8 +138,11 @@ def get_lattice(kind):
         latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
     elif kind == 'tet':
         latt = Lattice(np.diag([1, 1, 1.2]))
-    else:
-        raise ValueError('unknown system')
 
-    struct = Structure(latt, [DummySpecie('X')], [[0, 0, 0]])
+    struct = Structure(latt, [DummySpecie('X')] * len(coords), coords)
     return struct
+
+
+if __name__ == '__main__':
+    hcp = get_lattice('hcp')
+    print(hcp)
