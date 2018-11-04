@@ -64,16 +64,36 @@ class DerivativeStructure(object):
 
 
 class Superlattice(object):
+    """
+    Parameters
+    ----------
+    hnf: array, (dim, dim)
+        Hermite normal form
+    lattice_vectors: array, (dim, dim)
+        lattice_vectors[:, i] is the i-th lattice vector
+
+    Attributes
+    ----------
+    dim : int
+        dimention of lattice
+    index: int
+        # of parent multilattice in super lattice
+    list_species: list of DummySpecie
+    snf: array, (dim, dim)
+        Smith normal form of hnf
+    left: array, (dim, dim)
+        left unimodular matrix
+    left_inv: array, (dim, dim)
+        inverse of left matrix
+    right: array, (dim, dim)
+        right unimodular matrix
+    """
 
     def __init__(self, hnf, lattice_vectors):
         self.hnf = hnf
-        self.num_sites = np.prod(self.hnf.diagonal())
+        self.dim = self.hnf.shape[0]
+        self.index = np.prod(self.hnf.diagonal())
         self.lattice_vectors = lattice_vectors
-        # self.list_species = [DummySpecie(str(i))
-        #                      for i in range(1, self.num_sites + 1)]
-        self.list_species = [DummySpecie('X')
-                             for _ in range(self.num_sites)]
-
         D, L, R = smith_normal_form(self.hnf)
         self.snf = D
         self.left = L
@@ -83,19 +103,23 @@ class Superlattice(object):
         self.struct = self._get_structure()
 
     def _get_structure(self):
-        # (dims, num)
-        factors_e = np.array([
+        # (dim, index)
+        lattice_factors_e = np.array([
             np.unravel_index(indices, tuple(self.snf.diagonal()))
-            for indices in range(self.num_sites)]).T
-        # (dims, num)
-        self.points = np.dot(self.lattice_vectors,
-                             np.dot(self.left_inv, factors_e))
-        frac_coords = np.linalg.solve(
-            np.dot(self.lattice_vectors, self.hnf), self.points).T
-        self.frac_coords = np.mod(frac_coords, np.ones(self.hnf.shape[0]))
+            for indices in range(self.index)]).T
+        # (dim, index)
+        self.lattice_points = np.dot(self.lattice_vectors,
+                                     np.dot(self.left_inv,
+                                            lattice_factors_e))
+        frac_coords = np.linalg.solve(self.hnf,
+                                      np.dot(self.left_inv,
+                                             lattice_factors_e)).T
+        frac_coords = np.mod(frac_coords, np.ones(self.dim))
 
         lattice = Lattice(np.dot(self.lattice_vectors, self.hnf).T)
-        struct = Structure(lattice, self.list_species, self.frac_coords)
+        list_species = [DummySpecie('X')] * self.index
+
+        struct = Structure(lattice, list_species, frac_coords)
         return struct
 
 

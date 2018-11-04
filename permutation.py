@@ -1,3 +1,5 @@
+from itertools import zip_longest
+
 import numpy as np
 
 from smith_normal_form import smith_normal_form
@@ -9,17 +11,21 @@ class Permutation(object):
     ----------
     hnf: array, (dims, dims)
         Hermite normal form
-    rotations: list
-        list of symmetry rotation operations in fractional coordinates
+    num_site_parent: int
+        # of atoms in parent multilattice
+    displacement_set: array, (num_site_parent, 3)
+        fractinal coordinates of A in multilattice site
+    rotations: array, (# of symmetry operations, 3, 3)
+        rotations in fractinal coordinations of A
+    translations: array, (# of symmetry operations, 3)
+        translations in fractinal coordinations of A
 
     Attributes
     ----------
     num: int
         the number of atoms in unit cell of super lattice
-    dims: int
-        dimentions of snf
-    shapes: tuple of int
-        diagonal of snf
+    shape: tuple of int
+        (num_site_parent, D11, D22, D33)
     snf: array, (dims, dims)
         Smith normal form
     left: array, (dims, dims)
@@ -31,12 +37,20 @@ class Permutation(object):
     factors_e: array, (dims, num)
     images_e: array, (dims, num)
     """
-    def __init__(self, hnf, rotations=None):
+    def __init__(self, hnf, num_site_parent=1, displacement_set=None,
+                 rotations=None, translations=None):
         self.hnf = hnf
         self.hnf_inv = np.linalg.inv(self.hnf)
+        self.index = np.prod(self.hnf.diagonal())
 
-        self.num = np.prod(self.hnf.diagonal())
-        self.dims = self.hnf.shape[0]
+        self.num_site_parent = num_site_parent
+        self.num_site = self.index * self.num_site_parent
+
+        if self.num_site_parent == 1:
+            displacement_set = np.array([[0, 0, 0]])
+        else:
+            self.displacement_set = displacement_set
+            assert self.displacement_set.shape[0] == self.num_site_parent
 
         D, L, R = smith_normal_form(self.hnf)
         self.snf = D
@@ -44,43 +58,47 @@ class Permutation(object):
         self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
         self.right = R
 
-        self.shapes = tuple(self.snf.diagonal())
+        self.shape = tuple([self.num_site_parent]
+                           + self.snf.diagonal().tolist())
 
-        self._init_unique_images()
-        self.rotations = self._get_rigid_transformations(rotations)
+        # (num_site_parent, D11, D22, D33)
+        self.factors_e = np.array([np.unravel_index(indices, self.shape)
+                                   for indices in range(self.num_site)]).T
+        self.rotations, self.translations = \
+            self._get_superlattice_symmetry_operations(rotations, translations)
 
-    def _init_unique_images(self):
-        # (dims, num)
-        self.factors_e = np.array([
-            np.unravel_index(indices, self.shapes)
-            for indices in range(self.num)]).T
-        # (dims, num)
-        self.images_e = np.dot(self.left_inv, self.factors_e)
-
-    def _get_rigid_transformations(self, rotations):
+    def _get_superlattice_symmetry_operations(self,
+                                              rotations, translations):
+        """
+        return symmetry operations of superlattice
+        """
         valid_rotations = []
+        valid_translations = []
         self.rotation_factors = []
 
-        for R in rotations:
+        for R, tau in zip_longest(rotations, translations):
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue
 
+            """
             r_tmp = np.dot(self.left, np.dot(R, self.left_inv))
             factors = np.dot(r_tmp, self.factors_e)
             factors = np.mod(factors,
-                             np.array(self.shapes)[:, np.newaxis])
+                             np.array(self.shape)[:, np.newaxis])
             self.rotation_factors.append(factors)
+            """
             valid_rotations.append(R)
+            valid_translations.append(tau)
 
-        return valid_rotations
+        return valid_rotations, valid_translations
 
     def get_translation_permutations(self):
         list_permutations = []
         for i in range(self.num):
             di = np.dot(self.left, self.factors_e[:, i])
             factors = np.mod(self.factors_e + di[:, np.newaxis],
-                             np.array(self.shapes)[:, np.newaxis])
-            raveled_factors = np.ravel_multi_index(factors, self.shapes)
+                             np.array(self.shape)[:, np.newaxis])
+            raveled_factors = np.ravel_multi_index(factors, self.shape)
             list_permutations.append(tuple(raveled_factors.tolist()))
         assert self.validate_permutations(list_permutations)
         return list_permutations
@@ -95,8 +113,8 @@ class Permutation(object):
             for factors_r in self.rotation_factors:
                 di = self.factors_e[:, i]
                 factors = np.mod(factors_r + di[:, np.newaxis],
-                                 np.array(self.shapes)[:, np.newaxis])
-                raveled_factors = tuple(np.ravel_multi_index(factors, self.shapes).tolist())
+                                 np.array(self.shape)[:, np.newaxis])
+                raveled_factors = tuple(np.ravel_multi_index(factors, self.shape).tolist())
                 if raveled_factors in list_permutations:
                     continue
                 if len(set(raveled_factors)) != len(raveled_factors):

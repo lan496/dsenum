@@ -176,6 +176,10 @@ class TestPermutation(unittest.TestCase):
             'tetragonal': {
                 'structure': get_lattice('tet'),
                 'indices': range(1, 10 + 1),
+            },
+            'hcp': {
+                'structure': get_lattice('hcp'),
+                'indices': range(1, 10 + 1)
             }
         }
 
@@ -188,11 +192,15 @@ class TestPermutation(unittest.TestCase):
             for index in dct['indices']:
                 print('    index={}'.format(index),)
                 list_HNF = generate_all_superlattices(index)
-                sp = SpacegroupAnalyzer(structure)
-                rotations = sp.get_symmetry_dataset()['rotations']
+                pl_rotations, pl_translations = \
+                    get_symmetry_operations(structure, parent_lattice=False)
 
                 for hnf in list_HNF:
-                    permutation = Permutation(hnf, rotations)
+                    frac_coords = structure.frac_coords
+                    permutation = Permutation(hnf, frac_coords.shape[0],
+                                              frac_coords,
+                                              pl_rotations,
+                                              pl_translations)
                     actual = permutation.rotations
 
                     sl = Superlattice(hnf, A)
