@@ -81,9 +81,12 @@ class Permutation(object):
         """
         valid_rotations = []
         valid_translations = []
-        self.rotation_factors = []
+        self.prm_rigid = []
 
         for R, tau in zip(rotations, translations):
+            if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
+                continue
+
             # (dim, num_site)
             parent_frac_coords = np.dot(R, self.parent_frac_coords_e) \
                 + tau[:, np.newaxis]
@@ -103,12 +106,13 @@ class Permutation(object):
                         factors[0, i] = j
                         break
 
-            if lattice_factors.shape[1] != np.unique(lattice_factors, axis=1).shape[1]:
-                continue
-            if np.any(factors[0, :] == -1):
-                continue
+            # if lattice_factors.shape[1] != np.unique(lattice_factors, axis=1).shape[1]:
+            #     continue
+            # if np.any(factors[0, :] == -1):
+            #     continue
 
             raveled_factors = np.ravel_multi_index(factors, self.shape)
+            self.prm_rigid.append(raveled_factors)
             print(raveled_factors)
 
             valid_rotations.append(R)
@@ -118,7 +122,7 @@ class Permutation(object):
 
     def get_translation_permutations(self):
         list_permutations = []
-        for i in range(self.num):
+        for i in range(self.num_site):
             di = np.dot(self.left, self.factors_e[:, i])
             factors = np.mod(self.factors_e + di[:, np.newaxis],
                              np.array(self.shape)[:, np.newaxis])
