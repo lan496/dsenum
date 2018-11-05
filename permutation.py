@@ -68,7 +68,8 @@ class Permutation(object):
         self.factors_e = np.array([np.unravel_index(indices, self.shape)
                                    for indices in range(self.num_site)]).T
         # (dim, num_site)
-        self.parent_frac_coords_e = self.displacement_set[self.factors_e[0, :]].T + np.dot(self.left_inv, self.factors_e[1:, :])
+        self.parent_frac_coords_e = self.displacement_set[self.factors_e[0, :]].T \
+            + np.dot(self.left_inv, self.factors_e[1:, :])
 
         self.rotations, self.translations = \
             self._get_superlattice_symmetry_operations(rotations, translations)
@@ -88,14 +89,32 @@ class Permutation(object):
                 + tau[:, np.newaxis]
             dset = np.fmod(parent_frac_coords,
                            np.ones(self.dim)[:, np.newaxis])
-            sl_images = np.dot(self.hnf_inv, parent_frac_coords - dset)
-            if not np.array_equal(sl_images, np.around(sl_images)):
+            lattice_factors = np.dot(self.left,
+                                     np.around(parent_frac_coords - dset).astype(np.int))
+            lattice_factors = np.mod(lattice_factors,
+                                     np.array(self.shape[1:])[:, np.newaxis])
+
+            factors = -np.ones_like(self.factors_e)
+            factors[1:, :] = lattice_factors
+            # TODO: awkward
+            for i in range(self.num_site):
+                for j, ds in enumerate(self.displacement_set):
+                    if np.array_equal(dset[:, i], ds):
+                        factors[0, i] = j
+                        break
+
+            if lattice_factors.shape[1] != np.unique(lattice_factors, axis=1).shape[1]:
                 continue
+            if np.any(factors[0, :] == -1):
+                continue
+
+            raveled_factors = np.ravel_multi_index(factors, self.shape)
+            print(raveled_factors)
 
             valid_rotations.append(R)
             valid_translations.append(tau)
 
-        return valid_rotations, valid_translations
+        return np.array(valid_rotations), np.array(valid_translations)
 
     def get_translation_permutations(self):
         list_permutations = []

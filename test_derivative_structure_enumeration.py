@@ -205,11 +205,34 @@ class TestPermutation(unittest.TestCase):
                     sl = SuperMultilattice(hnf, A, frac_coords.shape[0],
                                            frac_coords)
                     expected, _ = get_symmetry_operations(sl.struct)
-                    print(len(actual), len(expected))
+                    # expected = np.unique(expected, axis=0)
+                    print(len(pl_rotations), len(actual), len(expected))
                     try:
                         self.assertEqual(len(actual), len(expected))
                     except:
                         import pdb; pdb.set_trace()
+
+
+class TestSmall(unittest.TestCase):
+
+    def test(self):
+        parent_lattice = get_lattice('fcc')
+        frac_coords = parent_lattice.frac_coords
+        A = parent_lattice.lattice.matrix.T
+        pl_rotations, pl_translations = get_symmetry_operations(parent_lattice,
+                                                                parent_lattice=True)
+
+        hnf = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 3]])
+
+        permutation = Permutation(hnf, frac_coords.shape[0], frac_coords,
+                                  pl_rotations, pl_translations)
+        actual = permutation.rotations
+
+        sl = SuperMultilattice(hnf, A, frac_coords.shape[0], frac_coords)
+        sl_rotations, sl_translations = get_symmetry_operations(sl.struct)
+        print(len(pl_rotations), len(actual), len(sl_rotations))
+        import pdb; pdb.set_trace()
+        self.assertEqual(len(actual), len(sl_rotations))
 
 
 if __name__ == '__main__':

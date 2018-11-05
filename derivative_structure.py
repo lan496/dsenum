@@ -132,7 +132,7 @@ class SuperMultilattice(object):
             + np.dot(self.left_inv, factors_e[1:, :])
 
         frac_coords = np.linalg.solve(self.hnf, parent_frac_coords).T
-        frac_coords = np.fmod(frac_coords, np.ones(self.dim))
+        # frac_coords = np.fmod(frac_coords, np.ones(self.dim))
 
         lattice = Lattice(np.dot(self.lattice_vectors, self.hnf).T)
         list_species = [DummySpecie('X')] * self.num_site

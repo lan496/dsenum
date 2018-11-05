@@ -112,9 +112,10 @@ def smith_normal_form(M):
 
 if __name__ == '__main__':
     M = np.array([
-        [2, 0, 0],
-        [0, 1, 0],
-        [2, 1, 3]
+        [2, 0],
+        [1, 4],
     ])
-    D, _, _ = smith_normal_form(M)
+    D, P, Q = smith_normal_form(M)
     print(D)
+    print(P)
+    print(Q)
