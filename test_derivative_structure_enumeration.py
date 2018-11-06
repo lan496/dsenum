@@ -195,25 +195,75 @@ class TestPermutation(unittest.TestCase):
                     get_symmetry_operations(structure, parent_lattice=True)
                 rotations, translations = get_symmetry_operations(structure)
 
-                for hnf in list_HNF:
+                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
+                                                                              pl_rotations)
+                for hnf in list_reduced_HNF:
                     permutation = Permutation(hnf, frac_coords.shape[0],
                                               frac_coords,
                                               rotations,
                                               translations)
-                    prm_t = permutation.get_translation_permutations()
-                    self.assertTrue(self.validate_permutations(prm_t))
+                    self.assertTrue(self.validate_permutations(permutation.prm_t))
+
+    def test_rigid_permutation(self):
+        for name, dct in self.obj.items():
+            print('*' * 40)
+            print(name)
+            structure = dct['structure']
+            frac_coords = structure.frac_coords
+            for index in dct['indices']:
+                print('    index={}'.format(index),)
+                list_HNF = generate_all_superlattices(index)
+                pl_rotations, pl_translations = \
+                    get_symmetry_operations(structure, parent_lattice=True)
+                rotations, translations = get_symmetry_operations(structure)
+
+                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
+                                                                              pl_rotations)
+                for hnf in list_reduced_HNF:
+                    permutation = Permutation(hnf, frac_coords.shape[0],
+                                              frac_coords,
+                                              rotations,
+                                              translations)
+                    self.assertTrue(self.validate_permutations(permutation.prm_rigid))
+
+    def test_symmetry_permutation(self):
+        for name, dct in self.obj.items():
+            print('*' * 40)
+            print(name)
+            structure = dct['structure']
+            frac_coords = structure.frac_coords
+            for index in dct['indices']:
+                print('    index={}'.format(index),)
+                list_HNF = generate_all_superlattices(index)
+                pl_rotations, pl_translations = \
+                    get_symmetry_operations(structure, parent_lattice=True)
+                rotations, translations = get_symmetry_operations(structure)
+
+                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
+                                                                              pl_rotations)
+                for hnf in list_reduced_HNF:
+                    permutation = Permutation(hnf, frac_coords.shape[0],
+                                              frac_coords,
+                                              rotations,
+                                              translations)
+                    prm_all = permutation.get_symmetry_operation_permutaions()
+                    self.assertTrue(self.validate_permutations(prm_all))
 
     def validate_permutations(self, permutations):
+        # check if it is permutation
         for prm in permutations:
             if len(set(prm)) != len(prm):
                 print(prm)
                 print('not permutation')
                 return False
 
+        # check uniqueness
         if len(set(permutations)) != len(permutations):
             print('not unique')
             print(permutations)
             return False
+
+        # TODO: add to check it is group
 
         return True
 

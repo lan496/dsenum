@@ -74,6 +74,9 @@ class Permutation(object):
         self.rotations, self.translations = \
             self._get_superlattice_symmetry_operations(rotations, translations)
 
+        self.prm_t = self.get_translation_permutations()
+        self.prm_rigid = self.get_rigid_permutations()
+
     def _get_superlattice_symmetry_operations(self,
                                               rotations, translations):
         """
@@ -81,16 +84,24 @@ class Permutation(object):
         """
         valid_rotations = []
         valid_translations = []
-        self.prm_rigid = []
 
         for R, tau in zip(rotations, translations):
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue
 
+            valid_rotations.append(R)
+            valid_translations.append(tau)
+
+        return np.array(valid_rotations), np.array(valid_translations)
+
+    def get_rigid_permutations(self, eps=1e-10):
+        prm_rigid = []
+        self.rigid_factors_ = []
+
+        for R, tau in zip(self.rotations, self.translations):
             # (dim, num_site)
             parent_frac_coords = np.dot(R, self.parent_frac_coords_e) \
                 + tau[:, np.newaxis]
-            eps = 1e-10
             dset = np.remainder(parent_frac_coords + eps, 1)
             lattice_factors = np.dot(self.left,
                                      np.around(parent_frac_coords - dset).astype(np.int))
@@ -107,13 +118,12 @@ class Permutation(object):
                         break
             assert (np.sum(factors == -1) == 0)
 
-            raveled_factors = np.ravel_multi_index(factors, self.shape)
-            self.prm_rigid.append(raveled_factors)
+            raveled_factors = tuple(np.ravel_multi_index(factors, self.shape).tolist())
+            if raveled_factors not in prm_rigid:
+                prm_rigid.append(raveled_factors)
+                self.rigid_factors_.append(factors)
 
-            valid_rotations.append(R)
-            valid_translations.append(tau)
-
-        return np.array(valid_rotations), np.array(valid_translations)
+        return prm_rigid
 
     def get_translation_permutations(self):
         list_permutations = []
@@ -132,19 +142,18 @@ class Permutation(object):
 
         list_permutations = []
 
-        for i in range(self.num):
-            for factors_r in self.rotation_factors:
-                di = self.factors_e[:, i]
-                factors = np.mod(factors_r + di[:, np.newaxis],
-                                 np.array(self.shape)[:, np.newaxis])
+        for i in range(self.index):
+            for factors_r in self.rigid_factors_:
+                di = self.factors_e[1:, i]
+                factors = np.copy(factors_r)
+                factors[1:, :] = np.mod(self.factors_e[1:, :] + di[:, np.newaxis],
+                                        np.array(self.shape[1:])[:, np.newaxis])
                 raveled_factors = tuple(np.ravel_multi_index(factors, self.shape).tolist())
+
                 if raveled_factors in list_permutations:
-                    continue
-                if len(set(raveled_factors)) != len(raveled_factors):
                     continue
                 list_permutations.append(raveled_factors)
 
-        assert self.validate_permutations(list_permutations)
         return list_permutations
 
 
