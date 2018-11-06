@@ -89,8 +89,6 @@ class TestSmall(unittest.TestCase):
         expected = 7
 
         displacement_set = structure.frac_coords
-        print('displacement_set')
-        print(displacement_set)
         num_site_parent = displacement_set.shape[0]
 
         list_HNF = generate_all_superlattices(index)
