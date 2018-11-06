@@ -8,11 +8,8 @@ from superlattice import (
 )
 from smith_normal_form import smith_normal_form
 from permutation import Permutation
-from derivative_structure import (
-    SuperMultilattice,
-    get_lattice,
-    get_symmetry_operations
-)
+from derivative_structure import SuperMultilattice
+from utils import get_lattice, get_symmetry_operations
 
 
 class TestEnumerateSuperlattice(unittest.TestCase):

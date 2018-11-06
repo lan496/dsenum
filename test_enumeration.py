@@ -5,12 +5,8 @@ from superlattice import (
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
 from labeling import Labeling
-from derivative_structure import (
-    DerivativeStructure,
-    get_lattice,
-    get_symmetry_operations,
-    unique_structures
-)
+from derivative_structure import DerivativeStructure
+from utils import get_lattice, get_symmetry_operations, unique_structures
 
 
 class TestUniqueLabeling(unittest.TestCase):

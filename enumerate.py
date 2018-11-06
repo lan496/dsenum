@@ -3,10 +3,8 @@ from superlattice import (
     reduce_HNF_list_by_parent_lattice_symmetry
 )
 from labeling import Labeling
-from derivative_structure import (
-    DerivativeStructure,
-    get_symmetry_operations
-)
+from derivative_structure import DerivativeStructure
+from utils import get_symmetry_operations
 
 
 def enumerate_derivative_structures(structure, index, num_type):
