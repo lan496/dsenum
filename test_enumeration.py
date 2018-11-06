@@ -75,7 +75,7 @@ class TestUniqueLabeling(unittest.TestCase):
 
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(lbls), expected))
-                # self.assertEqual(len(lbls), expected)
+                self.assertEqual(len(lbls), expected)
 
 
 class TestSmall(unittest.TestCase):
@@ -106,9 +106,7 @@ class TestSmall(unittest.TestCase):
             dstructs = [DerivativeStructure(hnf, num_type, A, lbl).get_structure()
                         for lbl in lbls_tmp]
             uniqued_dstructs = unique_structures(dstructs)
-            print(len(dstructs), len(uniqued_dstructs))
-            if len(dstructs) != len(uniqued_dstructs):
-                import pdb; pdb.set_trace()
+            self.assertEqual(len(dstructs), len(uniqued_dstructs))
 
         print('labelings {} (expected {})'.format(len(lbls), expected))
 

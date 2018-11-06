@@ -147,7 +147,7 @@ class Permutation(object):
             for factors_r in self.rigid_factors_:
                 di = self.factors_e[1:, i]
                 factors = np.copy(factors_r)
-                factors[1:, :] = np.mod(self.factors_e[1:, :] + di[:, np.newaxis],
+                factors[1:, :] = np.mod(factors[1:, :] + di[:, np.newaxis],
                                         np.array(self.shape[1:])[:, np.newaxis])
                 raveled_factors = tuple(np.ravel_multi_index(factors, self.shape).tolist())
 
