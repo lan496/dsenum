@@ -77,20 +77,21 @@ class Permutation(object):
         self.prm_t = self.get_translation_permutations()
         self.prm_rigid = self.get_rigid_permutations()
 
-    def _get_superlattice_symmetry_operations(self,
-                                              rotations, translations):
+    def _get_superlattice_symmetry_operations(self, rotations, translations):
         """
         return symmetry operations of superlattice
         """
         valid_rotations = []
         valid_translations = []
 
-        for R, tau in zip(rotations, translations):
-            if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
-                continue
+        if rotations is not None:
+            for i, R in enumerate(rotations):
+                if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
+                    continue
 
-            valid_rotations.append(R)
-            valid_translations.append(tau)
+                valid_rotations.append(R)
+                if translations is not None:
+                        valid_translations.append(translations[i])
 
         return np.array(valid_rotations), np.array(valid_translations)
 

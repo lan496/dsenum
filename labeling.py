@@ -7,16 +7,63 @@ from permutation import Permutation
 
 
 class Labeling(object):
+    """
+    Parameters
+    ----------
+    hnf: array, (dim, dim)
+        Hermite normal form
+    num_type: int
+        # of kinds of atoms
+    num_site_parent: int
+        # of atoms in parent multilattice
+    displacement_set: array, (num_site_parent, dim)
+        fractinal coordinates of A in multilattice site
+    rotations: array, (# of symmetry operations, dim, dim)
+        rotations in fractinal coordinations of A
+    translations: array, (# of symmetry operations, dim)
+        translations in fractinal coordinations of A
 
-    def __init__(self, hnf, num_type, rotations=None):
+    Attributes
+    ----------
+    dim : int
+        dimention of lattice
+    index: int
+        # of parent multilattice in super lattice
+    num_site: int
+        # of sites in unit cell of superlattice
+    """
+    def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
+                 rotations=None, translations=None):
         self.hnf = hnf
+        self.dim = self.hnf.shape[0]
+        self.index = np.prod(self.hnf.diagonal())
         self.num_type = num_type
-        self.num_site = np.prod(self.hnf.diagonal())
 
-        self.permutation = Permutation(self.hnf, rotations)
+        self.num_site_parent = num_site_parent
+        if self.num_site_parent == 1:
+            self.displacement_set = np.array([[0, 0, 0]])
+        else:
+            self.displacement_set = displacement_set
+            assert self.displacement_set.shape[0] == self.num_site_parent
+
+        self.num_site = self.index * self.num_site_parent
+
+        self.permutation = Permutation(self.hnf, self.num_site_parent, self.displacement_set,
+                                       rotations, translations)
         # assuming that the 0-th element of permutaions is identity operation
-        self.prm_t = self.permutation.get_translation_permutations()
         self.prm_all = self.permutation.get_symmetry_operation_permutaions()
+
+    @property
+    def prm_t(self):
+        return self.permutation.prm_t
+
+    @property
+    def rotaions(self):
+        return self.permutation.rotations
+
+    @property
+    def translations(self):
+        return self.permutation.translations
 
     def act_permutation(self, labeling, prm):
         ret = tuple([labeling[prm[i]] for i in range(self.num_site)])
@@ -27,20 +74,11 @@ class Labeling(object):
         return ret
 
     def generate_possible_labelings(self):
-        list_labelings = [lbl for lbl in itertools.product(range(self.num_type), repeat=self.num_site) if len(set(lbl)) == self.num_type]
+        list_labelings = [lbl for lbl
+                          in itertools.product(range(self.num_type), repeat=self.num_site)
+                          if len(set(lbl)) == self.num_type]
         self.valid_flags = [True for _ in range(self.num_type ** self.num_site)]
         return list_labelings
-
-    def is_representative_coloring(self, labeling):
-        colors = []
-        for e in labeling:
-            if e not in colors:
-                colors.append(e)
-
-        if colors == sorted(colors):
-            return True
-        else:
-            return False
 
     def remove_translation_and_exchanging_duplicates(self, labelings):
         unique_labelings = []
@@ -97,7 +135,6 @@ class Labeling(object):
     def get_inequivalent_labelings(self):
         labelings = self.generate_possible_labelings()
         labelings = self.remove_duplicates(labelings)
-        # assert self.check_uniqueness(labelings)
         return labelings
 
     def check_uniqueness(self, labelings):
