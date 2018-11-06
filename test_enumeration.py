@@ -6,8 +6,10 @@ from superlattice import (
 )
 from labeling import Labeling
 from derivative_structure import (
+    DerivativeStructure,
     get_lattice,
-    get_symmetry_operations
+    get_symmetry_operations,
+    unique_structures
 )
 
 
@@ -78,6 +80,41 @@ class TestUniqueLabeling(unittest.TestCase):
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(lbls), expected))
                 # self.assertEqual(len(lbls), expected)
+
+
+class TestSmall(unittest.TestCase):
+
+    def test(self):
+        structure = get_lattice('fcc')
+        A = structure.lattice.matrix.T
+        num_type = 2
+        index = 5
+        expected = 14
+
+        displacement_set = structure.frac_coords
+        num_site_parent = displacement_set.shape[0]
+
+        list_HNF = generate_all_superlattices(index)
+        pl_rotations, _ = get_symmetry_operations(structure, parent_lattice=True)
+        rotations, translations = get_symmetry_operations(structure)
+
+        list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
+                                                                      pl_rotations)
+
+        lbls = []
+        for hnf in list_reduced_HNF:
+            labeling = Labeling(hnf, num_type, num_site_parent, displacement_set,
+                                rotations, translations)
+            lbls_tmp = labeling.get_inequivalent_labelings()
+            lbls.extend(lbls_tmp)
+            dstructs = [DerivativeStructure(hnf, num_type, A, lbl).get_structure()
+                        for lbl in lbls_tmp]
+            uniqued_dstructs = unique_structures(dstructs)
+            print(len(dstructs), len(uniqued_dstructs))
+            if len(dstructs) != len(uniqued_dstructs):
+                import pdb; pdb.set_trace()
+
+        print('labelings {} (expected {})'.format(len(lbls), expected))
 
 
 if __name__ == '__main__':
