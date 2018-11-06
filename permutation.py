@@ -121,8 +121,6 @@ class Permutation(object):
 
             raveled_factors = tuple(np.ravel_multi_index(factors, self.shape).tolist())
             if raveled_factors not in prm_rigid:
-                print(R)
-                print(tau)
                 prm_rigid.append(raveled_factors)
                 self.rigid_factors_.append(factors)
 
@@ -155,6 +153,7 @@ class Permutation(object):
 
                 if raveled_factors in list_permutations:
                     continue
+                assert len(set(raveled_factors)) == len(raveled_factors)
                 list_permutations.append(raveled_factors)
 
         return list_permutations
