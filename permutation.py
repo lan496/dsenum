@@ -90,8 +90,8 @@ class Permutation(object):
             # (dim, num_site)
             parent_frac_coords = np.dot(R, self.parent_frac_coords_e) \
                 + tau[:, np.newaxis]
-            dset = np.fmod(parent_frac_coords,
-                           np.ones(self.dim)[:, np.newaxis])
+            eps = 1e-10
+            dset = np.remainder(parent_frac_coords + eps, 1)
             lattice_factors = np.dot(self.left,
                                      np.around(parent_frac_coords - dset).astype(np.int))
             lattice_factors = np.mod(lattice_factors,
@@ -102,18 +102,13 @@ class Permutation(object):
             # TODO: awkward
             for i in range(self.num_site):
                 for j, ds in enumerate(self.displacement_set):
-                    if np.array_equal(dset[:, i], ds):
+                    if np.allclose(dset[:, i], ds, rtol=1e-5):
                         factors[0, i] = j
                         break
-
-            # if lattice_factors.shape[1] != np.unique(lattice_factors, axis=1).shape[1]:
-            #     continue
-            # if np.any(factors[0, :] == -1):
-            #     continue
+            assert (np.sum(factors == -1) == 0)
 
             raveled_factors = np.ravel_multi_index(factors, self.shape)
             self.prm_rigid.append(raveled_factors)
-            print(raveled_factors)
 
             valid_rotations.append(R)
             valid_translations.append(tau)
@@ -122,13 +117,13 @@ class Permutation(object):
 
     def get_translation_permutations(self):
         list_permutations = []
-        for i in range(self.num_site):
-            di = np.dot(self.left, self.factors_e[:, i])
-            factors = np.mod(self.factors_e + di[:, np.newaxis],
-                             np.array(self.shape)[:, np.newaxis])
+        for i in range(self.index):
+            di = self.factors_e[1:, i]
+            factors = np.copy(self.factors_e)
+            factors[1:, :] = np.mod(self.factors_e[1:, :] + di[:, np.newaxis],
+                                    np.array(self.shape[1:])[:, np.newaxis])
             raveled_factors = np.ravel_multi_index(factors, self.shape)
             list_permutations.append(tuple(raveled_factors.tolist()))
-        assert self.validate_permutations(list_permutations)
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
@@ -151,20 +146,6 @@ class Permutation(object):
 
         assert self.validate_permutations(list_permutations)
         return list_permutations
-
-    def validate_permutations(self, permutations):
-        for prm in permutations:
-            if len(set(prm)) != self.num:
-                print(prm)
-                print('not permutation')
-                return False
-
-        if len(set(permutations)) != len(permutations):
-            print('not unique')
-            print(permutations)
-            return False
-
-        return True
 
 
 def is_same_lattice(H1, H2):

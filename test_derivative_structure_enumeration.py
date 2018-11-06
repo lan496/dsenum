@@ -182,6 +182,42 @@ class TestPermutation(unittest.TestCase):
             }
         }
 
+    def test_translation_permutation(self):
+        for name, dct in self.obj.items():
+            print('*' * 40)
+            print(name)
+            structure = dct['structure']
+            frac_coords = structure.frac_coords
+            for index in dct['indices']:
+                print('    index={}'.format(index),)
+                list_HNF = generate_all_superlattices(index)
+                pl_rotations, pl_translations = \
+                    get_symmetry_operations(structure, parent_lattice=True)
+                rotations, translations = get_symmetry_operations(structure)
+
+                for hnf in list_HNF:
+                    permutation = Permutation(hnf, frac_coords.shape[0],
+                                              frac_coords,
+                                              rotations,
+                                              translations)
+                    prm_t = permutation.get_translation_permutations()
+                    self.assertTrue(self.validate_permutations(prm_t))
+
+    def validate_permutations(self, permutations):
+        for prm in permutations:
+            if len(set(prm)) != len(prm):
+                print(prm)
+                print('not permutation')
+                return False
+
+        if len(set(permutations)) != len(permutations):
+            print('not unique')
+            print(permutations)
+            return False
+
+        return True
+
+    """
     def test_get_superlattice_rotations(self):
         for name, dct in self.obj.items():
             print('*' * 40)
@@ -212,6 +248,7 @@ class TestPermutation(unittest.TestCase):
                         self.assertEqual(len(actual), len(expected))
                     except:
                         import pdb; pdb.set_trace()
+    """
 
 
 class TestSmall(unittest.TestCase):
