@@ -7,8 +7,10 @@ from pymatgen.core.periodic_table import DummySpecie
 
 def get_lattice(kind):
     if kind == 'hcp':
-        latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
-        coords = [[0, 0, 0], [0.5, np.sqrt(3) / 2, np.sqrt(6) / 3]]
+        latt = Lattice(np.array([[1, 0, 0],
+                                 [0.5, np.sqrt(3) / 2, 0],
+                                 [0, 0, 2 * np.sqrt(6) / 3]]))
+        coords = [[0, 0, 0], [0.5, 0.5, 0.5]]
     else:
         coords = [[0, 0, 0]]
 

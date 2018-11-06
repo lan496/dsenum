@@ -62,6 +62,7 @@ class TestUniqueLabeling(unittest.TestCase):
                 pl_rotations, pl_translations = \
                     get_symmetry_operations(structure, parent_lattice=True)
                 rotations, translations = get_symmetry_operations(structure)
+                print(len(pl_rotations), len(rotations))
 
                 list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
                                                                               pl_rotations)
@@ -88,11 +89,14 @@ class TestSmall(unittest.TestCase):
         expected = 7
 
         displacement_set = structure.frac_coords
+        print('displacement_set')
+        print(displacement_set)
         num_site_parent = displacement_set.shape[0]
 
         list_HNF = generate_all_superlattices(index)
-        pl_rotations, _ = get_symmetry_operations(structure, parent_lattice=True)
+        pl_rotations, pl_translations = get_symmetry_operations(structure, parent_lattice=True)
         rotations, translations = get_symmetry_operations(structure)
+        print("rotations: ", len(pl_rotations), len(rotations))
 
         list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
                                                                       pl_rotations)
@@ -108,7 +112,11 @@ class TestSmall(unittest.TestCase):
                         for lbl in lbls_tmp]
             uniqued_dstructs = unique_structures(dstructs)
             # self.assertEqual(len(dstructs), len(uniqued_dstructs))
+            print(labeling.prm_t)
+            print(labeling.permutation.prm_rigid)
+            print(labeling.prm_all)
             print(len(dstructs), len(uniqued_dstructs))
+            print()
 
         print('labelings {} (expected {})'.format(len(lbls), expected))
 

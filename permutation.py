@@ -117,7 +117,10 @@ class Permutation(object):
                     if np.allclose(dset[:, i], ds, rtol=1e-5):
                         factors[0, i] = j
                         break
-            assert (np.sum(factors == -1) == 0)
+
+            if np.any(factors[0] == -1):
+                continue
+            # assert (np.sum(factors == -1) == 0)
 
             raveled_factors = tuple(np.ravel_multi_index(factors, self.shape).tolist())
             if raveled_factors not in prm_rigid:
