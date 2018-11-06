@@ -8,20 +8,24 @@ from utils import get_symmetry_operations
 
 
 def enumerate_derivative_structures(structure, index, num_type):
+    displacement_set = structure.frac_coords
+    num_site_parent = displacement_set.shape[0]
     A = structure.lattice.matrix.T
+
     list_HNF = generate_all_superlattices(index)
-    pl_rotations, _ = get_symmetry_operations(structure,
-                                              parent_lattice=True)
     rotations, translations = get_symmetry_operations(structure)
     list_reduced_HNF = \
-        reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, pl_rotations)
+        reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
 
     list_ds = []
 
     for hnf in list_reduced_HNF:
-        labeling = Labeling(hnf, num_type, rotations)
+        labeling = Labeling(hnf, num_type,
+                            num_site_parent, displacement_set,
+                            rotations, translations)
         lbls_tmp = labeling.get_inequivalent_labelings()
-        list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl)
+        list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl,
+                                            num_site_parent, displacement_set)
                         for lbl in lbls_tmp])
 
     return list_ds

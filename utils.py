@@ -10,7 +10,7 @@ def get_lattice(kind):
         latt = Lattice(np.array([[1, 0, 0],
                                  [0.5, np.sqrt(3) / 2, 0],
                                  [0, 0, 2 * np.sqrt(6) / 3]]))
-        coords = [[0, 0, 0], [0.5, 0.5, 0.5]]
+        coords = [[0, 0, 0], [1 / 3, 1 / 3, 0.5]]
     else:
         coords = [[0, 0, 0]]
 
@@ -29,26 +29,18 @@ def get_lattice(kind):
     return struct
 
 
-def get_symmetry_operations(structure, parent_lattice=False):
+def get_symmetry_operations(structure):
     """
     Parameters
     ----------
     structure: pymatgen.core.Structure
-    parent_lattice: bool
-        if True, return symmetry operations of parent lattice of a given structure
 
     Returns
     -------
     rotations: array, (# of symmetry operations, 3, 3)
     translations: array, (# of symmetry operations, 3)
     """
-    if parent_lattice:
-        struct = Structure(structure.lattice, [DummySpecie('X')],
-                           coords=[[0, 0, 0]])
-    else:
-        struct = structure
-
-    sym_dataset = SpacegroupAnalyzer(struct).get_symmetry_dataset()
+    sym_dataset = SpacegroupAnalyzer(structure).get_symmetry_dataset()
     rotations = sym_dataset['rotations']
     translations = sym_dataset['translations']
     return rotations, translations

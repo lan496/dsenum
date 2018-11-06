@@ -6,6 +6,7 @@ from superlattice import (
 )
 from labeling import Labeling
 from derivative_structure import DerivativeStructure
+from enumerate import enumerate_derivative_structures
 from utils import get_lattice, get_symmetry_operations, unique_structures
 
 
@@ -53,30 +54,16 @@ class TestUniqueLabeling(unittest.TestCase):
         for name, dct in self.obj.items():
             structure = dct['structure']
             displacement_set = structure.frac_coords
-            num_site_parent = displacement_set.shape[0]
             num_type = dct['num_type']
             for index, expected in zip(dct['indices'], dct['num_expected']):
                 if index > 8:
                     continue
-                list_HNF = generate_all_superlattices(index)
-                pl_rotations, pl_translations = \
-                    get_symmetry_operations(structure, parent_lattice=True)
-                rotations, translations = get_symmetry_operations(structure)
-                print(len(pl_rotations), len(rotations))
-
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                                              pl_rotations)
-
-                lbls = []
-                for hnf in list_reduced_HNF:
-                    labeling = Labeling(hnf, num_type, num_site_parent, displacement_set,
-                                        rotations, translations)
-                    lbls_tmp = labeling.get_inequivalent_labelings()
-                    lbls.extend(lbls_tmp)
-
+                actual = enumerate_derivative_structures(structure,
+                                                         index,
+                                                         num_type)
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
-                                                                        len(lbls), expected))
-                self.assertEqual(len(lbls), expected)
+                                                                        len(actual), expected))
+                self.assertEqual(len(actual), expected)
 
 
 class TestSmall(unittest.TestCase):
@@ -92,12 +79,10 @@ class TestSmall(unittest.TestCase):
         num_site_parent = displacement_set.shape[0]
 
         list_HNF = generate_all_superlattices(index)
-        pl_rotations, pl_translations = get_symmetry_operations(structure, parent_lattice=True)
         rotations, translations = get_symmetry_operations(structure)
-        print("rotations: ", len(pl_rotations), len(rotations))
 
         list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                                      pl_rotations)
+                                                                      rotations)
 
         lbls = []
         for hnf in list_reduced_HNF:
@@ -110,11 +95,6 @@ class TestSmall(unittest.TestCase):
                         for lbl in lbls_tmp]
             uniqued_dstructs = unique_structures(dstructs)
             # self.assertEqual(len(dstructs), len(uniqued_dstructs))
-            print(labeling.prm_t)
-            print(labeling.permutation.prm_rigid)
-            print(labeling.prm_all)
-            print(len(dstructs), len(uniqued_dstructs))
-            print()
 
         print('labelings {} (expected {})'.format(len(lbls), expected))
 

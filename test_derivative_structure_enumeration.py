@@ -62,8 +62,7 @@ class TestEnumerateSuperlattice(unittest.TestCase):
             structure = dct['structure']
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
-                rotations, _ = get_symmetry_operations(structure,
-                                                       parent_lattice=True)
+                rotations, _ = get_symmetry_operations(structure)
 
                 list_reduced_HNF = \
                     reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
