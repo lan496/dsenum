@@ -70,6 +70,7 @@ class Labeling(object):
         return ret
 
     def convert_base(self, labeling):
+        # labeling(i.e. list of int) -> int
         ret = reduce(lambda x, y: x * self.num_type + y, labeling)
         return ret
 
@@ -151,6 +152,28 @@ class Labeling(object):
                     if idx != i:
                         return False
         return True
+
+
+class ConstraintedLabeling(Labeling):
+    """
+    Attributes
+    ----------
+    constraints: [['X', 'V'], ['A', 'B', 'V'], ...]
+    """
+    def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
+                 rotations=None, translations=None, constraints=None):
+        super.__init__(hnf, num_type, num_site_parent, displacement_set,
+                       rotations, translations)
+        self.constraints = constraints
+        self.bases = np.array([len(l) for l in self.constraints])
+
+    def convert_base(self, labeling):
+        raveled_labeling = np.reshape(labeling, self.permutation.shape)
+        pass
+
+    def generate_possible_labelings(self):
+        self.valid_flags = None
+        return list_labelings
 
 
 if __name__ == '__main__':
