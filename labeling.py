@@ -158,7 +158,7 @@ class ConstraintedLabeling(Labeling):
     """
     Attributes
     ----------
-    constraints: [['X', 'V'], ['A', 'B', 'V'], ...]
+    constraints: [[0, 1], [0, 2, 3], [0, 2, 3], ...]
     """
     def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
                  rotations=None, translations=None, constraints=None):
@@ -166,13 +166,11 @@ class ConstraintedLabeling(Labeling):
                        rotations, translations)
         self.constraints = constraints
         self.bases = np.array([len(l) for l in self.constraints])
-
-    def convert_base(self, labeling):
-        raveled_labeling = np.reshape(labeling, self.permutation.shape)
-        pass
+        self.length = self.bases ** self.num_site
 
     def generate_possible_labelings(self):
-        self.valid_flags = None
+        self.valid_flags = [True for _ in range(self.num_type ** self.num_site)]
+
         return list_labelings
 
 
