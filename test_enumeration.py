@@ -1,13 +1,7 @@
 import unittest
 
-from superlattice import (
-    generate_all_superlattices,
-    reduce_HNF_list_by_parent_lattice_symmetry,
-)
-from labeling import Labeling
-from derivative_structure import DerivativeStructure
 from enumerate import enumerate_derivative_structures
-from utils import get_lattice, get_symmetry_operations, unique_structures
+from utils import get_lattice
 
 
 class TestUniqueLabeling(unittest.TestCase):
@@ -53,7 +47,7 @@ class TestUniqueLabeling(unittest.TestCase):
     def test_labelings(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
-            displacement_set = structure.frac_coords
+            # displacement_set = structure.frac_coords
             num_type = dct['num_type']
             for index, expected in zip(dct['indices'], dct['num_expected']):
                 if index > 8:
@@ -64,39 +58,6 @@ class TestUniqueLabeling(unittest.TestCase):
                 print('{}, index {}, labelings {} (expected {})'.format(name, index,
                                                                         len(actual), expected))
                 self.assertEqual(len(actual), expected)
-
-
-class TestSmall(unittest.TestCase):
-
-    def test(self):
-        structure = get_lattice('hcp')
-        A = structure.lattice.matrix.T
-        num_type = 2
-        index = 2
-        expected = 7
-
-        displacement_set = structure.frac_coords
-        num_site_parent = displacement_set.shape[0]
-
-        list_HNF = generate_all_superlattices(index)
-        rotations, translations = get_symmetry_operations(structure)
-
-        list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                                      rotations)
-
-        lbls = []
-        for hnf in list_reduced_HNF:
-            labeling = Labeling(hnf, num_type, num_site_parent, displacement_set,
-                                rotations, translations)
-            lbls_tmp = labeling.get_inequivalent_labelings()
-            lbls.extend(lbls_tmp)
-            dstructs = [DerivativeStructure(hnf, num_type, A, lbl,
-                                            num_site_parent, displacement_set).get_structure()
-                        for lbl in lbls_tmp]
-            uniqued_dstructs = unique_structures(dstructs)
-            # self.assertEqual(len(dstructs), len(uniqued_dstructs))
-
-        print('labelings {} (expected {})'.format(len(lbls), expected))
 
 
 if __name__ == '__main__':

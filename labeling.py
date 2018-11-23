@@ -162,7 +162,7 @@ class ConstraintedLabeling(Labeling):
     """
     def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
                  rotations=None, translations=None, constraints=None):
-        super.__init__(hnf, num_type, num_site_parent, displacement_set,
+        super().__init__(hnf, num_type, num_site_parent, displacement_set,
                        rotations, translations)
         self.constraints = constraints
         self.bases = np.array([len(l) for l in self.constraints])
@@ -170,7 +170,10 @@ class ConstraintedLabeling(Labeling):
 
     def generate_possible_labelings(self):
         self.valid_flags = [True for _ in range(self.num_type ** self.num_site)]
-
+        gen = itertools.product(*[itertools.product(cns, repeat=self.index)
+                                  for cns in self.constraints])
+        list_labelings = [np.array(e).reshape(-1).tolist() for e in gen]
+        list_labelings = [lbl for lbl in list_labelings if len(set(lbl)) == self.num_type]
         return list_labelings
 
 
