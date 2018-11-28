@@ -3,7 +3,7 @@ import itertools
 
 import numpy as np
 
-from permutation import Permutation
+from derivative.permutation import Permutation
 
 
 class Labeling(object):
@@ -22,6 +22,8 @@ class Labeling(object):
         rotations in fractinal coordinations of A
     translations: array, (# of symmetry operations, dim)
         translations in fractinal coordinations of A
+    ignore_site_property: bool
+        if True, treat label-exchange duplicates as distinct
 
     Attributes
     ----------
@@ -33,11 +35,12 @@ class Labeling(object):
         # of sites in unit cell of superlattice
     """
     def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
-                 rotations=None, translations=None):
+                 rotations=None, translations=None, ignore_site_property=False):
         self.hnf = hnf
         self.dim = self.hnf.shape[0]
         self.index = np.prod(self.hnf.diagonal())
         self.num_type = num_type
+        self.ignore_site_property = ignore_site_property
 
         self.num_site_parent = num_site_parent
         if self.num_site_parent == 1:
@@ -94,14 +97,22 @@ class Labeling(object):
                 continue
 
             # remove translation and exchanging duplicates
-            for type_prm in itertools.permutations(range(self.num_type)):
-                lbl_ex = [type_prm[e] for e in lbl]
+            if self.ignore_site_property:
                 for prm in self.prm_t:
-                    if (lbl_ex == lbl) and (prm == range(self.num_site)):
+                    if prm == range(self.num_site):
                         continue
-                    operated_lbl_ex = self.act_permutation(lbl_ex, prm)
-                    idx_lbl_ex = self.convert_base(operated_lbl_ex)
-                    self.valid_flags[idx_lbl_ex] = False
+                    operated_lbl = self.act_permutation(lbl, prm)
+                    idx_lbl = self.convert_base(operated_lbl)
+                    self.valid_flags[idx_lbl] = False
+            else:
+                for type_prm in itertools.permutations(range(self.num_type)):
+                    lbl_ex = [type_prm[e] for e in lbl]
+                    for prm in self.prm_t:
+                        if (lbl_ex == lbl) and (prm == range(self.num_site)):
+                            continue
+                        operated_lbl_ex = self.act_permutation(lbl_ex, prm)
+                        idx_lbl_ex = self.convert_base(operated_lbl_ex)
+                        self.valid_flags[idx_lbl_ex] = False
 
             self.valid_flags[idx] = True
             unique_labelings.append(lbl)
@@ -114,14 +125,22 @@ class Labeling(object):
             if not self.valid_flags[idx]:
                 continue
 
-            for type_prm in itertools.permutations(range(self.num_type)):
-                lbl_ex = [type_prm[e] for e in lbl]
+            if self.ignore_site_property:
                 for prm in self.prm_all:
-                    if (lbl_ex == lbl) and (prm == range(self.num_site)):
+                    if prm == range(self.num_site):
                         continue
-                    operated_lbl_ex = self.act_permutation(lbl_ex, prm)
-                    idx_lbl_ex = self.convert_base(operated_lbl_ex)
-                    self.valid_flags[idx_lbl_ex] = False
+                    operated_lbl = self.act_permutation(lbl, prm)
+                    idx_lbl = self.convert_base(operated_lbl)
+                    self.valid_flags[idx_lbl] = False
+            else:
+                for type_prm in itertools.permutations(range(self.num_type)):
+                    lbl_ex = [type_prm[e] for e in lbl]
+                    for prm in self.prm_all:
+                        if (lbl_ex == lbl) and (prm == range(self.num_site)):
+                            continue
+                        operated_lbl_ex = self.act_permutation(lbl_ex, prm)
+                        idx_lbl_ex = self.convert_base(operated_lbl_ex)
+                        self.valid_flags[idx_lbl_ex] = False
 
             self.valid_flags[idx] = True
             unique_labelings.append(lbl)
@@ -161,9 +180,10 @@ class ConstraintedLabeling(Labeling):
     constraints: [[0, 1], [0, 2, 3], [0, 2, 3], ...]
     """
     def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
-                 rotations=None, translations=None, constraints=None):
+                 rotations=None, translations=None,
+                 constraints=None, ignore_site_property=False):
         super().__init__(hnf, num_type, num_site_parent, displacement_set,
-                       rotations, translations)
+                         rotations, translations, ignore_site_property)
         self.constraints = constraints
         self.bases = np.array([len(l) for l in self.constraints])
         self.length = self.bases ** self.num_site

@@ -2,14 +2,14 @@ import unittest
 
 import numpy as np
 
-from superlattice import (
+from derivative.superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry,
 )
-from smith_normal_form import smith_normal_form
-from permutation import Permutation
-from derivative_structure import SuperMultilattice
-from utils import get_lattice, get_symmetry_operations
+from derivative.smith_normal_form import smith_normal_form
+from derivative.permutation import Permutation
+from derivative.derivative_structure import SuperMultilattice
+from derivative.utils import get_lattice, get_symmetry_operations
 
 
 class TestEnumerateSuperlattice(unittest.TestCase):

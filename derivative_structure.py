@@ -6,7 +6,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 
-from smith_normal_form import smith_normal_form
+from derivative.smith_normal_form import smith_normal_form
 
 
 class SuperMultilattice:
@@ -94,8 +94,13 @@ class DerivativeStructure(SuperMultilattice):
         self.num_type = num_type
         self.labeling = labeling
 
-        species = [DummySpecie(str(i)) for i in range(1, self.num_type + 1)]
-        self.list_species = [species[idx] for idx in self.labeling]
+    def get_structure(self, species=None):
+        if species is None:
+            self.species = [DummySpecie(str(i)) for i in range(1, self.num_type + 1)]
+        else:
+            self.species = species
+        self.list_species = [self.species[idx] for idx in self.labeling]
+        return super().get_structure()
 
     def draw(self, ax=None):
         fig = plt.figure()

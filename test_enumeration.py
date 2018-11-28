@@ -1,7 +1,7 @@
 import unittest
 
-from enumerate import enumerate_derivative_structures
-from utils import get_lattice
+from derivative.enumerate import enumerate_derivative_structures
+from derivative.utils import get_lattice
 
 
 class TestUniqueLabeling(unittest.TestCase):

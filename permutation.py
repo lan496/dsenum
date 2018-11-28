@@ -1,6 +1,6 @@
 import numpy as np
 
-from smith_normal_form import smith_normal_form
+from derivative.smith_normal_form import smith_normal_form
 
 
 class Permutation(object):

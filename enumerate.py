@@ -1,15 +1,16 @@
 from tqdm import tqdm
 
-from superlattice import (
+from derivative.superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry
 )
-from labeling import Labeling, ConstraintedLabeling
-from derivative_structure import DerivativeStructure
-from utils import get_symmetry_operations
+from derivative.labeling import Labeling, ConstraintedLabeling
+from derivative.derivative_structure import DerivativeStructure
+from derivative.utils import get_symmetry_operations
 
 
-def enumerate_derivative_structures(structure, index, num_type, constraints=None):
+def enumerate_derivative_structures(structure, index, num_type,
+                                    constraints=None, ignore_site_property=False):
     displacement_set = structure.frac_coords
     num_site_parent = displacement_set.shape[0]
     A = structure.lattice.matrix.T
@@ -25,12 +26,14 @@ def enumerate_derivative_structures(structure, index, num_type, constraints=None
         if constraints is None:
             labeling = Labeling(hnf, num_type,
                                 num_site_parent, displacement_set,
-                                rotations, translations)
+                                rotations, translations,
+                                ignore_site_property=ignore_site_property)
         else:
             labeling = ConstraintedLabeling(hnf, num_type,
                                             num_site_parent, displacement_set,
                                             rotations, translations,
-                                            constraints=constraints)
+                                            constraints=constraints,
+                                            ignore_site_property=ignore_site_property)
         lbls_tmp = labeling.get_inequivalent_labelings()
         print(len(lbls_tmp))
         list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl,
