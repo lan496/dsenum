@@ -4,7 +4,7 @@ from derivative.superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry
 )
-from derivative.labeling import Labeling, ConstraintedLabeling, LabelGenerator
+from derivative.labeling import Labeling, LabelGenerator
 from derivative.derivative_structure import DerivativeStructure
 from derivative.utils import get_symmetry_operations
 
@@ -26,19 +26,10 @@ def enumerate_derivative_structures(structure, index, num_type,
     list_ds = []
 
     for hnf in tqdm(list_reduced_HNF):
-        if constraints is None:
-            labeling = Labeling(hnf, num_type, labelgen,
-                                num_site_parent, displacement_set,
-                                rotations, translations,
-                                ignore_site_property=ignore_site_property)
-        else:
-            labeling = ConstraintedLabeling(hnf, num_type,
-                                            num_site_parent, displacement_set,
-                                            rotations, translations,
-                                            ignore_site_property=ignore_site_property,
-                                            constraints=constraints,
-                                            oxi_states=oxi_states
-                                            )
+        labeling = Labeling(hnf, num_type, labelgen,
+                            num_site_parent, displacement_set,
+                            rotations, translations,
+                            ignore_site_property=ignore_site_property)
         lbls_tmp = labeling.get_inequivalent_labelings()
         print("HNF: {}".format(hnf.tolist()))
         print(len(lbls_tmp))
