@@ -10,7 +10,8 @@ from derivative.utils import get_symmetry_operations
 
 
 def enumerate_derivative_structures(structure, index, num_type,
-                                    constraints=None, ignore_site_property=False):
+                                    ignore_site_property=False,
+                                    constraints=None, oxi_states=None):
     displacement_set = structure.frac_coords
     num_site_parent = displacement_set.shape[0]
     A = structure.lattice.matrix.T
@@ -32,9 +33,12 @@ def enumerate_derivative_structures(structure, index, num_type,
             labeling = ConstraintedLabeling(hnf, num_type,
                                             num_site_parent, displacement_set,
                                             rotations, translations,
+                                            ignore_site_property=ignore_site_property,
                                             constraints=constraints,
-                                            ignore_site_property=ignore_site_property)
+                                            oxi_states=oxi_states
+                                            )
         lbls_tmp = labeling.get_inequivalent_labelings()
+        print("HNF: {}".format(hnf.tolist()))
         print(len(lbls_tmp))
         list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl,
                                             num_site_parent, displacement_set)
