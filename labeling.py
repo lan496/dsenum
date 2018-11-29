@@ -15,6 +15,7 @@ class Labeling(object):
         Hermite normal form
     num_type: int
         # of kinds of atoms
+    labelgen: LabelGenerator
     num_site_parent: int
         # of atoms in parent multilattice
     displacement_set: array, (num_site_parent, dim)
@@ -35,7 +36,7 @@ class Labeling(object):
     num_site: int
         # of sites in unit cell of superlattice
     """
-    def __init__(self, hnf, num_type, num_site_parent=1, displacement_set=None,
+    def __init__(self, hnf, num_type, labelgen, num_site_parent=1, displacement_set=None,
                  rotations=None, translations=None, ignore_site_property=False):
         self.hnf = hnf
         self.dim = self.hnf.shape[0]
@@ -56,6 +57,8 @@ class Labeling(object):
                                        rotations, translations)
         # assuming that the 0-th element of permutaions is identity operation
         self.prm_all = self.permutation.get_symmetry_operation_permutaions()
+
+        self.labelgen = labelgen
 
     @property
     def prm_t(self):
@@ -83,6 +86,8 @@ class Labeling(object):
                           in itertools.product(range(self.num_type), repeat=self.num_site)
                           if len(set(lbl)) == self.num_type]
         self.valid_flags = [True for _ in range(self.num_type ** self.num_site)]
+        list_labelings = self.labelgen.list_labelings
+        self.valid_flags = self.labelgen.valid_flags  # TODO: bug here
         return list_labelings
 
     def remove_translation_and_exchanging_duplicates(self, labelings):
@@ -234,6 +239,74 @@ class ConstraintedLabeling(Labeling):
         list_labelings = [lbl for lbl in list_labelings if len(set(lbl)) == self.num_type]
         """
         return list_labelings
+
+
+class LabelGenerator:
+
+    def __init__(self, index, num_type, num_site_parent=1,
+                 constraints=None, oxi_states=None):
+        self.index = index
+        self.num_type = num_type
+        self.num_site_parent = num_site_parent
+        self.num_site = self.num_site_parent * self.index
+
+        self.constraints = constraints
+        self.oxi_states = oxi_states
+
+        self.list_labelings = self.generate_possible_labelings()
+        print("# of possible labelings: {}".format(len(self.list_labelings)))
+        self.valid_flags = {self.convert_base(lbl): True for lbl in self.list_labelings}
+
+    def _get_valid_ratios(self):
+        ratios = []
+
+        def _dfs(ratio, cnt):
+            if (len(ratio) == self.num_type) and (cnt == self.num_site):
+                if self.oxi_states is None:
+                    ratios.append(ratio)
+                elif np.sum(np.array(ratio) * self.oxi_states) == 0:
+                    ratios.append(ratio)
+            else:
+                for i in range(1, self.num_site - cnt + 1):
+                    tmp = ratio + [i, ]
+                    _dfs(tmp, cnt + i)
+
+        _dfs([], 0)
+        return ratios
+
+    def _is_valid_labeling(self, lbl):
+        if len(set(lbl)) != self.num_type:
+            return False
+
+        if self.constraints is not None:
+            raveled = np.array(lbl).reshape(-1)
+            for i in range(self.num_site_parent):
+                if not set(raveled[i].reshape(-1)) < set(self.constraints[i]):
+                    return False
+        return True
+
+    def generate_possible_labelings(self):
+        if self.oxi_states is not None:
+            # restrict ratio by composition neutrality
+            valid_ratios = self._get_valid_ratios()
+            print("# of possible ratios: {}".format(len(valid_ratios)))
+
+            list_labelings = []
+            for ratio in valid_ratios:
+                items = [i for i in range(self.num_type) for r in range(ratio[i])]
+                lbls_tmp = [lbl for lbl in msp(items) if self._is_valid_labeling(lbl)]
+                list_labelings.extend(lbls_tmp)
+        else:
+            list_labelings = list(itertools.product(range(self.num_type), repeat=self.num_site))
+
+        # remove invalid labelings
+        list_labelings = [lbl for lbl in list_labelings if self._is_valid_labeling(lbl)]
+        return list_labelings
+
+    def convert_base(self, labeling):
+        # labeling(i.e. list of int) -> int
+        ret = reduce(lambda x, y: x * self.num_type + y, labeling)
+        return ret
 
 
 if __name__ == '__main__':
