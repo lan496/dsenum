@@ -43,7 +43,7 @@ def enumerate_derivative_structures(structure, index, num_type,
 if __name__ == '__main__':
     from utils import get_fcc_with_vacancy
     structure = get_fcc_with_vacancy()
-    index = 4
+    index = 1
     num_type = 4
     constraints = [
         [0, 1],     # void and anion
@@ -52,6 +52,7 @@ if __name__ == '__main__':
         [0, 2, 3],
     ]
 
-    list_ds = enumerate_derivative_structures(structure, index, num_type, constraints)
+    list_ds = enumerate_derivative_structures(structure, index, num_type,
+                                              constraints=constraints)
     print(list_ds[0].get_structure())
     print(len(list_ds))

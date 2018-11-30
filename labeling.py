@@ -1,6 +1,7 @@
 from functools import reduce
 import itertools
 
+from joblib import Parallel, delayed
 import numpy as np
 
 from derivative.permutation import Permutation
@@ -185,7 +186,10 @@ class LabelGenerator:
         self.num_site = self.num_site_parent * self.index
 
         self.constraints = constraints
-        self.oxi_states = oxi_states
+        if oxi_states is None:
+            self.oxi_states = None
+        else:
+            self.oxi_states = np.array(oxi_states)
 
         self.list_labelings = self.generate_possible_labelings()
         print("# of possible labelings: {}".format(len(self.list_labelings)))
@@ -216,24 +220,32 @@ class LabelGenerator:
             for i in range(self.num_site_parent):
                 if not set(raveled[i].reshape(-1)) < set(self.constraints[i]):
                     return False
+        if self.oxi_states is not None:
+            # only take labeling that satisfy neutrality in each primitive cell
+            lbl_oxi_states = self.oxi_states[lbl].reshape(-1)
+            if not np.allclose(np.sum(lbl_oxi_states, axis=0), np.zeros(self.num_site_parent)):
+                return False
+
         return True
 
+    def _generate_with_ratio(self, ratio):
+        items = [i for i in range(self.num_type) for r in range(ratio[i])]
+        lbls_tmp = [lbl for lbl in msp(items) if self._is_valid_labeling(lbl)]
+        return lbls_tmp
+
     def generate_possible_labelings(self):
+        print("generate possible labelings")
         if self.oxi_states is not None:
             # restrict ratio by composition neutrality
             valid_ratios = self._get_valid_ratios()
             print("# of possible ratios: {}".format(len(valid_ratios)))
-
-            list_labelings = []
-            for ratio in valid_ratios:
-                items = [i for i in range(self.num_type) for r in range(ratio[i])]
-                lbls_tmp = [lbl for lbl in msp(items) if self._is_valid_labeling(lbl)]
-                list_labelings.extend(lbls_tmp)
+            list_labelings = Parallel(n_jobs=-1, verbose=10)([
+                delayed(self._generate_with_ratio)(ratio) for ratio in valid_ratios])
+            list_labelings = list(itertools.chain.from_iterable(list_labelings))
         else:
-            list_labelings = list(itertools.product(range(self.num_type), repeat=self.num_site))
-
-        # remove invalid labelings
-        list_labelings = [lbl for lbl in list_labelings if self._is_valid_labeling(lbl)]
+            list_labelings = [lbl for lbl
+                              in itertools.product(range(self.num_type), repeat=self.num_site)
+                              if self._is_valid_labeling(lbl)]
         return list_labelings
 
     def convert_base(self, labeling):
