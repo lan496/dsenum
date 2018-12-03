@@ -220,6 +220,12 @@ class LabelGenerator:
             for i in range(self.num_site_parent):
                 if not set(raveled[i].reshape(-1)) < set(self.constraints[i]):
                     return False
+            # each unitcell has at most two non-void sites
+            raveled = np.array(lbl).reshape(self.num_site_parent, self.index)
+            for i in range(self.index):
+                if len([e for e in raveled[:, i] if e != 0]) > 2:
+                    return False
+
         if self.oxi_states is not None:
             # only take labeling that satisfy neutrality in each primitive cell
             lbl_oxi_states = self.oxi_states[lbl].reshape(-1)

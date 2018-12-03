@@ -36,6 +36,7 @@ def enumerate_derivative_structures(structure, index, num_type,
         list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl,
                                             num_site_parent, displacement_set)
                         for lbl in lbls_tmp])
+    print('total: {}'.format(len(list_ds)))
 
     return list_ds
 
