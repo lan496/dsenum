@@ -216,21 +216,19 @@ class LabelGenerator:
             return False
 
         if self.constraints is not None:
-            raveled = np.array(lbl).reshape(-1)
+            # remove a labeling that does not satisfy the constraints for site preferences
+            raveled = np.array(lbl).reshape(self.num_site_parent, -1)
             for i in range(self.num_site_parent):
-                if not set(raveled[i].reshape(-1)) < set(self.constraints[i]):
-                    return False
-            # each unitcell has at most two non-void sites
-            raveled = np.array(lbl).reshape(self.num_site_parent, self.index)
-            for i in range(self.index):
-                if len([e for e in raveled[:, i] if e != 0]) > 2:
+                if not set(raveled[i].reshape(-1)) <= set(self.constraints[i]):
                     return False
 
+        """
         if self.oxi_states is not None:
             # only take labeling that satisfy neutrality in each primitive cell
             lbl_oxi_states = self.oxi_states[lbl].reshape(-1)
             if not np.allclose(np.sum(lbl_oxi_states, axis=0), np.zeros(self.num_site_parent)):
                 return False
+        """
 
         return True
 
@@ -258,19 +256,3 @@ class LabelGenerator:
         # labeling(i.e. list of int) -> int
         ret = reduce(lambda x, y: x * self.num_type + y, labeling)
         return ret
-
-
-if __name__ == '__main__':
-    hnf = np.array([[4]])
-    num_type = 2
-    labelings = Labeling(hnf, num_type)
-
-    list_labelings = labelings.generate_possible_labelings()
-    print('generate possible labelings')
-    print(len(list_labelings))
-    print(list_labelings)
-
-    list_labelings = labelings.remove_duplicates(list_labelings)
-    print('remove duplicates')
-    print(len(list_labelings))
-    print(list_labelings)
