@@ -100,7 +100,8 @@ class DerivativeStructure(SuperMultilattice):
         else:
             self.species = species
         self.list_species = [self.species[idx] for idx in self.labeling]
-        return super().get_structure()
+        struct = super().get_structure()
+        return struct
 
     def draw(self, ax=None):
         fig = plt.figure()

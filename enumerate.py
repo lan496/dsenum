@@ -11,7 +11,8 @@ from derivative.utils import get_symmetry_operations
 
 def enumerate_derivative_structures(structure, index, num_type,
                                     ignore_site_property=False,
-                                    constraints=None, oxi_states=None):
+                                    constraints=None, oxi_states=None,
+                                    n_jobs=-1):
     displacement_set = structure.frac_coords
     num_site_parent = displacement_set.shape[0]
     A = structure.lattice.matrix.T
@@ -21,7 +22,8 @@ def enumerate_derivative_structures(structure, index, num_type,
     list_reduced_HNF = \
         reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
 
-    labelgen = LabelGenerator(index, num_type, num_site_parent, constraints, oxi_states)
+    labelgen = LabelGenerator(index, num_type, num_site_parent, constraints, oxi_states,
+                              n_jobs=n_jobs)
 
     list_ds = []
 

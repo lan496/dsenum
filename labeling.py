@@ -179,11 +179,15 @@ class Labeling(object):
 class LabelGenerator:
 
     def __init__(self, index, num_type, num_site_parent=1,
-                 constraints=None, oxi_states=None):
+                 constraints=None, oxi_states=None,
+                 force_unitcell_neutraliry=False,
+                 n_jobs=-1):
         self.index = index
         self.num_type = num_type
         self.num_site_parent = num_site_parent
         self.num_site = self.num_site_parent * self.index
+        self.force_unitcell_neutraliry = force_unitcell_neutraliry
+        self.n_jobs = n_jobs
 
         self.constraints = constraints
         if oxi_states is None:
@@ -217,15 +221,15 @@ class LabelGenerator:
 
         if self.constraints is not None:
             # remove a labeling that does not satisfy the constraints for site preferences
-            raveled = np.array(lbl).reshape(self.num_site_parent, -1)
+            raveled = np.array(lbl).reshape(self.num_site_parent, self.index)
             for i in range(self.num_site_parent):
-                if not set(raveled[i].reshape(-1)) <= set(self.constraints[i]):
+                if not set(raveled[i]) <= set(self.constraints[i]):
                     return False
 
-        if self.oxi_states is not None:
+        if self.force_unitcell_neutraliry and (self.oxi_states is not None):
             # only take labeling that satisfy neutrality in each primitive cell
-            lbl_oxi_states = self.oxi_states[lbl].reshape(self.num_site_parent, -1)
-            if not np.allclose(np.sum(lbl_oxi_states, axis=0), np.zeros(self.num_site_parent)):
+            lbl_oxi_states = self.oxi_states[lbl].reshape(self.num_site_parent, self.index)
+            if not np.allclose(np.sum(lbl_oxi_states, axis=0), np.zeros(self.index)):
                 return False
 
         return True
@@ -233,6 +237,7 @@ class LabelGenerator:
     def _generate_with_ratio(self, ratio):
         items = [i for i in range(self.num_type) for r in range(ratio[i])]
         lbls_tmp = [lbl for lbl in msp(items) if self._is_valid_labeling(lbl)]
+        print("# of possible labelings with ratio {}: {}".format(ratio, len(lbls_tmp)))
         return lbls_tmp
 
     def generate_possible_labelings(self):
@@ -241,7 +246,7 @@ class LabelGenerator:
             # restrict ratio by composition neutrality
             valid_ratios = self._get_valid_ratios()
             print("# of possible ratios: {}".format(len(valid_ratios)))
-            list_labelings = Parallel(n_jobs=-1, verbose=10)([
+            list_labelings = Parallel(n_jobs=self.n_jobs, verbose=10)([
                 delayed(self._generate_with_ratio)(ratio) for ratio in valid_ratios])
             list_labelings = list(itertools.chain.from_iterable(list_labelings))
         else:
