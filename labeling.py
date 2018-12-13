@@ -222,13 +222,11 @@ class LabelGenerator:
                 if not set(raveled[i].reshape(-1)) <= set(self.constraints[i]):
                     return False
 
-        """
         if self.oxi_states is not None:
             # only take labeling that satisfy neutrality in each primitive cell
-            lbl_oxi_states = self.oxi_states[lbl].reshape(-1)
+            lbl_oxi_states = self.oxi_states[lbl].reshape(self.num_site_parent, -1)
             if not np.allclose(np.sum(lbl_oxi_states, axis=0), np.zeros(self.num_site_parent)):
                 return False
-        """
 
         return True
 
