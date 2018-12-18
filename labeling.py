@@ -38,12 +38,14 @@ class Labeling(object):
         # of sites in unit cell of superlattice
     """
     def __init__(self, hnf, num_type, labelgen, num_site_parent=1, displacement_set=None,
-                 rotations=None, translations=None, ignore_site_property=False):
+                 rotations=None, translations=None,
+                 ignore_site_property=False, leave_superperiodic=False):
         self.hnf = hnf
         self.dim = self.hnf.shape[0]
         self.index = np.prod(self.hnf.diagonal())
         self.num_type = num_type
         self.ignore_site_property = ignore_site_property
+        self.leave_superperiodic = leave_superperiodic
 
         self.num_site_parent = num_site_parent
         if self.num_site_parent == 1:
@@ -95,9 +97,10 @@ class Labeling(object):
                 continue
 
             # remove superperiodic
-            if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
-                self.valid_flags[idx] = False
-                continue
+            if self.leave_superperiodic:
+                if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
+                    self.valid_flags[idx] = False
+                    continue
 
             # remove translation and exchanging duplicates
             if self.ignore_site_property:
