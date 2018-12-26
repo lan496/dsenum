@@ -97,9 +97,10 @@ class Labeling(object):
                 continue
 
             # remove superperiodic
-            if self.leave_superperiodic:
+            if not self.leave_superperiodic:
                 if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
                     self.valid_flags[idx] = False
+                    print(idx)
                     continue
 
             # remove translation and exchanging duplicates

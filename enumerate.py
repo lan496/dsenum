@@ -10,7 +10,7 @@ from derivative.utils import get_symmetry_operations
 
 
 def enumerate_derivative_structures(structure, index, num_type,
-                                    ignore_site_property=False,
+                                    ignore_site_property=False, leave_superperiodic=False,
                                     constraints=None, oxi_states=None,
                                     n_jobs=-1):
     displacement_set = structure.frac_coords
@@ -31,7 +31,8 @@ def enumerate_derivative_structures(structure, index, num_type,
         labeling = Labeling(hnf, num_type, labelgen,
                             num_site_parent, displacement_set,
                             rotations, translations,
-                            ignore_site_property=ignore_site_property)
+                            ignore_site_property=ignore_site_property,
+                            leave_superperiodic=leave_superperiodic)
         lbls_tmp = labeling.get_inequivalent_labelings()
         print("HNF: {}".format(hnf.tolist()))
         print(len(lbls_tmp))
