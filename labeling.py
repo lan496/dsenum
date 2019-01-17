@@ -263,3 +263,11 @@ class LabelGenerator:
         # labeling(i.e. list of int) -> int
         ret = reduce(lambda x, y: x * self.num_type + y, labeling)
         return ret
+
+
+class ListBasedLabelGenerator:
+    """
+    generate possible labeling from a given list
+    """
+    def __init__(self, list_labelings):
+        self.list_labelings = list_labelings

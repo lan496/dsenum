@@ -4,7 +4,7 @@ from derivative.superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry
 )
-from derivative.labeling import Labeling, LabelGenerator
+from derivative.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
 from derivative.derivative_structure import DerivativeStructure
 from derivative.utils import get_symmetry_operations
 
@@ -42,6 +42,21 @@ def enumerate_derivative_structures(structure, index, num_type,
     print('total: {}'.format(len(list_ds)))
 
     return list_ds
+
+
+def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):
+    displacement_set = structure.frac_coords
+    num_site_parent = displacement_set.shape[0]
+    rotations, translations = get_symmetry_operations(structure)
+    labelgen = ListBasedLabelGenerator(list_labelings)
+
+    labeling = Labeling(hnf, num_type, labelgen,
+                        num_site_parent, displacement_set,
+                        rotations, translations,
+                        ignore_site_property=False, leave_superperiodic=True)
+
+    lbls = labeling.get_inequivalent_labelings()
+    return lbls
 
 
 if __name__ == '__main__':
