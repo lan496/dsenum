@@ -50,6 +50,7 @@ def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):
     rotations, translations = get_symmetry_operations(structure)
     labelgen = ListBasedLabelGenerator(list_labelings)
 
+    # discard superperiodic conf, and leave label-exchange duplicates
     labeling = Labeling(hnf, num_type, labelgen,
                         num_site_parent, displacement_set,
                         rotations, translations,
