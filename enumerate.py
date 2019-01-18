@@ -53,7 +53,7 @@ def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):
     labeling = Labeling(hnf, num_type, labelgen,
                         num_site_parent, displacement_set,
                         rotations, translations,
-                        ignore_site_property=False, leave_superperiodic=True)
+                        ignore_site_property=True, leave_superperiodic=False)
 
     lbls = labeling.get_inequivalent_labelings()
     return lbls
