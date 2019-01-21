@@ -51,18 +51,8 @@ class Permutation(object):
             self.displacement_set = displacement_set
             assert self.displacement_set.shape[0] == self.num_site_parent
 
-        """
-        D, L, R = smith_normal_form(self.hnf)
-        self.snf = D
-        self.left = L
-        self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
-        self.right = R
-        """
-
         # (1 + dim, num_site)
         self.factors_e = self.dshash.get_distinct_factors().T
-        # self.factors_e = np.array([np.unravel_index(indices, self.shape)
-        #                            for indices in range(self.num_site)]).T
 
         # (dim, num_site)
         self.parent_frac_coords_e = self.displacement_set[self.factors_e[0, :]].T \
