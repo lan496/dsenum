@@ -1,12 +1,11 @@
 import itertools
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D  # noqa
 import numpy as np
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 
-from derivative.smith_normal_form import smith_normal_form
+from ds.smith_normal_form import smith_normal_form
 
 
 class SuperMultilattice:

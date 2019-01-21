@@ -6,4 +6,7 @@
   - calculate permutaions correspoinding to symmery operations
 - `labeling.py`
   - generator possible labelings and unique symmetry-distinct labelings
+- `enumerate.py`
+  - enumerate derivative structure
+- `derivative_structure.py`
 - `utils.py`
