@@ -100,22 +100,22 @@ def _smf(M, L, R, s):
 
 def smith_normal_form(M):
     """
-    D = np.dot(L, np.dot(M, R))
-    L, R are unimodular.
+    calculate Smith normal form
+
+    Parameters
+    ----------
+    M: array, (dim, dim)
+
+    Returns
+    -------
+    D: array, (dim)
+    L: array, (dim)
+    R: array, (dim)
+        D = np.dot(L, np.dot(M, R))
+        L, R are unimodular.
     """
     MM = np.copy(M)
     L = np.eye(M.shape[0], dtype=int)
     R = np.eye(M.shape[1], dtype=int)
     D, L, R = _smf(MM, L, R, s=0)
     return D, L, R
-
-
-if __name__ == '__main__':
-    M = np.array([
-        [2, 0],
-        [1, 4],
-    ])
-    D, P, Q = smith_normal_form(M)
-    print(D)
-    print(P)
-    print(Q)
