@@ -29,6 +29,9 @@ dstructs = [ds.get_structure() for ds in dstructs]
 print(len(dstructs))  # ->14
 ```
 
+## Official Implementation
+- https://github.com/msg-byu/enumlib
+
 ## References
 - https://journals.aps.org/prb/abstract/10.1103/PhysRevB.77.224115
 - https://journals.aps.org/prb/abstract/10.1103/PhysRevB.80.014120
