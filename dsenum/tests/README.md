@@ -1,10 +1,12 @@
 ### Tests
 - `test_smith_normal_form.py`
   - reproduce Table3 in [1]
-- 'test_superlattice.py'
+- `test_superlattice.py`
   - reproduce https://oeis.org/A001001
   - reproduce https://oeis.org/A045790
   - reproduce Table4 in [1]
+- `test_permutation.py`
+  - check if permutation is valid and unique
 - not tested figures
   - [1]
     - fig2
