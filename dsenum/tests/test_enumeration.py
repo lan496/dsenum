@@ -1,7 +1,7 @@
 import unittest
 
-from derivative.enumerate import enumerate_derivative_structures
-from derivative.utils import get_lattice
+from dsenum.enumerate import enumerate_derivative_structures
+from dsenum.utils import get_lattice
 
 
 class TestUniqueLabeling(unittest.TestCase):
@@ -55,8 +55,6 @@ class TestUniqueLabeling(unittest.TestCase):
                 actual = enumerate_derivative_structures(structure,
                                                          index,
                                                          num_type)
-                print('{}, index {}, labelings {} (expected {})'.format(name, index,
-                                                                        len(actual), expected))
                 self.assertEqual(len(actual), expected)
 
 

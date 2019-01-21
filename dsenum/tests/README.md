@@ -7,12 +7,17 @@
   - reproduce Table4 in [1]
 - `test_permutation.py`
   - check if permutation is valid and unique
-- not tested figures
+- `test_enumeration.py`
+  - reproduce Table4 in [1] up to index = 8
+  - reproduce Table6 in [1]
+  - reproduce Table7 in [1] up to index = 8
+- not tested figures or tables
   - [1]
     - fig2
     - fig3
     - fig9
     - fig10
+    - fig11
   - [2]
 
 ### Refs.

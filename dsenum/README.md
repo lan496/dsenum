@@ -1,5 +1,9 @@
 - `smith_normal_form.py`
-  calculcate Smith normal form
+  - calculcate Smith normal form
 - `superlattice.py`
-  enumerate symmetry-distinct Hermite normal form with parent multilattice
-
+  - enumerate symmetry-distinct Hermite normal form with parent multilattice
+- `permutation.py`
+  - calculate permutaions correspoinding to symmery operations
+- `labeling.py`
+  - generator possible labelings and unique symmetry-distinct labelings
+- `utils.py`
