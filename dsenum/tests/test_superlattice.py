@@ -31,7 +31,6 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
         }
 
         for name, dct in obj.items():
-            print('#' * 40)
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
                 list_HNF = generate_all_superlattices(index)
                 sp = SpacegroupAnalyzer(dct['structure'])
@@ -41,9 +40,6 @@ class TestDerivativeStructureEnumeration(unittest.TestCase):
                     reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
                                                                list_rotation_matrix,
                                                                n_jobs=-1)
-                print('{}, index {}: superlattices {} {}'.format(name, index,
-                                                                 len(list_reduced_HNF),
-                                                                 expected))
                 self.assertEqual(len(list_reduced_HNF), expected)
 
     def get_face_centered_cubic(self):

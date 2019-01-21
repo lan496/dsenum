@@ -3,6 +3,8 @@ import numpy as np
 
 def generate_all_superlattices(index):
     """
+    enumerate 3-by-3 Hermite normal form which determinant is equal to `index`
+
     Parameters
     ----------
     index: positive integer
@@ -30,8 +32,10 @@ def generate_all_superlattices(index):
     return list_HNF
 
 
-def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix, n_jobs=1):
+def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     """
+    reduce equivalent HNF with parent lattice symmetry
+
     Parameters
     ----------
     list_HNF: list of matrices, each element is Hermite normal form
