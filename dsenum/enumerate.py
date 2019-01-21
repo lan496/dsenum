@@ -1,12 +1,12 @@
 from tqdm import tqdm
 
-from derivative.superlattice import (
+from dsenum.superlattice import (
     generate_all_superlattices,
     reduce_HNF_list_by_parent_lattice_symmetry
 )
-from derivative.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
-from derivative.derivative_structure import DerivativeStructure
-from derivative.utils import get_symmetry_operations
+from dsenum.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
+from dsenum.derivative_structure import DerivativeStructure
+from dsenum.utils import get_symmetry_operations
 
 
 def enumerate_derivative_structures(structure, index, num_type,
@@ -35,7 +35,6 @@ def enumerate_derivative_structures(structure, index, num_type,
                             leave_superperiodic=leave_superperiodic)
         lbls_tmp = labeling.get_inequivalent_labelings()
         print("HNF: {}".format(hnf.tolist()))
-        print(len(lbls_tmp))
         list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl,
                                             num_site_parent, displacement_set)
                         for lbl in lbls_tmp])

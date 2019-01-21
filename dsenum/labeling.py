@@ -4,8 +4,8 @@ import itertools
 from joblib import Parallel, delayed
 import numpy as np
 
-from derivative.permutation import Permutation
-from derivative.utils import msp
+from dsenum.permutation import Permutation
+from dsenum.utils import msp
 
 
 class Labeling(object):
@@ -27,6 +27,8 @@ class Labeling(object):
         translations in fractinal coordinations of A
     ignore_site_property: bool
         if True, treat label-exchange duplicates as distinct
+    leave_superperiodic: bool
+        if True, leave superperiodic labeling
 
     Attributes
     ----------
@@ -100,7 +102,6 @@ class Labeling(object):
             if not self.leave_superperiodic:
                 if any([(self.act_permutation(lbl, prm) == lbl) for prm in self.prm_t[1:]]):
                     self.valid_flags[idx] = False
-                    print(idx)
                     continue
 
             # remove translation and exchanging duplicates
