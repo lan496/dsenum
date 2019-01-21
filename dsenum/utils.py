@@ -42,6 +42,8 @@ def get_fcc_with_vacancy():
 
 def get_symmetry_operations(structure):
     """
+    find symmetry operations for a given structure
+
     Parameters
     ----------
     structure: pymatgen.core.Structure
@@ -58,6 +60,17 @@ def get_symmetry_operations(structure):
 
 
 def unique_structures(structures):
+    """
+    unique list of structure by StructureMatcher
+
+    Parameters
+    ----------
+    structures: list of pymatgen.core.Structure objects
+
+    Returns
+    -------
+    uniqued: list of pymatgen.core.Structure objects
+    """
     uniqued = []
     stm = StructureMatcher()
 
