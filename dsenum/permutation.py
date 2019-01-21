@@ -42,12 +42,8 @@ class Permutation(object):
     def __init__(self, hnf, num_site_parent=1, displacement_set=None,
                  rotations=None, translations=None):
         self.hnf = hnf
-        self.hnf_inv = np.linalg.inv(self.hnf)
-        self.dim = self.hnf.shape[0]
-        self.index = np.prod(self.hnf.diagonal())
-
         self.num_site_parent = num_site_parent
-        self.num_site = self.index * self.num_site_parent
+        self.dshash = DerivativeStructureHash(hnf, num_site_parent)
 
         if self.num_site_parent == 1:
             self.displacement_set = np.array([[0, 0, 0]])
@@ -55,18 +51,9 @@ class Permutation(object):
             self.displacement_set = displacement_set
             assert self.displacement_set.shape[0] == self.num_site_parent
 
-        D, L, R = smith_normal_form(self.hnf)
-        self.snf = D
-        self.left = L
-        self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
-        self.right = R
-
-        self.shape = tuple([self.num_site_parent]
-                           + self.snf.diagonal().tolist())
-
         # (1 + dim, num_site)
-        self.factors_e = np.array([np.unravel_index(indices, self.shape)
-                                   for indices in range(self.num_site)]).T
+        self.factors_e = self.dshash.get_distinct_factors().T
+
         # (dim, num_site)
         self.parent_frac_coords_e = self.displacement_set[self.factors_e[0, :]].T \
             + np.dot(self.left_inv, self.factors_e[1:, :])
@@ -76,6 +63,30 @@ class Permutation(object):
 
         self.prm_t = self.get_translation_permutations()
         self.prm_rigid = self.get_rigid_permutations()
+
+    @property
+    def dim(self):
+        return self.dshash.dim
+
+    @property
+    def index(self):
+        return self.dshash.index
+
+    @property
+    def num_site(self):
+        return self.dshash.num_site
+
+    @property
+    def shape(self):
+        return self.dshash.shape
+
+    @property
+    def left(self):
+        return self.dshash.left
+
+    @property
+    def left_inv(self):
+        return self.dshash.left_inv
 
     def _get_superlattice_symmetry_operations(self, rotations, translations):
         """
@@ -156,10 +167,102 @@ class Permutation(object):
 
                 if raveled_factors in list_permutations:
                     continue
-                assert len(set(raveled_factors)) == len(raveled_factors)
+                # assert len(set(raveled_factors)) == len(raveled_factors)
                 list_permutations.append(raveled_factors)
 
         return list_permutations
+
+
+class DerivativeStructureHash:
+
+    def __init__(self, hnf, num_site_parents=1):
+        self.hnf = hnf
+        self.dim = self.hnf.shape[0]
+        self.index = np.prod(self.hnf.diagonal())
+
+        self.num_site_parents = num_site_parents
+        self.num_site = self.num_site_parents * self.index
+
+        D, L, R = smith_normal_form(self.hnf)
+        self.snf = D
+        self.left = L
+        self.right = R
+        self.left_inv = np.around(np.linalg.inv(self.left)).astype(np.int)
+
+        self.shape = tuple([self.num_site_parents]
+                           + self.snf.diagonal().tolist())
+
+    def hash_fractional_coordinates(self, indexes):
+        """
+        (d, n) -> (d, Ln mod D)
+
+        Parameters
+        ----------
+        indexes: array, ([N,] 1 + self.dim)
+
+        Returns
+        -------
+        factors: array, ([N,] 1 + self.dim)
+        """
+        indexes = np.atleast_2d(indexes)
+        factors = np.empty_like(indexes)
+        factors[:, 0] = indexes[:, 0][:]
+        factors[:, 1:] = np.sum(self.left[np.newaxis, :, :] * indexes[:, np.newaxis, 1:],
+                                axis=2)
+        factors[:, 1:] = np.mod(factors[:, 1:], np.array(self.shape[1:])[np.newaxis, :])
+        if factors.shape[0] == 1:
+            factors = np.squeeze(factors, axis=0)
+        return factors
+
+    def unhash_factors(self, factors):
+        """
+        f -> L^{-1}f
+
+        Parameters
+        ----------
+        factors: array, ([N,] 1 + self.dim)
+
+        Returns
+        -------
+        indexes: array, ([N,] 1 + self.dim)
+        """
+        factors = np.atleast_2d(factors)
+        indexes = np.empty_like(factors)
+        indexes[:, 0] = factors[:, 0][:]
+        indexes[:, 1:] = np.sum(self.left_inv[np.newaxis, :, :]
+                                * factors[:, np.newaxis, 1:], axis=2)
+        if indexes.shape[0] == 1:
+            indexes = np.squeeze(indexes, axis=0)
+        return indexes
+
+    def get_distinct_factors(self):
+        """
+        return a list of factors corresponding to distinct lattice points
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        factors_e: array, (self.num_site, 1 + self.dim)
+        """
+        factors_e = np.array([np.unravel_index(indices, self.shape)
+                              for indices in range(self.num_site)])
+        return factors_e
+
+    def get_distinct_indexes(self):
+        """
+        return a list of lattice indexes corresponding to distinct lattice points
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        indexes_e: array, (self.num_site, 1 + self.dim)
+        """
+        indexes_e = self.unhash_factors(self.get_distinct_factors())
+        return indexes_e
 
 
 def is_same_lattice(H1, H2):

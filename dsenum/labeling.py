@@ -43,8 +43,6 @@ class Labeling(object):
                  rotations=None, translations=None,
                  ignore_site_property=False, leave_superperiodic=False):
         self.hnf = hnf
-        self.dim = self.hnf.shape[0]
-        self.index = np.prod(self.hnf.diagonal())
         self.num_type = num_type
         self.ignore_site_property = ignore_site_property
         self.leave_superperiodic = leave_superperiodic
@@ -56,14 +54,24 @@ class Labeling(object):
             self.displacement_set = displacement_set
             assert self.displacement_set.shape[0] == self.num_site_parent
 
-        self.num_site = self.index * self.num_site_parent
-
         self.permutation = Permutation(self.hnf, self.num_site_parent, self.displacement_set,
                                        rotations, translations)
         # assuming that the 0-th element of permutaions is identity operation
         self.prm_all = self.permutation.get_symmetry_operation_permutaions()
 
         self.labelgen = labelgen
+
+    @property
+    def dim(self):
+        return self.permutation.dshash.dim
+
+    @property
+    def index(self):
+        return self.permutation.dshash.index
+
+    @property
+    def num_site(self):
+        return self.permutation.dshash.num_site
 
     @property
     def prm_t(self):

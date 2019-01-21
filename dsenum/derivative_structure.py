@@ -5,7 +5,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 
-from ds.smith_normal_form import smith_normal_form
+from dsenum.smith_normal_form import smith_normal_form
 
 
 class SuperMultilattice:
