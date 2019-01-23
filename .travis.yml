@@ -2,12 +2,11 @@ language: python
 python:
   - "3.6"
 install:
-  - pip install -c constraints.txt
-  - pip install coverage codeclimate-test-reporter
+  - pip install -r requirements.txt
+  - pip install pytest pytest-cov codeclimate-test-reporter
 env:
   - CODECLIMATE_REPO_TOKEN="7a11f42d5c4599b12fe5bec4b6bfdfb9fb3bf251e22b3166c2189c7fc2cd2070"
 script:
-  - python -m unittest discover -v
-  - coverage run -m unittest discover
+  - pytest --cov=./
 after_sucess:
   - codeclimate-test-reporter
