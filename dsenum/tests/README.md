@@ -21,8 +21,6 @@
     - fig3
     - fig9
     - fig10
-  - [2]
-    - fig6
 
 ### Refs.
 1. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.77.224115
