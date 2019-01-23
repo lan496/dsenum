@@ -1,11 +1,8 @@
 import unittest
 
-from dsenum.superlattice import (
-    generate_all_superlattices,
-    reduce_HNF_list_by_parent_lattice_symmetry,
-)
+from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.permutation import Permutation
-from dsenum.utils import get_lattice, get_symmetry_operations
+from dsenum.utils import get_lattice
 
 
 class TestPermutation(unittest.TestCase):
@@ -44,12 +41,8 @@ class TestPermutation(unittest.TestCase):
             structure = dct['structure']
             frac_coords = structure.frac_coords
             for index in dct['indices']:
-                list_HNF = generate_all_superlattices(index)
-                pl_rotations, pl_translations = get_symmetry_operations(structure)
-                rotations, translations = get_symmetry_operations(structure)
-
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                                              pl_rotations)
+                list_reduced_HNF, rotations, translations = \
+                    generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
                 for hnf in list_reduced_HNF:
                     permutation = Permutation(hnf, frac_coords.shape[0],
                                               frac_coords,
@@ -62,12 +55,8 @@ class TestPermutation(unittest.TestCase):
             structure = dct['structure']
             frac_coords = structure.frac_coords
             for index in dct['indices']:
-                list_HNF = generate_all_superlattices(index)
-                pl_rotations, pl_translations = get_symmetry_operations(structure)
-                rotations, translations = get_symmetry_operations(structure)
-
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                                              pl_rotations)
+                list_reduced_HNF, rotations, translations = \
+                    generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
                 for hnf in list_reduced_HNF:
                     permutation = Permutation(hnf, frac_coords.shape[0],
                                               frac_coords,
@@ -80,12 +69,8 @@ class TestPermutation(unittest.TestCase):
             structure = dct['structure']
             frac_coords = structure.frac_coords
             for index in dct['indices']:
-                list_HNF = generate_all_superlattices(index)
-                pl_rotations, pl_translations = get_symmetry_operations(structure)
-                rotations, translations = get_symmetry_operations(structure)
-
-                list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                                              pl_rotations)
+                list_reduced_HNF, rotations, translations = \
+                    generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
                 for hnf in list_reduced_HNF:
                     permutation = Permutation(hnf, frac_coords.shape[0],
                                               frac_coords,
