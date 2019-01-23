@@ -2,13 +2,12 @@ import unittest
 
 import numpy as np
 from pymatgen.core import Structure, Lattice
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from dsenum.superlattice import (
     generate_all_superlattices,
-    reduce_HNF_list_by_parent_lattice_symmetry,
+    generate_symmetry_distinct_superlattices,
 )
-from dsenum.utils import get_lattice, get_symmetry_operations
+from dsenum.utils import get_lattice
 
 
 class TestSuperlattice(unittest.TestCase):
@@ -59,12 +58,7 @@ class TestSuperlattice(unittest.TestCase):
         for name, dct in obj.items():
             structure = dct['structure']
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
-                list_HNF = generate_all_superlattices(index)
-                rotations, _ = get_symmetry_operations(structure)
-
-                list_reduced_HNF = \
-                    reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                               rotations)
+                list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
                 self.assertEqual(len(list_reduced_HNF), expected)
 
     def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc(self):
@@ -87,13 +81,8 @@ class TestSuperlattice(unittest.TestCase):
 
         for name, dct in obj.items():
             for index, expected in zip(range(1, len(dct['num_expected']) + 1), dct['num_expected']):
-                list_HNF = generate_all_superlattices(index)
-                sp = SpacegroupAnalyzer(dct['structure'])
-                list_rotation_matrix = sp.get_symmetry_dataset()['rotations']
-
-                list_reduced_HNF = \
-                    reduce_HNF_list_by_parent_lattice_symmetry(list_HNF,
-                                                               list_rotation_matrix)
+                structure = dct['structure']
+                list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
                 self.assertEqual(len(list_reduced_HNF), expected)
 
     def get_face_centered_cubic(self):
