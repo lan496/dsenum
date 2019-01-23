@@ -1,6 +1,7 @@
 # dsenum
-[![Build Status](https://travis-ci.com/lan496/dsenum.svg?branch=master)]
+![Build Status](https://travis-ci.com/lan496/dsenum.svg?branch=master)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
 Derivative structure enumerator for multilattice
 
 ## install

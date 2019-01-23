@@ -1,9 +1,6 @@
 from tqdm import tqdm
 
-from dsenum.superlattice import (
-    generate_all_superlattices,
-    reduce_HNF_list_by_parent_lattice_symmetry
-)
+from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
 from dsenum.derivative_structure import DerivativeStructure
 from dsenum.utils import get_symmetry_operations
@@ -17,10 +14,8 @@ def enumerate_derivative_structures(structure, index, num_type,
     num_site_parent = displacement_set.shape[0]
     A = structure.lattice.matrix.T
 
-    list_HNF = generate_all_superlattices(index)
-    rotations, translations = get_symmetry_operations(structure)
-    list_reduced_HNF = \
-        reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
+    list_reduced_HNF, rotations, translations = \
+        generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
 
     labelgen = LabelGenerator(index, num_type, num_site_parent, constraints, oxi_states,
                               n_jobs=n_jobs)

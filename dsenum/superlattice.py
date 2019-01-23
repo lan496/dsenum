@@ -1,5 +1,7 @@
 import numpy as np
 
+from dsenum.utils import get_symmetry_operations
+
 
 def generate_all_superlattices(index):
     """
@@ -74,3 +76,28 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
                 list_RBj_inv = np.concatenate([list_RBj_inv, preinv])
 
     return list_reduced_HNF
+
+
+def generate_symmetry_distinct_superlattices(index, structure, return_symops=False):
+    """
+    generate symmetry distict HNF
+
+    Parameters
+    ----------
+    index: positive integer
+    structure: pymatgen.core.Structure
+    return_symops: bool
+
+    Returns
+    -------
+    list_reduced_HNF: list of matrices, unique by symmetry
+    (Optional) rotations: array, (# of symmetry operations, 3, 3)
+    (Optional) translations: array, (# of symmetry operations, 3)
+    """
+    rotations, translations = get_symmetry_operations(structure)
+    list_HNF = generate_all_superlattices(index)
+    list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
+    if return_symops:
+        return list_reduced_HNF, rotations, translations
+    else:
+        return list_reduced_HNF
