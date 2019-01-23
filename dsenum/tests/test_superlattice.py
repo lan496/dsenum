@@ -61,6 +61,7 @@ class TestSuperlattice(unittest.TestCase):
                 list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
                 self.assertEqual(len(list_reduced_HNF), expected)
 
+    @unittest.skip
     def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc(self):
         # https://oeis.org/A045790
         lst_num = [1, 2, 3, 7, 5, 10, 7, 20, 14, 18,
