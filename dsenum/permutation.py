@@ -192,7 +192,7 @@ class DerivativeStructureHash:
         self.shape = tuple([self.num_site_parents]
                            + self.snf.diagonal().tolist())
 
-    def hash_fractional_coordinates(self, indexes):
+    def hash_fractional_coordinates(self, indexes, return_image=False):
         """
         (d, n) -> (d, Ln mod D)
 
@@ -210,9 +210,23 @@ class DerivativeStructureHash:
         factors[:, 1:] = np.sum(self.left[np.newaxis, :, :] * indexes[:, np.newaxis, 1:],
                                 axis=2)
         factors[:, 1:] = np.mod(factors[:, 1:], np.array(self.shape[1:])[np.newaxis, :])
-        if factors.shape[0] == 1:
-            factors = np.squeeze(factors, axis=0)
-        return factors
+
+        if return_image:
+            images = np.sum(self.left[np.newaxis, :, :] * indexes[:, np.newaxis, 1:], axis=2) \
+                - factors[:, 1:]
+            images = np.around(images / np.array(self.shape[1:])[np.newaxis, :]).astype(int)
+            images = np.sum(self.right[np.newaxis, :, :] * images[:, np.newaxis, :], axis=2)
+
+            if factors.shape[0] == 1:
+                factors = np.squeeze(factors, axis=0)
+                images = np.squeeze(images, axis=0)
+
+            return factors, images
+        else:
+            if factors.shape[0] == 1:
+                factors = np.squeeze(factors, axis=0)
+
+            return factors
 
     def unhash_factors(self, factors):
         """
