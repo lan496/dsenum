@@ -11,7 +11,7 @@ DerivativeSite = namedtuple('DerivativeSite', ('site_index', 'jimage'))
 CanonicalSite = namedtuple('CanonicalSite', ('site_index', 'factor'))
 
 
-class PermutationGroup(object):
+class DerivativeStructurePermutation(object):
     """
     Permutation Representation of space group of superlattice
 
@@ -93,6 +93,9 @@ class PermutationGroup(object):
             list_permutations.append(perm)
 
         assert(is_permutation_group(list_permutations))
+        # assume list_permutations[0] is identity
+        assert(is_identity_permutation(list_permutations[0]))
+
         return list_permutations
 
     def _get_rigid_permutations(self):
@@ -123,6 +126,9 @@ class PermutationGroup(object):
                 list_permutations.append(perm)
 
         assert(is_permutation_group(list_permutations))
+        # assume list_permutations[0] is identity
+        assert(is_identity_permutation(list_permutations[0]))
+
         return list_permutations
 
 
@@ -231,6 +237,13 @@ def is_same_lattice(H1: np.ndarray, H2: np.ndarray) -> bool:
 
 def is_permutation(perm):
     return len(set(perm)) == len(perm)
+
+
+def is_identity_permutation(perm):
+    if all([index == i for i, index in enumerate(perm)]):
+        return True
+    else:
+        return False
 
 
 def is_permutation_group(list_permutations):
