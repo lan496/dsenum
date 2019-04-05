@@ -5,6 +5,14 @@ from dsenum.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
 from dsenum.derivative_structure import DerivativeStructure
 from dsenum.utils import get_symmetry_operations
 
+from dsenum.coloring import SiteColoringEnumerator
+from dsenum.permutation_group import (
+    DerivativeStructurePermutation,
+    DerivativeMultiLatticeHash,
+)
+
+from dsenum.coloring_generator import ColoringGenerator
+
 
 def enumerate_derivative_structures(structure, index, num_type,
                                     ignore_site_property=False, leave_superperiodic=False,
@@ -36,6 +44,38 @@ def enumerate_derivative_structures(structure, index, num_type,
     print('total: {}'.format(len(list_ds)))
 
     return list_ds
+
+
+def enumerate(base_structure, index, num_type,
+              color_exchange=True, leave_superperiodic=False):
+    displacement_set = base_structure.frac_coords
+    list_reduced_HNF, rotations, translations = \
+        generate_symmetry_distinct_superlattices(index, base_structure, return_symops=True)
+
+    num_sites_base = base_structure.num_sites
+    num_sites = num_sites_base * index
+    cl_generator = ColoringGenerator(num_sites, num_type)
+
+    list_ds = []
+    for hnf in tqdm(list_reduced_HNF):
+        print("HNF: {}".format(hnf.tolist()))
+        ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
+                                                       rotations, translations)
+        sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+                                         color_exchange, leave_superperiodic)
+        colorings = sc_enum.unique_colorings()
+        list_ds.extend([coloring_to_derivative_structure(base_structure, hnf, cl,
+                                                         ds_permutaion.dshash)
+                        for cl in colorings])
+
+    print('total: {}'.format(len(list_ds)))
+    return list_ds
+
+
+def coloring_to_derivative_structure(base_structure, hnf, coloring,
+                                     dshash: DerivativeMultiLatticeHash):
+    list_dsites = dshash.get_distinct_derivative_sites_list()
+    # TODO
 
 
 def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):

@@ -207,9 +207,21 @@ class DerivativeMultiLatticeHash(object):
 
     def hash_canonical_site(self, csite: CanonicalSite) -> int:
         # hash canonical site s.t. self.get_canonical_sites_list <=> identity
-        indices = tuple(csite.site_index) + csite.factor
+        multi_index = tuple(csite.site_index) + csite.factor
+        raveled = np.ravel_multi_index(multi_index, self.shape)
+        return raveled
+
+    def unhash_to_canonical_site(self, indices: int) -> CanonicalSite:
         unraveled = np.unravel_index(indices, self.shape)
-        return unraveled
+        site_index, factor = unraveled[0], unraveled[1:]
+        csite = CanonicalSite(site_index, factor)
+        return csite
+
+    def unhash_to_derivative_site(self, csite: CanonicalSite) -> DerivativeSite:
+        site_index, factor = csite
+        jimage_base = cast_integer_matrix(np.dot(self.left_inv, factor))
+        dsite = DerivativeSite(site_index, jimage_base)
+        return dsite
 
 
 def cast_integer_matrix(arr: np.ndarray) -> np.ndarray:
