@@ -84,6 +84,7 @@ class DerivativeStructurePermutation(object):
             new_list_csites = []
             for site_index, factor in self.list_csites:
                 new_factor = np.array(factor) + np.array(add_factor)
+                # TODO: seems tricky
                 new_csite = self.dhash.modulus_factor(CanonicalSite(site_index, new_factor))
                 new_list_csites.append(new_csite)
 
@@ -103,8 +104,9 @@ class DerivativeStructurePermutation(object):
 
         for R, tau in zip(self.rotations, self.translations):
             new_list_csites = []
-            for site_index, factor in self.list_csites:
-                frac_coord = self.displacement_set[site_index]
+            # for site_index, factor in self.list_csites:
+            for site_index, dimage in self.list_dsites:
+                frac_coord = self.displacement_set[site_index] + np.array(dimage)
                 acted_frac_coord = np.dot(R, frac_coord) + tau
                 new_csite = self.dhash.hash_frac_coords(acted_frac_coord)
                 assert(new_csite is not None)
@@ -196,7 +198,7 @@ class DerivativeMultiLatticeHash(object):
 
     def get_distinct_derivative_sites_list(self) -> List[DerivativeSite]:
         list_csites = self.get_canonical_sites_list()
-        list_dsites = [self.hash_derivative_site(dsite) for dsite in list_csites]
+        list_dsites = [self.unhash_to_canonical_site(csite) for csite in list_csites]
         return list_dsites
 
     def modulus_factor(self, csite: CanonicalSite) -> CanonicalSite:
