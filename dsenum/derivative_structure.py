@@ -77,8 +77,12 @@ def coloring_to_derivative_structure(base_structure: Structure, dshash: Derivati
         species = mapping_color_to_species[coloring[indices]]
 
         coords = dshash.get_frac_coords(dsite)
+        base_matrix = base_structure.lattice.matrix
+        cart_coords = np.dot(coords, base_matrix)
 
-        psite = PeriodicSite(species, coords, base_structure.lattice, coords_are_cartesian=False)
+        lattice_matrix = np.dot(base_matrix.T, dshash.hnf).T
+        lattice = Lattice(lattice_matrix)
+        psite = PeriodicSite(species, cart_coords, lattice, coords_are_cartesian=True)
         sites.append(psite)
 
     dstruct = Structure.from_sites(sites)

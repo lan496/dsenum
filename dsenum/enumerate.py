@@ -45,7 +45,22 @@ def enumerate_derivative_structures(structure, index, num_type,
 
 
 def enumerate_derivatives(base_structure, index, num_type,
+                          mapping_color_species=None,
                           color_exchange=True, leave_superperiodic=False):
+    """
+    Parameter
+    ---------
+    base_structure: Structure
+    index: int
+    num_type: int
+    mapping_color_species: if specified, use these species in derivative structures
+    color_exchange: identify color-exchanging
+    leave_superperiodic: do not discard superperiodic coloring
+
+    Returns
+    -------
+    list_ds: list of derivative structure
+    """
     displacement_set = base_structure.frac_coords
     list_reduced_HNF, rotations, translations = \
         generate_symmetry_distinct_superlattices(index, base_structure, return_symops=True)
@@ -53,9 +68,12 @@ def enumerate_derivatives(base_structure, index, num_type,
     num_sites_base = base_structure.num_sites
     num_sites = num_sites_base * index
 
-    # TODO: prepare options
     cl_generator = ColoringGenerator(num_sites, num_type)
-    mapping_color_species = [DummySpecie(str(i)) for i in range(1, num_type + 1)]
+
+    if mapping_color_species and len(mapping_color_species) != num_type:
+        raise ValueError('mapping_color_species must have num_type species.')
+    if mapping_color_species is None:
+        mapping_color_species = [DummySpecie(str(i)) for i in range(1, num_type + 1)]
 
     list_ds = []
     for hnf in tqdm(list_reduced_HNF):
