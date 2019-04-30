@@ -1,17 +1,15 @@
 from tqdm import tqdm
+from pymatgen.core.periodic_table import DummySpecie
 
-from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
 from dsenum.derivative_structure import DerivativeStructure
 from dsenum.utils import get_symmetry_operations
 
-from dsenum.coloring import SiteColoringEnumerator
-from dsenum.permutation_group import (
-    DerivativeStructurePermutation,
-    DerivativeMultiLatticeHash,
-)
-
+from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.coloring_generator import ColoringGenerator
+from dsenum.coloring import SiteColoringEnumerator
+from dsenum.permutation_group import DerivativeStructurePermutation
+from dsenum.derivative_structure import coloring_to_derivative_structure
 
 
 def enumerate_derivative_structures(structure, index, num_type,
@@ -46,15 +44,18 @@ def enumerate_derivative_structures(structure, index, num_type,
     return list_ds
 
 
-def enumerate(base_structure, index, num_type,
-              color_exchange=True, leave_superperiodic=False):
+def enumerate_derivatives(base_structure, index, num_type,
+                          color_exchange=True, leave_superperiodic=False):
     displacement_set = base_structure.frac_coords
     list_reduced_HNF, rotations, translations = \
         generate_symmetry_distinct_superlattices(index, base_structure, return_symops=True)
 
     num_sites_base = base_structure.num_sites
     num_sites = num_sites_base * index
+
+    # TODO: prepare options
     cl_generator = ColoringGenerator(num_sites, num_type)
+    mapping_color_species = [DummySpecie(str(i)) for i in range(1, num_type + 1)]
 
     list_ds = []
     for hnf in tqdm(list_reduced_HNF):
@@ -64,18 +65,12 @@ def enumerate(base_structure, index, num_type,
         sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
                                          color_exchange, leave_superperiodic)
         colorings = sc_enum.unique_colorings()
-        list_ds.extend([coloring_to_derivative_structure(base_structure, hnf, cl,
-                                                         ds_permutaion.dshash)
+        list_ds.extend([coloring_to_derivative_structure(base_structure, ds_permutaion.dhash,
+                                                         mapping_color_species, cl)
                         for cl in colorings])
 
     print('total: {}'.format(len(list_ds)))
     return list_ds
-
-
-def coloring_to_derivative_structure(base_structure, hnf, coloring,
-                                     dshash: DerivativeMultiLatticeHash):
-    list_dsites = dshash.get_distinct_derivative_sites_list()
-    # TODO
 
 
 def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):

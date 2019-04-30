@@ -208,6 +208,9 @@ class DerivativeMultiLatticeHash(object):
         modded_factor = np.mod(factor, np.array(self.invariant_factors))
         return modded_factor
 
+    def get_frac_coords(self, dsite: DerivativeSite):
+        return self.displacement_set[dsite.site_index] + np.array(dsite.jimage)
+
     def hash_canonical_site(self, csite: CanonicalSite) -> int:
         # hash canonical site s.t. self.get_canonical_sites_list <=> identity
         multi_index = (csite.site_index, ) + tuple(csite.factor)

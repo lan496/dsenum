@@ -4,6 +4,63 @@ from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.coloring_generator import ColoringGenerator
 
 
+def act_permutation(perm, coloring):
+    new_coloring = [coloring[perm[i]] for i in range(len(coloring))]
+    return new_coloring
+
+
+class DirectColoringEnumerator:
+    """
+    Parameters
+    ----------
+    permutation_group: list of permutation
+    num_color: int
+    cl_generator: ColoringGenerator
+    color_exchange: bool
+    """
+    def __init__(self, permutation_group, num_color, cl_generator: ColoringGenerator,
+                 color_exchange=True):
+        self.permutation_group = permutation_group
+        self.num_color = num_color
+        self.cl_generator = cl_generator
+        self.color_exchange = color_exchange
+
+        self.list_colorings, self.flags = self.cl_generator.generate_all_colorings()
+
+    def _hash(self, coloring):
+        return self.cl_generator.hash_coloring(coloring)
+
+    def _walk_orbit(self, coloring, include_identity=False):
+        offset = 0 if include_identity else 1
+        # assume self.permutation_group[0] is identity
+        for prm in self.permutation_group[offset:]:
+            acted_cl = act_permutation(prm, coloring)
+            acted_cl_hash = self._hash(acted_cl)
+            self.flags[acted_cl_hash] = False
+
+    def coset_enumerate(self):
+        colorings = []
+
+        for cl in self.list_colorings:
+            cl_hash = self._hash(cl)
+            # avoid already-visited coloring
+            if not self.flags[cl_hash]:
+                continue
+            colorings.append(cl)
+
+            self._walk_orbit(cl, include_identity=False)
+
+            if self.color_exchange:
+                for cl_prm in permutations(range(self.num_color)):
+                    exchanged_cl = [cl_prm[c] for c in cl]
+                    exchanged_cl_hash = self._hash(exchanged_cl)
+                    if exchanged_cl_hash == cl_hash:
+                        continue
+                    self._walk_orbit(exchanged_cl, include_identity=True)
+
+        return colorings
+
+
 class SiteColoringEnumerator(object):
     """
     Parameters
@@ -24,62 +81,47 @@ class SiteColoringEnumerator(object):
         self.color_exchange = color_exchange
         self.leave_superperiodic = leave_superperiodic
 
+        if self.ds_permutation.num_site < self.num_color:
+            raise ValueError('too many num_types')
+
+        if self.ds_permutation.num_site < self.num_color:
+            raise ValueError('too many num_types')
+
         self.permutation_group = self.ds_permutation.get_symmetry_operation_permutaions()
+
+        self.clenum = DirectColoringEnumerator(self.permutation_group, self.num_color,
+                                               self.cl_generator, color_exchange=color_exchange)
 
     @property
     def translation_permutations(self):
         return self.ds_permutation.prm_t
 
-    def unique_colorings(self):
-        self.colorings, self.flags = self.cl_generator.generate_all_colorings()
-        self.remove_symmetry_duplicates()
-        if not self.leave_superperiodic:
-            self.remove_superperiodic()
+    def _hash(self, coloring):
+        return self.clenum._hash(coloring)
 
-        colorings = [cl for cl_hash, cl in self.colorings.items() if self.flags[cl_hash]]
+    def unique_colorings(self):
+        symmetry_uniqued_coloring = self.clenum.coset_enumerate()
+        colorings = []
+
+        for cl in symmetry_uniqued_coloring:
+            if not self._has_all_colors(cl):
+                continue
+            if (not self.leave_superperiodic) and self._is_superperiodic(cl):
+                continue
+            colorings.append(cl)
+
         return colorings
 
-    def remove_superperiodic(self):
-        for cl in self.colorings:
-            cl_hash = self.cl_generator.hash_coloring(cl)
-            # avoid already-visited coloring
-            if not self.flags[cl_hash]:
-                continue
+    def _has_all_colors(self, coloring):
+        if len(set(coloring)) == self.num_color:
+            return True
+        else:
+            return False
 
-            # assume self.translation_permutations[0] is identity
-            if any([self.product_permutation(prm, cl) == cl]
-                   for prm in self.translation_permutations[1:]):
-                self.flags[cl_hash] = False
-
-    def remove_rotation_duplicates(self):
-        for cl in self.colorings:
-            cl_hash = self.cl_generator.hash_coloring(cl)
-            # avoid already-visited coloring
-            if not self.flags[cl_hash]:
-                continue
-
-            # assume self.permutation_group[0] is identity
-            for prm in self.permutation_group[1:]:
-                acted_cl = product_permutations(prm, cl)
-                acted_cl_hash = self.cl_generator.hash_coloring(acted_cl)
-                self.flags[acted_cl_hash] = False
-
-            if self.color_exchange:
-                for cl_prm in permutations(range(self.num_color)):
-                    exchanged_cl = [cl_prm[c] for c in cl]
-                    exchanged_cl_hash = self.cl_generator.hash_coloring(exchanged_cl)
-                    if exchanged_cl_hash == cl_hash:
-                        continue
-                    # assume self.permutation_group[0] is identity
-                    for prm in self.permutation_group[1:]:
-                        acted_cl = product_permutations(prm, exchanged_cl)
-                        acted_cl_hash = self.cl_generator.hash_coloring(acted_cl)
-                        self.flags[acted_cl_hash] = False
-
-
-def product_permutations(p1, p2):
-    """
-    (p1 p2)(i) = p1(p2(i))
-    """
-    perm = [p1[p2[i]] for i in range(len(p1))]
-    return perm
+    def _is_superperiodic(self, coloring):
+        # assume self.translation_permutations[0] is identity
+        if any([self._hash(act_permutation(prm, coloring)) == self._hash(coloring)
+               for prm in self.translation_permutations[1:]]):
+            return True
+        else:
+            return False

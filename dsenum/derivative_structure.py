@@ -1,8 +1,11 @@
 import numpy as np
-from pymatgen.core import Lattice, Structure
+from pymatgen.core import Lattice
+from pymatgen.core.structure import Structure
+from pymatgen.core.sites import PeriodicSite
 from pymatgen.core.periodic_table import DummySpecie
 
 from dsenum.permutation import DerivativeStructureHash
+from dsenum.permutation_group import DerivativeMultiLatticeHash
 
 
 class DerivativeStructure:
@@ -61,3 +64,22 @@ class DerivativeStructure:
 
         struct = Structure(lattice, self.list_species, frac_coords)
         return struct
+
+
+def coloring_to_derivative_structure(base_structure: Structure, dshash: DerivativeMultiLatticeHash,
+                                     mapping_color_to_species, coloring) -> Structure:
+    sites = []
+    for dsite in dshash.get_distinct_derivative_sites_list():
+        site_index, dimage = dsite
+
+        csite = dshash.hash_derivative_site(dsite)
+        indices = dshash.hash_canonical_site(csite)
+        species = mapping_color_to_species[coloring[indices]]
+
+        coords = dshash.get_frac_coords(dsite)
+
+        psite = PeriodicSite(species, coords, base_structure.lattice, coords_are_cartesian=False)
+        sites.append(psite)
+
+    dstruct = Structure.from_sites(sites)
+    return dstruct

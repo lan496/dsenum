@@ -10,9 +10,9 @@ class ColoringGenerator(object):
 
     def generate_all_colorings(self):
         list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
-        flags = {self.hash_coloring(coloring) for coloring in list_colorings}
+        flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
         return list_colorings, flags
 
     def hash_coloring(self, coloring):
-        ret = reduce(lambda x, y: x * self.num_type + y, coloring)
+        ret = reduce(lambda x, y: x * self.num_color + y, coloring)
         return ret
