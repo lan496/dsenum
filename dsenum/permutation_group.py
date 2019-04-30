@@ -68,7 +68,7 @@ class DerivativeStructurePermutation(object):
         valid_rotations = []
         valid_translations = []
 
-        for i, (R, tau) in zip(rotations, translations):
+        for R, tau in zip(rotations, translations):
             if not is_same_lattice(np.dot(R, self.hnf), self.hnf):
                 continue
 
@@ -80,12 +80,11 @@ class DerivativeStructurePermutation(object):
 
     def _get_translation_permutations(self):
         list_permutations = []
-        for _, add_factor in self.list_csites:
+        for add_factor in self.dhash.get_all_factors():
             new_list_csites = []
             for site_index, factor in self.list_csites:
-                new_factor = np.array(factor) + np.array(add_factor)
-                # TODO: seems tricky
-                new_csite = self.dhash.modulus_factor(CanonicalSite(site_index, new_factor))
+                new_factor = self.dhash.modulus_factor(np.array(factor) + np.array(add_factor))
+                new_csite = CanonicalSite(site_index, new_factor)
                 new_list_csites.append(new_csite)
 
             # permutation represenation
@@ -93,29 +92,30 @@ class DerivativeStructurePermutation(object):
             assert(is_permutation(perm))
             list_permutations.append(perm)
 
-        assert(is_permutation_group(list_permutations))
         # assume list_permutations[0] is identity
         assert(is_identity_permutation(list_permutations[0]))
 
         return list_permutations
 
     def _get_rigid_permutations(self):
-        list_permutations = []
+        identity = list(range(self.num_site))
+        list_permutations = [identity, ]
 
         for R, tau in zip(self.rotations, self.translations):
             new_list_csites = []
-            # for site_index, factor in self.list_csites:
             for site_index, dimage in self.list_dsites:
                 frac_coord = self.displacement_set[site_index] + np.array(dimage)
                 acted_frac_coord = np.dot(R, frac_coord) + tau
                 new_csite = self.dhash.hash_frac_coords(acted_frac_coord)
                 assert(new_csite is not None)
+                new_list_csites.append(new_csite)
 
-            new_list_csites.append(new_csite)
             perm = [self.dhash.hash_canonical_site(csite) for csite in new_list_csites]
             assert(is_permutation(perm))
-            list_permutations.append(perm)
+            if perm not in list_permutations:
+                list_permutations.append(perm)
 
+        # this set of permutations is not group!
         return list_permutations
 
     def get_symmetry_operation_permutaions(self):
@@ -127,7 +127,6 @@ class DerivativeStructurePermutation(object):
                 assert(perm not in list_permutations)
                 list_permutations.append(perm)
 
-        assert(is_permutation_group(list_permutations))
         # assume list_permutations[0] is identity
         assert(is_identity_permutation(list_permutations[0]))
 
@@ -160,7 +159,7 @@ class DerivativeMultiLatticeHash(object):
         self.left_inv = cast_integer_matrix(np.linalg.inv(self.left))
 
         self.invariant_factors = tuple(self.snf.diagonal())
-        self.shape = tuple(self.num_site_base) + self.invariant_factors
+        self.shape = (self.num_site_base, ) + self.invariant_factors
 
     def hash_derivative_site(self, dsite: DerivativeSite) -> CanonicalSite:
         site_index, jimage = dsite.site_index, dsite.jimage
@@ -188,7 +187,7 @@ class DerivativeMultiLatticeHash(object):
     def get_canonical_sites_list(self) -> List[CanonicalSite]:
         list_csites = []
         for site_index in range(len(self.displacement_set)):
-            for factor in product([range(f) for f in self.invariant_factors]):
+            for factor in product(*[range(f) for f in self.invariant_factors]):
                 csite = CanonicalSite(site_index, tuple(factor))
                 list_csites.append(csite)
 
@@ -198,28 +197,30 @@ class DerivativeMultiLatticeHash(object):
 
     def get_distinct_derivative_sites_list(self) -> List[DerivativeSite]:
         list_csites = self.get_canonical_sites_list()
-        list_dsites = [self.unhash_to_canonical_site(csite) for csite in list_csites]
+        list_dsites = [self.embed_to_derivative_site(csite) for csite in list_csites]
         return list_dsites
 
-    def modulus_factor(self, csite: CanonicalSite) -> CanonicalSite:
-        site_index, factor = csite
+    def get_all_factors(self):
+        list_factors = list(product(*[range(f) for f in self.invariant_factors]))
+        return list_factors
+
+    def modulus_factor(self, factor):
         modded_factor = np.mod(factor, np.array(self.invariant_factors))
-        new_csite = CanonicalSite(site_index, modded_factor)
-        return new_csite
+        return modded_factor
 
     def hash_canonical_site(self, csite: CanonicalSite) -> int:
         # hash canonical site s.t. self.get_canonical_sites_list <=> identity
-        multi_index = tuple(csite.site_index) + csite.factor
+        multi_index = (csite.site_index, ) + tuple(csite.factor)
         raveled = np.ravel_multi_index(multi_index, self.shape)
         return raveled
 
-    def unhash_to_canonical_site(self, indices: int) -> CanonicalSite:
+    def unhash_indices_to_canonical_site(self, indices: int) -> CanonicalSite:
         unraveled = np.unravel_index(indices, self.shape)
         site_index, factor = unraveled[0], unraveled[1:]
         csite = CanonicalSite(site_index, factor)
         return csite
 
-    def unhash_to_derivative_site(self, csite: CanonicalSite) -> DerivativeSite:
+    def embed_to_derivative_site(self, csite: CanonicalSite) -> DerivativeSite:
         site_index, factor = csite
         jimage_base = cast_integer_matrix(np.dot(self.left_inv, factor))
         dsite = DerivativeSite(site_index, jimage_base)
@@ -261,7 +262,30 @@ def is_identity_permutation(perm):
 
 
 def is_permutation_group(list_permutations):
-    # TODO
+    list_permutations_tuple = [tuple(perm) for perm in list_permutations]
+    if len(set(list_permutations_tuple)) != len(list_permutations_tuple):
+        print(list_permutations)
+        raise ValueError('not unique permutations')
+
+    # identity
+    if not any([is_identity_permutation(perm) for perm in list_permutations]):
+        raise ValueError('There is not identity')
+
+    # close
+    for p1, p2 in product(list_permutations, repeat=2):
+        p1p2 = product_permutations(p1, p2)
+        if p1p2 not in list_permutations:
+            raise ValueError('not closed in product')
+
+    # inverse
+    for perm in list_permutations:
+        perm_inv = [-1 for _ in range(len(perm))]
+        for i, idx in enumerate(perm):
+            perm_inv[idx] = i
+
+        if perm_inv not in list_permutations:
+            raise ValueError('not contains inverse')
+
     return True
 
 
