@@ -3,7 +3,12 @@ import unittest
 from dsenum.enumerate import enumerate_derivative_structures
 
 from dsenum.enumerate import enumerate_derivatives
+from dsenum.coloring_generator import ColoringGenerator
+from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.utils import get_lattice
+from dsenum.polya import polya_counting
+from dsenum.superlattice import generate_symmetry_distinct_superlattices
+from dsenum.coloring import SiteColoringEnumerator
 
 
 class TestUniqueLabeling(unittest.TestCase):
@@ -46,6 +51,7 @@ class TestUniqueLabeling(unittest.TestCase):
             }
         }
 
+    @unittest.skip
     def test_labelings(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
@@ -100,7 +106,7 @@ class TestUniqueColoring(unittest.TestCase):
             }
         }
 
-    def test_labelings(self):
+    def test_colorings(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
             # displacement_set = structure.frac_coords
@@ -112,6 +118,33 @@ class TestUniqueColoring(unittest.TestCase):
                                                color_exchange=True,
                                                leave_superperiodic=False)
                 self.assertEqual(len(actual), expected)
+
+    def test_colorings_with_polya(self):
+        for name, dct in self.obj.items():
+            structure = dct['structure']
+            displacement_set = structure.frac_coords
+            num_type = dct['num_type']
+            num_sites_base = structure.num_sites
+
+            for index, expected in zip(dct['indices'], dct['num_expected']):
+                if index > 8:
+                    continue
+
+                list_reduced_HNF, rotations, translations = \
+                    generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
+                num_sites = num_sites_base * index
+                cl_generator = ColoringGenerator(num_sites, num_type)
+
+                for hnf in list_reduced_HNF:
+                    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
+                                                                   rotations, translations)
+                    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+                                                     color_exchange=False,
+                                                     leave_superperiodic=True,
+                                                     use_all_colors=False)
+                    colorings = sc_enum.unique_colorings()
+                    cnt_polya = polya_counting(sc_enum.permutation_group, num_type)
+                    self.assertEqual(len(colorings), cnt_polya)
 
 
 if __name__ == '__main__':

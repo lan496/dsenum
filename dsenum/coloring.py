@@ -74,18 +74,18 @@ class SiteColoringEnumerator(object):
     def __init__(self, num_color,
                  ds_permutation: DerivativeStructurePermutation,
                  cl_generator: ColoringGenerator,
-                 color_exchange=True, leave_superperiodic=False):
+                 color_exchange=True, leave_superperiodic=False, use_all_colors=True):
         self.num_color = num_color
         self.ds_permutation = ds_permutation
         self.cl_generator = cl_generator
         self.color_exchange = color_exchange
         self.leave_superperiodic = leave_superperiodic
+        self.use_all_colors = use_all_colors
 
+        """
         if self.ds_permutation.num_site < self.num_color:
             raise ValueError('too many num_types')
-
-        if self.ds_permutation.num_site < self.num_color:
-            raise ValueError('too many num_types')
+        """
 
         self.permutation_group = self.ds_permutation.get_symmetry_operation_permutaions()
 
@@ -104,7 +104,7 @@ class SiteColoringEnumerator(object):
         colorings = []
 
         for cl in symmetry_uniqued_coloring:
-            if not self._has_all_colors(cl):
+            if self.use_all_colors and (not self._has_all_colors(cl)):
                 continue
             if (not self.leave_superperiodic) and self._is_superperiodic(cl):
                 continue

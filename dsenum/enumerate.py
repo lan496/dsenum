@@ -1,3 +1,5 @@
+from time import time
+
 from tqdm import tqdm
 from pymatgen.core.periodic_table import DummySpecie
 
@@ -46,7 +48,7 @@ def enumerate_derivative_structures(structure, index, num_type,
 
 def enumerate_derivatives(base_structure, index, num_type,
                           mapping_color_species=None,
-                          color_exchange=True, leave_superperiodic=False):
+                          color_exchange=True, leave_superperiodic=False, use_all_colors=True):
     """
     Parameter
     ---------
@@ -61,6 +63,8 @@ def enumerate_derivatives(base_structure, index, num_type,
     -------
     list_ds: list of derivative structure
     """
+    start = time()
+
     displacement_set = base_structure.frac_coords
     list_reduced_HNF, rotations, translations = \
         generate_symmetry_distinct_superlattices(index, base_structure, return_symops=True)
@@ -77,17 +81,19 @@ def enumerate_derivatives(base_structure, index, num_type,
 
     list_ds = []
     for hnf in tqdm(list_reduced_HNF):
-        print("HNF: {}".format(hnf.tolist()))
+        # print("HNF: {}".format(hnf.tolist()))
         ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
                                                        rotations, translations)
         sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
-                                         color_exchange, leave_superperiodic)
+                                         color_exchange, leave_superperiodic, use_all_colors)
         colorings = sc_enum.unique_colorings()
         list_ds.extend([coloring_to_derivative_structure(base_structure, ds_permutaion.dhash,
                                                          mapping_color_species, cl)
                         for cl in colorings])
 
-    print('total: {}'.format(len(list_ds)))
+    end = time()
+    print('total: {} (Time: {:.4}sec)'.format(len(list_ds), end - start))
+
     return list_ds
 
 
