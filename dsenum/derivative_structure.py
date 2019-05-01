@@ -1,7 +1,7 @@
 import numpy as np
 from pymatgen.core import Lattice
 from pymatgen.core.structure import Structure
-# from pymatgen.core.sites import PeriodicSite
+from pymatgen.core.sites import PeriodicSite
 from pymatgen.core.periodic_table import DummySpecie
 
 from dsenum.permutation import DerivativeStructureHash
@@ -76,32 +76,30 @@ class ColoringToStructure:
         self.mapping_color_to_species = mapping_color_to_species
 
         self.lattice_matrix = np.dot(self.base_matrix.T, self.dshash.hnf).T
+        # lattice of derivative structure
         self.lattice = Lattice(self.lattice_matrix)
 
         self.canonical_derivative_sites = dshash.get_canonical_and_derivative_sites_list()
-        self.csite_indices = [self.dshash.hash_canonical_site(csite)
-                              for csite, _ in self.canonical_derivative_sites]
 
         list_coords = []
         for _, dsite in self.canonical_derivative_sites:
             coords = dshash.get_frac_coords(dsite)
             cart_coords = np.dot(coords, self.base_matrix)
             list_coords.append(cart_coords)
-
         self.list_coords = list_coords
+
+        self.precomputed_psites = [[PeriodicSite(sp, coords, self.lattice,
+                                                 coords_are_cartesian=True)
+                                    for sp in self.mapping_color_to_species]
+                                   for coords in self.list_coords]
 
     @property
     def base_matrix(self):
         return self.base_structure.lattice.matrix
 
     def convert_to_structure(self, coloring) -> Structure:
-        list_species = []
-        for (csite, dsite), indices in zip(self.canonical_derivative_sites, self.csite_indices):
-            site_index, dimage = dsite
-            species = self.mapping_color_to_species[coloring[indices]]
-            list_species.append(species)
-
-        dstruct = Structure(self.lattice, list_species, self.list_coords,
-                            coords_are_cartesian=True)
+        list_psites = [self.precomputed_psites[i][coloring[i]]
+                       for i in range(self.dshash.num_site)]
+        dstruct = Structure.from_sites(list_psites)
 
         return dstruct
