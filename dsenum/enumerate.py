@@ -11,7 +11,7 @@ from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.coloring_generator import ColoringGenerator
 from dsenum.coloring import SiteColoringEnumerator
 from dsenum.permutation_group import DerivativeStructurePermutation
-from dsenum.derivative_structure import coloring_to_derivative_structure
+from dsenum.derivative_structure import ColoringToStructure
 
 
 def enumerate_derivative_structures(structure, index, num_type,
@@ -87,9 +87,10 @@ def enumerate_derivatives(base_structure, index, num_type,
         sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
                                          color_exchange, leave_superperiodic, use_all_colors)
         colorings = sc_enum.unique_colorings()
-        list_ds.extend([coloring_to_derivative_structure(base_structure, ds_permutaion.dhash,
-                                                         mapping_color_species, cl)
-                        for cl in colorings])
+
+        # convert to Structure object
+        cts = ColoringToStructure(base_structure, ds_permutaion.dhash, mapping_color_species)
+        list_ds.extend([cts.convert_to_structure(cl) for cl in colorings])
 
     end = time()
     print('total: {} (Time: {:.4}sec)'.format(len(list_ds), end - start))
@@ -117,7 +118,7 @@ if __name__ == '__main__':
     from utils import get_lattice
     structure = get_lattice('fcc')
     index = 10
-    num_type = 2
+    num_type = 3
 
     list_ds = enumerate_derivatives(structure, index, num_type,
                                     color_exchange=False,

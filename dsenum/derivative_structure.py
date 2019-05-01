@@ -66,27 +66,42 @@ class DerivativeStructure:
         return struct
 
 
-def coloring_to_derivative_structure(base_structure: Structure,
-                                     dshash: DerivativeMultiLatticeHash,
-                                     mapping_color_to_species, coloring) -> Structure:
-    base_matrix = base_structure.lattice.matrix
-    lattice_matrix = np.dot(base_matrix.T, dshash.hnf).T
+class ColoringToStructure:
 
-    list_species = []
-    list_coords = []
+    def __init__(self, base_structure: Structure,
+                 dshash: DerivativeMultiLatticeHash,
+                 mapping_color_to_species):
+        self.base_structure = base_structure
+        self.dshash = dshash
+        self.mapping_color_to_species = mapping_color_to_species
 
-    for csite, dsite in dshash.get_canonical_and_derivative_sites_list():
-        site_index, dimage = dsite
-        indices = dshash.hash_canonical_site(csite)
-        species = mapping_color_to_species[coloring[indices]]
+        self.lattice_matrix = np.dot(self.base_matrix.T, self.dshash.hnf).T
+        self.lattice = Lattice(self.lattice_matrix)
 
-        coords = dshash.get_frac_coords(dsite)
-        cart_coords = np.dot(coords, base_matrix)
+        self.canonical_derivative_sites = dshash.get_canonical_and_derivative_sites_list()
+        self.csite_indices = [self.dshash.hash_canonical_site(csite)
+                              for csite, _ in self.canonical_derivative_sites]
 
-        list_species.append(species)
-        list_coords.append(cart_coords)
+        list_coords = []
+        for _, dsite in self.canonical_derivative_sites:
+            coords = dshash.get_frac_coords(dsite)
+            cart_coords = np.dot(coords, self.base_matrix)
+            list_coords.append(cart_coords)
 
-    dstruct = Structure(lattice_matrix, list_species, list_coords,
-                        coords_are_cartesian=True)
+        self.list_coords = list_coords
 
-    return dstruct
+    @property
+    def base_matrix(self):
+        return self.base_structure.lattice.matrix
+
+    def convert_to_structure(self, coloring) -> Structure:
+        list_species = []
+        for (csite, dsite), indices in zip(self.canonical_derivative_sites, self.csite_indices):
+            site_index, dimage = dsite
+            species = self.mapping_color_to_species[coloring[indices]]
+            list_species.append(species)
+
+        dstruct = Structure(self.lattice, list_species, self.list_coords,
+                            coords_are_cartesian=True)
+
+        return dstruct
