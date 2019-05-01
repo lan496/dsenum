@@ -1,7 +1,7 @@
 import numpy as np
 from pymatgen.core import Lattice
 from pymatgen.core.structure import Structure
-from pymatgen.core.sites import PeriodicSite
+# from pymatgen.core.sites import PeriodicSite
 from pymatgen.core.periodic_table import DummySpecie
 
 from dsenum.permutation import DerivativeStructureHash
@@ -66,24 +66,27 @@ class DerivativeStructure:
         return struct
 
 
-def coloring_to_derivative_structure(base_structure: Structure, dshash: DerivativeMultiLatticeHash,
+def coloring_to_derivative_structure(base_structure: Structure,
+                                     dshash: DerivativeMultiLatticeHash,
                                      mapping_color_to_species, coloring) -> Structure:
-    sites = []
-    for dsite in dshash.get_distinct_derivative_sites_list():
-        site_index, dimage = dsite
+    base_matrix = base_structure.lattice.matrix
+    lattice_matrix = np.dot(base_matrix.T, dshash.hnf).T
 
-        csite = dshash.hash_derivative_site(dsite)
+    list_species = []
+    list_coords = []
+
+    for csite, dsite in dshash.get_canonical_and_derivative_sites_list():
+        site_index, dimage = dsite
         indices = dshash.hash_canonical_site(csite)
         species = mapping_color_to_species[coloring[indices]]
 
         coords = dshash.get_frac_coords(dsite)
-        base_matrix = base_structure.lattice.matrix
         cart_coords = np.dot(coords, base_matrix)
 
-        lattice_matrix = np.dot(base_matrix.T, dshash.hnf).T
-        lattice = Lattice(lattice_matrix)
-        psite = PeriodicSite(species, cart_coords, lattice, coords_are_cartesian=True)
-        sites.append(psite)
+        list_species.append(species)
+        list_coords.append(cart_coords)
 
-    dstruct = Structure.from_sites(sites)
+    dstruct = Structure(lattice_matrix, list_species, list_coords,
+                        coords_are_cartesian=True)
+
     return dstruct

@@ -114,18 +114,12 @@ def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):
 
 
 if __name__ == '__main__':
-    from utils import get_fcc_with_vacancy
-    structure = get_fcc_with_vacancy()
-    index = 1
-    num_type = 4
-    constraints = [
-        [0, 1],     # void and anion
-        [0, 2, 3],  # void, cation1, and cation2
-        [0, 2, 3],
-        [0, 2, 3],
-    ]
+    from utils import get_lattice
+    structure = get_lattice('fcc')
+    index = 10
+    num_type = 2
 
-    list_ds = enumerate_derivative_structures(structure, index, num_type,
-                                              constraints=constraints)
-    print(list_ds[0].get_structure())
-    print(len(list_ds))
+    list_ds = enumerate_derivatives(structure, index, num_type,
+                                    color_exchange=False,
+                                    leave_superperiodic=False,
+                                    use_all_colors=True)

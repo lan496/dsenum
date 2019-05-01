@@ -200,6 +200,16 @@ class DerivativeMultiLatticeHash(object):
         list_dsites = [self.embed_to_derivative_site(csite) for csite in list_csites]
         return list_dsites
 
+    def get_canonical_and_derivative_sites_list(self):
+        list_csites_dsites = []
+        for site_index in range(len(self.displacement_set)):
+            for factor in product(*[range(f) for f in self.invariant_factors]):
+                csite = CanonicalSite(site_index, tuple(factor))
+                dsite = self.embed_to_derivative_site(csite)
+                list_csites_dsites.append((csite, dsite))
+
+        return list_csites_dsites
+
     def get_all_factors(self):
         list_factors = list(product(*[range(f) for f in self.invariant_factors]))
         return list_factors
