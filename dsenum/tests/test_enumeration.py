@@ -5,10 +5,10 @@ from tqdm import tqdm
 from dsenum.enumerate import enumerate_derivative_structures
 
 from dsenum.enumerate import enumerate_derivatives
-from dsenum.coloring_generator import ColoringGenerator
+from dsenum.coloring_generator import ColoringGenerator, FixedConcentrationColoringGenerator
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.utils import get_lattice
-from dsenum.polya import polya_counting
+from dsenum.polya import polya_counting, polya_fixed_degrees_counting
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.coloring import SiteColoringEnumerator
 
@@ -108,6 +108,7 @@ class TestUniqueColoring(unittest.TestCase):
             }
         }
 
+    @unittest.skip
     def test_colorings(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
@@ -121,6 +122,7 @@ class TestUniqueColoring(unittest.TestCase):
                                                leave_superperiodic=False)
                 self.assertEqual(len(actual), expected)
 
+    @unittest.skip
     def test_colorings_with_polya(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
@@ -129,7 +131,7 @@ class TestUniqueColoring(unittest.TestCase):
             num_sites_base = structure.num_sites
 
             for index, expected in zip(dct['indices'], dct['num_expected']):
-                if index > 8:
+                if index >= 6:
                     continue
 
                 list_reduced_HNF, rotations, translations = \
@@ -146,6 +148,35 @@ class TestUniqueColoring(unittest.TestCase):
                                                      use_all_colors=False)
                     colorings = sc_enum.unique_colorings()
                     cnt_polya = polya_counting(sc_enum.permutation_group, num_type)
+                    self.assertEqual(len(colorings), cnt_polya)
+
+    def test_fixed_colorings_with_polya(self):
+        for name, dct in self.obj.items():
+            structure = dct['structure']
+            displacement_set = structure.frac_coords
+            num_type = dct['num_type']
+            num_sites_base = structure.num_sites
+
+            for index, expected in zip(dct['indices'], dct['num_expected']):
+                if index >= 6:
+                    continue
+
+                list_reduced_HNF, rotations, translations = \
+                    generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
+                num_sites = num_sites_base * index
+                color_ratio = [1] * (num_type - 1) + [num_sites - num_type + 1, ]
+                cl_generator = FixedConcentrationColoringGenerator(num_sites, num_type, color_ratio)
+
+                for hnf in tqdm(list_reduced_HNF):
+                    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
+                                                                   rotations, translations)
+                    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+                                                     color_exchange=False,
+                                                     leave_superperiodic=True,
+                                                     use_all_colors=False)
+                    colorings = sc_enum.unique_colorings()
+                    cnt_polya = polya_fixed_degrees_counting(sc_enum.permutation_group,
+                                                             num_type, color_ratio)
                     self.assertEqual(len(colorings), cnt_polya)
 
 
