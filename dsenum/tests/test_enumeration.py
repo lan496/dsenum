@@ -1,5 +1,7 @@
 import unittest
 
+from tqdm import tqdm
+
 from dsenum.enumerate import enumerate_derivative_structures
 
 from dsenum.enumerate import enumerate_derivatives
@@ -135,7 +137,7 @@ class TestUniqueColoring(unittest.TestCase):
                 num_sites = num_sites_base * index
                 cl_generator = ColoringGenerator(num_sites, num_type)
 
-                for hnf in list_reduced_HNF:
+                for hnf in tqdm(list_reduced_HNF):
                     ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
                                                                    rotations, translations)
                     sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
