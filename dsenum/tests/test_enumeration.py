@@ -108,7 +108,6 @@ class TestUniqueColoring(unittest.TestCase):
             }
         }
 
-    @unittest.skip
     def test_colorings(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
@@ -122,7 +121,6 @@ class TestUniqueColoring(unittest.TestCase):
                                                leave_superperiodic=False)
                 self.assertEqual(len(actual), expected)
 
-    @unittest.skip
     def test_colorings_with_polya(self):
         for name, dct in self.obj.items():
             structure = dct['structure']
@@ -164,6 +162,7 @@ class TestUniqueColoring(unittest.TestCase):
                 list_reduced_HNF, rotations, translations = \
                     generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
                 num_sites = num_sites_base * index
+                # TODO: test at more color_ratio cases
                 color_ratio = [1] * (num_type - 1) + [num_sites - num_type + 1, ]
                 cl_generator = FixedConcentrationColoringGenerator(num_sites, num_type, color_ratio)
 

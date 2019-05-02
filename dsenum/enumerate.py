@@ -14,7 +14,7 @@ from dsenum.coloring_generator import (
     FixedConcentrationColoringGenerator,
 )
 from dsenum.coloring import SiteColoringEnumerator
-from dsenum.permutation_group import DerivativeStructurePermutation
+from dsenum.permutation_group import DerivativeStructurePermutation, DerivativeMultiLatticeHash
 from dsenum.derivative_structure import ColoringToStructure
 
 
@@ -52,7 +52,7 @@ def enumerate_derivative_structures(structure, index, num_type,
 
 def enumerate_derivatives(base_structure, index, num_type,
                           mapping_color_species=None,
-                          composition_restriction=None,
+                          composition_constraints=None, base_site_constraints=None,
                           color_exchange=True, leave_superperiodic=False, use_all_colors=True):
     """
     Parameter
@@ -60,10 +60,13 @@ def enumerate_derivatives(base_structure, index, num_type,
     base_structure: Structure
     index: int
     num_type: int
-    mapping_color_species: if specified, use these species in derivative structures
-    composition_restriction: None or list of int
+    mapping_color_species: (Optional) if specified, use these species in derivative structures
+    composition_constraints: (Optional) None or list of int
+    base_site_constraints: (Optional) list (num_elements, num_color)
+        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
     color_exchange: identify color-exchanging
     leave_superperiodic: do not discard superperiodic coloring
+    use_all_colors: bool
 
     Returns
     -------
@@ -77,10 +80,19 @@ def enumerate_derivatives(base_structure, index, num_type,
     num_sites_base = base_structure.num_sites
     num_sites = num_sites_base * index
 
-    if composition_restriction is None:
-        cl_generator = ColoringGenerator(num_sites, num_type)
+    # site constraints
+    if base_site_constraints:
+        site_constraints = DerivativeMultiLatticeHash.convert_site_constraints(base_site_constraints,
+                                                                               index)
     else:
-        cl_generator = FixedConcentrationColoringGenerator(num_sites, num_type, composition_restriction)
+        site_constraints = None
+
+    # composition constraints
+    if composition_constraints is None:
+        cl_generator = ColoringGenerator(num_sites, num_type, site_constraints)
+    else:
+        cl_generator = FixedConcentrationColoringGenerator(num_sites, num_type, composition_constraints,
+                                                           site_constraints)
 
     if mapping_color_species and len(mapping_color_species) != num_type:
         raise ValueError('mapping_color_species must have num_type species.')
@@ -91,7 +103,6 @@ def enumerate_derivatives(base_structure, index, num_type,
     for hnf in tqdm(list_reduced_HNF):
         list_ds_hnf = enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
                                          cl_generator, mapping_color_species,
-
                                          color_exchange, leave_superperiodic, use_all_colors)
         list_ds.extend(list_ds_hnf)
 

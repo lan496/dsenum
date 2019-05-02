@@ -13,20 +13,26 @@ class BaseColoringGenerator:
         raise NotImplementedError
 
 
-def hash_in_all_configuration(coloring, num_color):
-    ret = reduce(lambda x, y: x * num_color + y, coloring)
-    return ret
-
-
 class ColoringGenerator(BaseColoringGenerator):
 
-    def __init__(self, num_elements, num_color):
+    def __init__(self, num_elements, num_color, site_constraints=None):
         self.num_elements = num_elements
         self.num_color = num_color
+        self.site_constraints = site_constraints
 
     def generate_all_colorings(self):
-        list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
-        flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
+        if self.site_constraints:
+            list_colorings = []
+            flags = dict()
+            for cl in product(range(self.num_color), repeat=self.num_elements):
+                # TODO: more efficient way to adopt site_constraints
+                if satisfy_site_constraints(self.site_constraints, cl):
+                    list_colorings.append(cl)
+                    flags[self.hash_coloring(cl)] = True
+        else:
+            list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
+            flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
+
         return list_colorings, flags
 
     def hash_coloring(self, coloring):
@@ -55,12 +61,15 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
     num_color: int
     color_ratio: list of int
         num_elements % sum(color_ratio) == 0
+    site_constraints: (Optional), list (num_elements, num_color)
+        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 must be 0, 3, or 4.
     """
 
-    def __init__(self, num_elements, num_color, color_ratio):
+    def __init__(self, num_elements, num_color, color_ratio, site_constraints=None):
         self.num_elements = num_elements
         self.num_color = num_color
         self.color_ratio = color_ratio
+        self.site_constraints = site_constraints
 
         if num_elements % sum(self.color_ratio) != 0:
             raise ValueError('incorrect composition ratio')
@@ -73,9 +82,18 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         for i in range(self.num_color):
             first_coloring.extend([i for _ in range(self.num_elements_each_color[i])])
 
-        # TODO: inefficient to cast to list
-        list_colorings = list(multiset_permutations(first_coloring))
-        flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
+        if self.site_constraints:
+            list_colorings = []
+            flags = dict()
+            for cl in multiset_permutations(first_coloring):
+                # TODO: more efficient way to adopt site_constraints
+                if satisfy_site_constraints(self.site_constraints, cl):
+                    list_colorings.append(cl)
+                    flags[self.hash_coloring(cl)] = True
+        else:
+            # TODO: inefficient to cast to list
+            list_colorings = list(multiset_permutations(first_coloring))
+            flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
         return list_colorings, flags
 
     def hash_coloring(self, coloring):
@@ -87,3 +105,15 @@ class CompositionColoringGenerator(BaseColoringGenerator):
     def __init__(self, num_sites_base, num_color, mapping_color_speices, site_constraints=None):
         # TODO
         pass
+
+
+def hash_in_all_configuration(coloring, num_color):
+    ret = reduce(lambda x, y: x * num_color + y, coloring)
+    return ret
+
+
+def satisfy_site_constraints(site_constraints, coloring):
+    if all([(color in site_constraints[i]) for i, color in enumerate(coloring)]):
+        return True
+    else:
+        return False

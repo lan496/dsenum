@@ -239,6 +239,14 @@ class DerivativeMultiLatticeHash(object):
         dsite = DerivativeSite(site_index, jimage_base)
         return dsite
 
+    @classmethod
+    def convert_site_constraints(cls, base_site_constraints, index):
+        site_constraints = []
+        for sc in base_site_constraints:
+            for _ in range(index):
+                site_constraints.append(sc)
+        return site_constraints
+
 
 def cast_integer_matrix(arr: np.ndarray) -> np.ndarray:
     arr_int = np.around(arr).astype(np.int)
