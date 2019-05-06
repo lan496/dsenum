@@ -24,11 +24,10 @@ class ColoringGenerator(BaseColoringGenerator):
         if self.site_constraints:
             list_colorings = []
             flags = dict()
-            for cl in product(range(self.num_color), repeat=self.num_elements):
-                # TODO: more efficient way to adopt site_constraints
-                if satisfy_site_constraints(self.site_constraints, cl):
-                    list_colorings.append(cl)
-                    flags[self.hash_coloring(cl)] = True
+            for cl_compressed in product(*[range(len(sc)) for sc in self.site_constraints]):
+                cl = [self.site_constraints[i][idx] for i, idx in enumerate(cl_compressed)]
+                list_colorings.append(cl)
+                flags[self.hash_coloring(cl)] = True
         else:
             list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
             flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
