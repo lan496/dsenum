@@ -3,6 +3,8 @@ from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
+from pymatgen.io.cif import CifWriter
+from pymatgen.analysis.structure_prediction.volume_predictor import DLSVolumePredictor
 
 
 def get_lattice(kind):
@@ -148,3 +150,24 @@ def msp(items):
         afteri = E[i][nxt]
         head = k
         yield visit(head)
+
+
+def write_cif(filename, struct, refine_cell=False, resize_volume=False):
+    struct = refine_and_resize_structure(struct, refine_cell, resize_volume)
+    if not struct.is_valid(1e-4):
+        return
+    cw = CifWriter(struct)
+    cw.write_file(filename)
+
+
+def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
+    if resize_volume:
+        dls = DLSVolumePredictor()
+        struct = dls.get_predicted_structure(struct)
+        struct.apply_strain(0.5)
+
+    if refine_cell:
+        sga = SpacegroupAnalyzer(struct, symprec=1e-6, angle_tolerance=1e-2)
+        struct = sga.get_primitive_standard_structure()
+
+    return struct

@@ -1,7 +1,10 @@
+import os
+
 from pymatgen.io.cif import CifParser
 from pymatgen.core import Specie, DummySpecie
 
 from dsenum.enumerate import enumerate_derivatives
+from dsenum.utils import write_cif
 
 
 def get_structure(filename):
@@ -12,7 +15,7 @@ def get_structure(filename):
 
 if __name__ == '__main__':
     rutile = get_structure('examples/TiO2_mp-2657_conventional_standard.cif')
-    index = 2
+    index = 1
     # mapping_color_species = [DummySpecie('X', 0), Specie('O', -2), Specie('Sn', +2), Specie('Sn', +4)]
     mapping_color_species = [DummySpecie('X'), Specie('O'), Specie('Sn')]
     num_type = len(mapping_color_species)
@@ -36,4 +39,12 @@ if __name__ == '__main__':
                                           color_exchange=False,
                                           leave_superperiodic=False,
                                           use_all_colors=False)
-    # import pdb; pdb.set_trace()
+
+    name = 'SnOx_index={}'.format(index)
+    os.makedirs(os.path.join('examples', name), exist_ok=True)
+    for i, dstruct in enumerate(list_dstructs):
+        # remove void
+        dstruct.remove_species([mapping_color_species[0], ])
+
+        filename = os.path.join('examples', name, "SnOx_index={}_{}.cif".format(index, i))
+        write_cif(filename, dstruct, refine_cell=True)
