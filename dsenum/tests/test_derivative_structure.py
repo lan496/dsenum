@@ -4,8 +4,8 @@ import unittest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.periodic_table import Specie
 
-from dsenum.enumerate import enumerate_derivatives
-from dsenum.utils import get_lattice, write_cif
+from dsenum.enumerate import enumerate_derivative_structures
+from dsenum.utils import get_lattice, write_cif  # noqa
 
 
 class TestDerivativeStructure(unittest.TestCase):
@@ -38,9 +38,9 @@ class TestDerivativeStructure(unittest.TestCase):
     def check(self, base_structure, num_type, indices, species, name):
         os.makedirs(os.path.join('tests', name), exist_ok=True)
         for index in indices:
-            list_ds = enumerate_derivatives(base_structure, index, num_type, species,
-                                            color_exchange=True,
-                                            leave_superperiodic=False)
+            list_ds = enumerate_derivative_structures(base_structure, index, num_type, species,
+                                                      color_exchange=True,
+                                                      leave_superperiodic=False)
 
             stm = StructureMatcher(ltol=1e-4, stol=1e-4)
             grouped = stm.group_structures(list_ds)

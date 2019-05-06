@@ -52,7 +52,6 @@ def polya_fixed_degrees_counting(permutation_group, num_color, num_elements_of_e
 
     for perm in permutation_group:
         type_of_perm = tuple(get_type_of_permutation(perm))
-        # import pdb; pdb.set_trace()
         coeffs_perm = get_inventory_coefficient(type_of_perm, num_elements,
                                                 tuple(num_elements_of_each_color))
         coeffs += coeffs_perm

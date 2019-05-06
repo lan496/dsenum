@@ -3,7 +3,7 @@ import os
 from pymatgen.io.cif import CifParser
 from pymatgen.core import Specie, DummySpecie
 
-from dsenum.enumerate import enumerate_derivatives
+from dsenum.enumerate import enumerate_derivative_structures
 from dsenum.utils import write_cif
 
 
@@ -34,11 +34,11 @@ if __name__ == '__main__':
                              [0, 1],  # 4f
                              [0, 1]]  # 4f
 
-    list_dstructs = enumerate_derivatives(rutile, index, num_type, mapping_color_species,
-                                          base_site_constraints=base_site_constraints,
-                                          color_exchange=False,
-                                          leave_superperiodic=False,
-                                          use_all_colors=False)
+    list_dstructs = enumerate_derivative_structures(rutile, index, num_type, mapping_color_species,
+                                                    base_site_constraints=base_site_constraints,
+                                                    color_exchange=False,
+                                                    leave_superperiodic=False,
+                                                    use_all_colors=False)
 
     name = 'SnOx_index={}'.format(index)
     os.makedirs(os.path.join('examples', name), exist_ok=True)

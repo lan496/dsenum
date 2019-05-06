@@ -2,9 +2,9 @@
   - calculcate Smith normal form
 - `superlattice.py`
   - enumerate symmetry-distinct Hermite normal form with parent multilattice
-- `permutation.py`
+- `permutation_group.py`
   - calculate permutaions correspoinding to symmery operations
-- `labeling.py`
+- `coloring.py`
   - generator possible labelings and unique symmetry-distinct labelings
 - `enumerate.py`
   - enumerate derivative structure
