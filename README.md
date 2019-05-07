@@ -8,7 +8,8 @@ Derivative structure enumerator for multilattice
 ```
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
-pip install -c constraints.txt .
+pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Usage
@@ -28,7 +29,6 @@ num_type = 2
 index = 4
 
 dstructs = enumerate_derivative_structures(structure, index, num_type)
-dstructs = [ds.get_structure() for ds in dstructs]
 print(len(dstructs))  # ->14
 ```
 
@@ -38,4 +38,5 @@ print(len(dstructs))  # ->14
 ## References
 - https://journals.aps.org/prb/abstract/10.1103/PhysRevB.77.224115
 - https://journals.aps.org/prb/abstract/10.1103/PhysRevB.80.014120
+- https://iopscience.iop.org/article/10.1088/0953-8984/25/10/105401
 - http://blog.dlfer.xyz/post/2016-10-27-smith-normal-form/
