@@ -1,72 +1,120 @@
+from time import time
+
 from tqdm import tqdm
+from pymatgen.core.periodic_table import DummySpecie
 
-from dsenum.superlattice import generate_symmetry_distinct_superlattices
-from dsenum.labeling import Labeling, LabelGenerator, ListBasedLabelGenerator
-from dsenum.derivative_structure import DerivativeStructure
 from dsenum.utils import get_symmetry_operations
+from dsenum.superlattice import generate_symmetry_distinct_superlattices
+from dsenum.coloring_generator import (
+    BaseColoringGenerator,
+    ColoringGenerator,
+    FixedConcentrationColoringGenerator,
+    ListBasedColoringGenerator,
+)
+from dsenum.coloring import SiteColoringEnumerator
+from dsenum.permutation_group import DerivativeStructurePermutation, DerivativeMultiLatticeHash
+from dsenum.derivative_structure import ColoringToStructure
 
 
-def enumerate_derivative_structures(structure, index, num_type,
-                                    ignore_site_property=False, leave_superperiodic=False,
-                                    constraints=None, oxi_states=None,
-                                    n_jobs=-1):
-    displacement_set = structure.frac_coords
-    num_site_parent = displacement_set.shape[0]
-    A = structure.lattice.matrix.T
+def enumerate_derivative_structures(base_structure, index, num_type,
+                                    mapping_color_species=None,
+                                    composition_constraints=None, base_site_constraints=None,
+                                    color_exchange=True, leave_superperiodic=False, use_all_colors=True):
+    """
+    Parameter
+    ---------
+    base_structure: Structure
+    index: int
+    num_type: int
+    mapping_color_species: (Optional) if specified, use these species in derivative structures
+    composition_constraints: (Optional) None or list of int
+    base_site_constraints: (Optional) list (num_elements, num_color)
+        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+    color_exchange: identify color-exchanging
+    leave_superperiodic: do not discard superperiodic coloring
+    use_all_colors: bool
+
+    Returns
+    -------
+    list_ds: list of derivative structure
+    """
+    start = time()
 
     list_reduced_HNF, rotations, translations = \
-        generate_symmetry_distinct_superlattices(index, structure, return_symops=True)
+        generate_symmetry_distinct_superlattices(index, base_structure, return_symops=True)
 
-    labelgen = LabelGenerator(index, num_type, num_site_parent, constraints, oxi_states,
-                              n_jobs=n_jobs)
+    num_sites_base = base_structure.num_sites
+    num_sites = num_sites_base * index
+
+    # site constraints
+    if base_site_constraints:
+        site_constraints = DerivativeMultiLatticeHash.convert_site_constraints(base_site_constraints,
+                                                                               index)
+    else:
+        site_constraints = None
+
+    # composition constraints
+    if composition_constraints is None:
+        cl_generator = ColoringGenerator(num_sites, num_type, site_constraints)
+    else:
+        cl_generator = FixedConcentrationColoringGenerator(num_sites, num_type, composition_constraints,
+                                                           site_constraints)
+
+    if mapping_color_species and len(mapping_color_species) != num_type:
+        raise ValueError('mapping_color_species must have num_type species.')
+    if mapping_color_species is None:
+        mapping_color_species = [DummySpecie(str(i)) for i in range(1, num_type + 1)]
 
     list_ds = []
-
     for hnf in tqdm(list_reduced_HNF):
-        labeling = Labeling(hnf, num_type, labelgen,
-                            num_site_parent, displacement_set,
-                            rotations, translations,
-                            ignore_site_property=ignore_site_property,
-                            leave_superperiodic=leave_superperiodic)
-        lbls_tmp = labeling.get_inequivalent_labelings()
-        print("HNF: {}".format(hnf.tolist()))
-        list_ds.extend([DerivativeStructure(hnf, num_type, A, lbl,
-                                            num_site_parent, displacement_set)
-                        for lbl in lbls_tmp])
-    print('total: {}'.format(len(list_ds)))
+        list_ds_hnf = enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
+                                         cl_generator, mapping_color_species,
+                                         color_exchange, leave_superperiodic, use_all_colors)
+        list_ds.extend(list_ds_hnf)
+
+    end = time()
+    print('total: {} (Time: {:.4}sec)'.format(len(list_ds), end - start))
 
     return list_ds
 
 
-def remove_symmetry_duplicates(structure, hnf, num_type, list_labelings):
-    displacement_set = structure.frac_coords
-    num_site_parent = displacement_set.shape[0]
-    rotations, translations = get_symmetry_operations(structure)
-    labelgen = ListBasedLabelGenerator(list_labelings)
+def enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
+                       cl_generator: BaseColoringGenerator, mapping_color_species,
+                       color_exchange: bool, leave_superperiodic: bool, use_all_colors: bool):
+    displacement_set = base_structure.frac_coords
+    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
+                                                   rotations, translations)
+    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+                                     color_exchange, leave_superperiodic, use_all_colors)
+    colorings = sc_enum.unique_colorings()
 
-    # discard superperiodic conf, and leave label-exchange duplicates
-    labeling = Labeling(hnf, num_type, labelgen,
-                        num_site_parent, displacement_set,
-                        rotations, translations,
-                        ignore_site_property=True, leave_superperiodic=False)
+    # convert to Structure object
+    cts = ColoringToStructure(base_structure, ds_permutaion.dhash, mapping_color_species)
+    list_ds = [cts.convert_to_structure(cl) for cl in colorings]
+    return list_ds
 
-    lbls = labeling.get_inequivalent_labelings()
-    return lbls
+
+def remove_symmetry_duplicates(base_structure, hnf, num_type, list_colorings,
+                               color_exchange: bool, leave_superperiodic: bool, use_all_colors: bool):
+    displacement_set = base_structure.frac_coords
+    rotations, translations = get_symmetry_operations(base_structure)
+    cl_generator = ListBasedColoringGenerator(num_type, list_colorings)
+
+    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
+                                                   rotations, translations)
+    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+                                     color_exchange, leave_superperiodic, use_all_colors)
+    colorings = sc_enum.unique_colorings()
+    return colorings
 
 
 if __name__ == '__main__':
-    from utils import get_fcc_with_vacancy
-    structure = get_fcc_with_vacancy()
-    index = 1
-    num_type = 4
-    constraints = [
-        [0, 1],     # void and anion
-        [0, 2, 3],  # void, cation1, and cation2
-        [0, 2, 3],
-        [0, 2, 3],
-    ]
+    from utils import get_lattice
+    structure = get_lattice('fcc')
+    index = 10
+    num_type = 3
 
     list_ds = enumerate_derivative_structures(structure, index, num_type,
-                                              constraints=constraints)
-    print(list_ds[0].get_structure())
-    print(len(list_ds))
+                                              color_exchange=False,
+                                              leave_superperiodic=False,
+                                              use_all_colors=True)
