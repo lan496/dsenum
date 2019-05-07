@@ -184,6 +184,7 @@ class DerivativeMultiLatticeHash(object):
                 / np.array(self.invariant_factors)
             derivative_jimage = cast_integer_matrix(derivative_jimage)
             derivative_jimage = np.dot(self.right, derivative_jimage)
+            return csite, derivative_jimage
         else:
             return csite
 
