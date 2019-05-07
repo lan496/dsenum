@@ -161,19 +161,31 @@ class DerivativeMultiLatticeHash(object):
         self.invariant_factors = tuple(self.snf.diagonal())
         self.shape = (self.num_site_base, ) + self.invariant_factors
 
-    def hash_derivative_site(self, dsite: DerivativeSite) -> CanonicalSite:
+    def hash_derivative_site(self, dsite: DerivativeSite, return_image=False) -> CanonicalSite:
+        """
+        Returns
+        -------
+        csite: CanoncalSite
+        derivative_jimage: (Optional), array
+
+        self.get_frac_coords(dsite) == self.displacement_set[dsite.site_index]
+                                        + np.dot(self.left_inv, csite.factor)
+                                        + np.dot(self.hnf, derivative_jimage)
+        """
         site_index, jimage = dsite.site_index, dsite.jimage
 
         factor_tmp = np.dot(self.left, np.array(jimage, dtype=int))
         factor = np.mod(factor_tmp, np.array(self.invariant_factors))
 
-        derivative_jimage = cast_integer_matrix(factor_tmp - factor) \
-            / np.array(self.invariant_factors)
-        derivative_jimage = cast_integer_matrix(derivative_jimage)
-        derivative_jimage = np.dot(self.right, derivative_jimage)
-
         csite = CanonicalSite(site_index, tuple(factor))
-        return csite
+
+        if return_image:
+            derivative_jimage = cast_integer_matrix(factor_tmp - factor) \
+                / np.array(self.invariant_factors)
+            derivative_jimage = cast_integer_matrix(derivative_jimage)
+            derivative_jimage = np.dot(self.right, derivative_jimage)
+        else:
+            return csite
 
     def hash_frac_coords(self, frac_coord) -> Optional[CanonicalSite]:
         for site_index, fc in enumerate(self.displacement_set):
