@@ -4,7 +4,14 @@
 
 Derivative structure enumerator for multilattice
 
-## install
+
+## installing
+
+### Requirements
+- cython
+
+### install
+
 ```
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
