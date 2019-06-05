@@ -59,10 +59,12 @@ class TestUniqueColoring(unittest.TestCase):
             for index, expected in zip(dct['indices'], dct['num_expected']):
                 if index > 8:
                     continue
-                actual = enumerate_derivative_structures(structure, index, num_type,
-                                                         color_exchange=True,
-                                                         leave_superperiodic=False)
-                self.assertEqual(len(actual), expected)
+                for method in ['direct', 'lexicographic']:
+                    actual = enumerate_derivative_structures(structure, index, num_type,
+                                                             color_exchange=True,
+                                                             leave_superperiodic=False,
+                                                             method=method)
+                    self.assertEqual(len(actual), expected)
 
     def test_colorings_with_polya(self):
         for name, dct in self.obj.items():
