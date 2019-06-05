@@ -1,7 +1,8 @@
-from functools import reduce
 from itertools import product
 
 from sympy.utilities.iterables import multiset_permutations
+
+from dsenum.core import hash_in_all_configuration
 
 
 class BaseColoringGenerator:
@@ -27,7 +28,7 @@ class ColoringGenerator(BaseColoringGenerator):
                 flags[hash_in_all_configuration(cl, self.num_color)] = True
         else:
             list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
-            flags = {hash_in_all_configuration(coloring, self.num_color): True
+            flags = {hash_in_all_configuration(list(coloring), self.num_color): True
                      for coloring in list_colorings}
 
         return list_colorings, flags
@@ -95,11 +96,6 @@ class CompositionColoringGenerator(BaseColoringGenerator):
     def __init__(self, num_sites_base, num_color, mapping_color_speices, site_constraints=None):
         # TODO
         pass
-
-
-def hash_in_all_configuration(coloring, num_color):
-    ret = reduce(lambda x, y: x * num_color + y, coloring)
-    return ret
 
 
 def satisfy_site_constraints(site_constraints, coloring):

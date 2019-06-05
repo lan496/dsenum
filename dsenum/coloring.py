@@ -1,7 +1,8 @@
 from itertools import permutations
 
 from dsenum.permutation_group import DerivativeStructurePermutation
-from dsenum.coloring_generator import ColoringGenerator, hash_in_all_configuration
+from dsenum.coloring_generator import ColoringGenerator
+from dsenum.core import hash_in_all_configuration, act_permutation
 
 
 class DirectColoringEnumerator:
@@ -120,8 +121,3 @@ class SiteColoringEnumerator(object):
             return True
         else:
             return False
-
-
-def act_permutation(perm, coloring):
-    new_coloring = [coloring[perm[i]] for i in range(len(coloring))]
-    return new_coloring
