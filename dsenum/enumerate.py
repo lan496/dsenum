@@ -100,9 +100,9 @@ def remove_symmetry_duplicates(base_structure, hnf, num_type, list_colorings,
     rotations, translations = get_symmetry_operations(base_structure)
     cl_generator = ListBasedColoringGenerator(num_type, list_colorings)
 
-    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
-                                                   rotations, translations)
-    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+    ds_permutation = DerivativeStructurePermutation(hnf, displacement_set,
+                                                    rotations, translations)
+    sc_enum = SiteColoringEnumerator(num_type, ds_permutation, cl_generator,
                                      color_exchange, leave_superperiodic, use_all_colors)
     colorings = sc_enum.unique_colorings()
     return colorings

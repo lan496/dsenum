@@ -15,7 +15,7 @@ def get_structure(filename):
 
 if __name__ == '__main__':
     rutile = get_structure('examples/TiO2_mp-2657_conventional_standard.cif')
-    index = 1
+    index = 5
     # mapping_color_species = [DummySpecie('X', 0), Specie('O', -2), Specie('Sn', +2), Specie('Sn', +4)]
     mapping_color_species = [DummySpecie('X'), Specie('O'), Specie('Sn')]
     num_type = len(mapping_color_species)

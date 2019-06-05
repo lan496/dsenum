@@ -252,6 +252,15 @@ class DerivativeMultiLatticeHash(object):
         dsite = DerivativeSite(site_index, jimage_base)
         return dsite
 
+    def get_species_list(self, list_species):
+        """
+        tile list of species for derivative structure
+        """
+        species = []
+        for sp in list_species:
+            species.extend([sp, ] * self.index)
+        return species
+
     @classmethod
     def convert_site_constraints(cls, base_site_constraints, index):
         site_constraints = []
