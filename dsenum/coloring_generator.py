@@ -33,9 +33,23 @@ class ColoringGenerator(BaseColoringGenerator):
 
         return list_colorings, flags
 
+    def yield_coloring(self):
+        if self.site_constraints:
+            for cl_compressed in product(*[range(len(sc)) for sc in self.site_constraints]):
+                cl = [self.site_constraints[i][idx] for i, idx in enumerate(cl_compressed)]
+                yield cl
+        else:
+            for cl in product(range(self.num_color), repeat=self.num_elements):
+                yield list(cl)
+
 
 class ListBasedColoringGenerator(BaseColoringGenerator):
-
+    """
+    Parameters
+    ----------
+    num_color: int
+    list_colorings: list of generator
+    """
     def __init__(self, num_color, list_colorings):
         self.num_color = num_color
         self.list_colorings = list_colorings
@@ -44,6 +58,10 @@ class ListBasedColoringGenerator(BaseColoringGenerator):
         flags = {hash_in_all_configuration(coloring, self.num_color): True
                  for coloring in self.list_colorings}
         return self.list_colorings, flags
+
+    def yield_coloring(self):
+        for cl in self.list_colorings:
+            yield cl
 
 
 class FixedConcentrationColoringGenerator(BaseColoringGenerator):

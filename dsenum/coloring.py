@@ -57,6 +57,54 @@ class DirectColoringEnumerator:
         return colorings
 
 
+class LexicographicColoringEnumerator:
+    """
+    this algorithm takes the most lexicographically small colorings
+
+    Parameters
+    ----------
+    permutation_group: list of permutation
+    num_color: int
+    cl_generator: ColoringGenerator
+    color_exchange: bool
+    """
+    def __init__(self, permutation_group, num_color, cl_generator: ColoringGenerator,
+                 color_exchange=True):
+        self.permutation_group = permutation_group
+        self.num_color = num_color
+        self.cl_generator = cl_generator
+        self.color_exchange = color_exchange
+
+    def _hash(self, coloring):
+        return hash_in_all_configuration(coloring, self.num_color)
+
+    def _is_champion_coloring(self, coloring):
+        cl_hash = self._hash(coloring)
+
+        if self.color_exchange:
+            for cl_prm in permutations(range(self.num_color)):
+                exchanged_cl = [cl_prm[c] for c in coloring]
+                for prm in self.permutation_group:
+                    acted_cl = act_permutation(prm, exchanged_cl)
+                    acted_cl_hash = self._hash(acted_cl)
+                    if acted_cl_hash < cl_hash:
+                        return False
+        else:
+            for prm in self.permutation_group:
+                acted_cl = act_permutation(prm, coloring)
+                acted_cl_hash = self._hash(acted_cl)
+                if acted_cl_hash < cl_hash:
+                    return False
+        return True
+
+    def coset_enumerate(self):
+        colorings = []
+        for cl in self.cl_generator.yield_coloring():
+            if self._is_champion_coloring(cl):
+                colorings.append(cl)
+        return colorings
+
+
 class SiteColoringEnumerator(object):
     """
     Parameters
@@ -70,13 +118,15 @@ class SiteColoringEnumerator(object):
     def __init__(self, num_color,
                  ds_permutation: DerivativeStructurePermutation,
                  cl_generator: ColoringGenerator,
-                 color_exchange=True, leave_superperiodic=False, use_all_colors=True):
+                 color_exchange=True, leave_superperiodic=False, use_all_colors=True,
+                 method='direct'):
         self.num_color = num_color
         self.ds_permutation = ds_permutation
         self.cl_generator = cl_generator
         self.color_exchange = color_exchange
         self.leave_superperiodic = leave_superperiodic
         self.use_all_colors = use_all_colors
+        self.method = method
 
         """
         if self.ds_permutation.num_site < self.num_color:
@@ -85,8 +135,15 @@ class SiteColoringEnumerator(object):
 
         self.permutation_group = self.ds_permutation.get_symmetry_operation_permutaions()
 
-        self.clenum = DirectColoringEnumerator(self.permutation_group, self.num_color,
-                                               self.cl_generator, color_exchange=color_exchange)
+        if self.method == 'direct':
+            self.clenum = DirectColoringEnumerator(self.permutation_group, self.num_color,
+                                                   self.cl_generator, color_exchange=color_exchange)
+        elif self.method == 'lexicographic':
+            self.clenum = LexicographicColoringEnumerator(self.permutation_group, self.num_color,
+                                                          self.cl_generator,
+                                                          color_exchange=color_exchange)
+        else:
+            raise ValueError("Unknown method: ", self.method)
 
     @property
     def translation_permutations(self):

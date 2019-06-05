@@ -81,11 +81,12 @@ def enumerate_derivative_structures(base_structure, index, num_type,
 def enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
                        cl_generator: BaseColoringGenerator, mapping_color_species,
                        color_exchange: bool, leave_superperiodic: bool, use_all_colors: bool):
-    displacement_set = base_structure.frac_coords
+    displacement_set = base_structure.frac_cords
     ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
                                                    rotations, translations)
     sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
-                                     color_exchange, leave_superperiodic, use_all_colors)
+                                     color_exchange, leave_superperiodic, use_all_colors,
+                                     method='direct')
     colorings = sc_enum.unique_colorings()
 
     # convert to Structure object
@@ -108,13 +109,30 @@ def remove_symmetry_duplicates(base_structure, hnf, num_type, list_colorings,
     return colorings
 
 
+def remove_symmetry_duplicates_from_generator(base_structure, hnf, num_type, list_colorings,
+                                              color_exchange: bool, leave_superperiodic: bool,
+                                              use_all_colors: bool):
+    displacement_set = base_structure.frac_coords
+    rotations, translations = get_symmetry_operations(base_structure)
+    cl_generator = ListBasedColoringGenerator(num_type, list_colorings)
+
+    ds_permutation = DerivativeStructurePermutation(hnf, displacement_set,
+                                                    rotations, translations)
+    sc_enum = SiteColoringEnumerator(num_type, ds_permutation, cl_generator,
+                                     color_exchange, leave_superperiodic, use_all_colors,
+                                     method='lexicographic')
+    colorings = sc_enum.unique_colorings()
+    return colorings
+
+
+
 if __name__ == '__main__':
     from utils import get_lattice
     structure = get_lattice('fcc')
-    index = 10
-    num_type = 3
+    index = 15
+    num_type = 2
 
     list_ds = enumerate_derivative_structures(structure, index, num_type,
-                                              color_exchange=False,
+                                              color_exchange=True,
                                               leave_superperiodic=False,
                                               use_all_colors=True)
