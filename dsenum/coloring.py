@@ -1,5 +1,7 @@
 from itertools import permutations
 
+# from joblib import Parallel, delayed
+
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.coloring_generator import ColoringGenerator
 from dsenum.core import hash_in_all_configuration, act_permutation
@@ -67,13 +69,15 @@ class LexicographicColoringEnumerator:
     num_color: int
     cl_generator: ColoringGenerator
     color_exchange: bool
+    n_jobs: int
     """
     def __init__(self, permutation_group, num_color, cl_generator: ColoringGenerator,
-                 color_exchange=True):
+                 color_exchange=True, n_jobs=1):
         self.permutation_group = permutation_group
         self.num_color = num_color
         self.cl_generator = cl_generator
         self.color_exchange = color_exchange
+        self.n_jobs = n_jobs
 
     def _hash(self, coloring):
         return hash_in_all_configuration(coloring, self.num_color)
@@ -98,11 +102,21 @@ class LexicographicColoringEnumerator:
         return True
 
     def coset_enumerate(self):
+        """
+        # TODO: concurrent filter
+        colorings_flag = Parallel(n_jobs=self.n_jobs)([delayed(_calc_flag)(self, cl)
+                                                       for cl in self.cl_generator.yield_coloring()])
+        colorings = [cl for flag, cl in colorings_flag if flag]
+        """
         colorings = []
         for cl in self.cl_generator.yield_coloring():
             if self._is_champion_coloring(cl):
                 colorings.append(cl)
         return colorings
+
+
+def _calc_flag(enumcls, coloring):
+    return enumcls._is_champion_coloring(coloring), coloring
 
 
 class SiteColoringEnumerator(object):
@@ -113,13 +127,15 @@ class SiteColoringEnumerator(object):
     num_color: int
     color_exchange: bool
     leave_superperiodic: bool
+    method: "direct" or "lexicographic", so far
+    n_jobs: int, use only when method is "lexicographic"
     """
 
     def __init__(self, num_color,
                  ds_permutation: DerivativeStructurePermutation,
                  cl_generator: ColoringGenerator,
                  color_exchange=True, leave_superperiodic=False, use_all_colors=True,
-                 method='direct'):
+                 method='direct', n_jobs=1):
         self.num_color = num_color
         self.ds_permutation = ds_permutation
         self.cl_generator = cl_generator
@@ -127,6 +143,7 @@ class SiteColoringEnumerator(object):
         self.leave_superperiodic = leave_superperiodic
         self.use_all_colors = use_all_colors
         self.method = method
+        self.n_jobs = n_jobs
 
         """
         if self.ds_permutation.num_site < self.num_color:
@@ -141,7 +158,8 @@ class SiteColoringEnumerator(object):
         elif self.method == 'lexicographic':
             self.clenum = LexicographicColoringEnumerator(self.permutation_group, self.num_color,
                                                           self.cl_generator,
-                                                          color_exchange=color_exchange)
+                                                          color_exchange=color_exchange,
+                                                          n_jobs=self.n_jobs)
         else:
             raise ValueError("Unknown method: ", self.method)
 

@@ -111,7 +111,7 @@ def remove_symmetry_duplicates(base_structure, hnf, num_type, list_colorings,
 
 def remove_symmetry_duplicates_from_generator(base_structure, hnf, num_type, list_colorings,
                                               color_exchange: bool, leave_superperiodic: bool,
-                                              use_all_colors: bool):
+                                              use_all_colors: bool, n_jobs=1):
     displacement_set = base_structure.frac_coords
     rotations, translations = get_symmetry_operations(base_structure)
     cl_generator = ListBasedColoringGenerator(num_type, list_colorings)
@@ -120,10 +120,9 @@ def remove_symmetry_duplicates_from_generator(base_structure, hnf, num_type, lis
                                                     rotations, translations)
     sc_enum = SiteColoringEnumerator(num_type, ds_permutation, cl_generator,
                                      color_exchange, leave_superperiodic, use_all_colors,
-                                     method='lexicographic')
+                                     method='lexicographic', n_jobs=n_jobs)
     colorings = sc_enum.unique_colorings()
     return colorings
-
 
 
 if __name__ == '__main__':
