@@ -9,9 +9,6 @@ class BaseColoringGenerator:
     def generate_all_colorings(self):
         raise NotImplementedError
 
-    def hash_coloring(self, coloring):
-        raise NotImplementedError
-
 
 class ColoringGenerator(BaseColoringGenerator):
 
@@ -27,15 +24,13 @@ class ColoringGenerator(BaseColoringGenerator):
             for cl_compressed in product(*[range(len(sc)) for sc in self.site_constraints]):
                 cl = [self.site_constraints[i][idx] for i, idx in enumerate(cl_compressed)]
                 list_colorings.append(cl)
-                flags[self.hash_coloring(cl)] = True
+                flags[hash_in_all_configuration(cl, self.num_color)] = True
         else:
             list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
-            flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
+            flags = {hash_in_all_configuration(coloring, self.num_color): True
+                     for coloring in list_colorings}
 
         return list_colorings, flags
-
-    def hash_coloring(self, coloring):
-        return hash_in_all_configuration(coloring, self.num_color)
 
 
 class ListBasedColoringGenerator(BaseColoringGenerator):
@@ -45,11 +40,9 @@ class ListBasedColoringGenerator(BaseColoringGenerator):
         self.list_colorings = list_colorings
 
     def generate_all_colorings(self):
-        flags = {self.hash_coloring(coloring): True for coloring in self.list_colorings}
+        flags = {hash_in_all_configuration(coloring, self.num_color): True
+                 for coloring in self.list_colorings}
         return self.list_colorings, flags
-
-    def hash_coloring(self, coloring):
-        return hash_in_all_configuration(coloring, self.num_color)
 
 
 class FixedConcentrationColoringGenerator(BaseColoringGenerator):
@@ -88,15 +81,13 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
                 # TODO: more efficient way to adopt site_constraints
                 if satisfy_site_constraints(self.site_constraints, cl):
                     list_colorings.append(cl)
-                    flags[self.hash_coloring(cl)] = True
+                    flags[hash_in_all_configuration(cl, self.num_color)] = True
         else:
             # TODO: inefficient to cast to list
             list_colorings = list(multiset_permutations(first_coloring))
-            flags = {self.hash_coloring(coloring): True for coloring in list_colorings}
+            flags = {hash_in_all_configuration(coloring, self.num_color): True
+                     for coloring in list_colorings}
         return list_colorings, flags
-
-    def hash_coloring(self, coloring):
-        return hash_in_all_configuration(coloring, self.num_color)
 
 
 class CompositionColoringGenerator(BaseColoringGenerator):

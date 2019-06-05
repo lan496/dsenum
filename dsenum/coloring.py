@@ -1,12 +1,7 @@
 from itertools import permutations
 
 from dsenum.permutation_group import DerivativeStructurePermutation
-from dsenum.coloring_generator import ColoringGenerator
-
-
-def act_permutation(perm, coloring):
-    new_coloring = [coloring[perm[i]] for i in range(len(coloring))]
-    return new_coloring
+from dsenum.coloring_generator import ColoringGenerator, hash_in_all_configuration
 
 
 class DirectColoringEnumerator:
@@ -28,7 +23,7 @@ class DirectColoringEnumerator:
         self.list_colorings, self.flags = self.cl_generator.generate_all_colorings()
 
     def _hash(self, coloring):
-        return self.cl_generator.hash_coloring(coloring)
+        return hash_in_all_configuration(coloring, self.num_color)
 
     def _walk_orbit(self, coloring, include_identity=False):
         offset = 0 if include_identity else 1
@@ -97,7 +92,7 @@ class SiteColoringEnumerator(object):
         return self.ds_permutation.prm_t
 
     def _hash(self, coloring):
-        return self.clenum._hash(coloring)
+        return hash_in_all_configuration(coloring, self.num_color)
 
     def unique_colorings(self):
         symmetry_uniqued_coloring = self.clenum.coset_enumerate()
@@ -125,3 +120,8 @@ class SiteColoringEnumerator(object):
             return True
         else:
             return False
+
+
+def act_permutation(perm, coloring):
+    new_coloring = [coloring[perm[i]] for i in range(len(coloring))]
+    return new_coloring
