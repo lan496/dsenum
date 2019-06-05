@@ -81,7 +81,7 @@ def enumerate_derivative_structures(base_structure, index, num_type,
 def enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
                        cl_generator: BaseColoringGenerator, mapping_color_species,
                        color_exchange: bool, leave_superperiodic: bool, use_all_colors: bool):
-    displacement_set = base_structure.frac_cords
+    displacement_set = base_structure.frac_coords
     ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
                                                    rotations, translations)
     sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
