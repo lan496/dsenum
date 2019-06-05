@@ -1,7 +1,5 @@
 from itertools import permutations
 
-# from joblib import Parallel, delayed
-
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.coloring_generator import ColoringGenerator
 from dsenum.core import hash_in_all_configuration, act_permutation
@@ -102,21 +100,11 @@ class LexicographicColoringEnumerator:
         return True
 
     def coset_enumerate(self):
-        """
-        # TODO: concurrent filter
-        colorings_flag = Parallel(n_jobs=self.n_jobs)([delayed(_calc_flag)(self, cl)
-                                                       for cl in self.cl_generator.yield_coloring()])
-        colorings = [cl for flag, cl in colorings_flag if flag]
-        """
         colorings = []
         for cl in self.cl_generator.yield_coloring():
             if self._is_champion_coloring(cl):
                 colorings.append(cl)
         return colorings
-
-
-def _calc_flag(enumcls, coloring):
-    return enumcls._is_champion_coloring(coloring), coloring
 
 
 class SiteColoringEnumerator(object):

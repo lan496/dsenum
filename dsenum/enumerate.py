@@ -121,6 +121,7 @@ def remove_symmetry_duplicates_from_generator(base_structure, hnf, num_type, lis
     sc_enum = SiteColoringEnumerator(num_type, ds_permutation, cl_generator,
                                      color_exchange, leave_superperiodic, use_all_colors,
                                      method='lexicographic', n_jobs=n_jobs)
+
     colorings = sc_enum.unique_colorings()
     return colorings
 
