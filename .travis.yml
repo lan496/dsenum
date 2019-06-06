@@ -1,12 +1,16 @@
 language: python
 python:
   - "3.6"
-before_install:
-  - 
+env:
+  - CC_TEST_REPORTER_ID="7a11f42d5c4599b12fe5bec4b6bfdfb9fb3bf251e22b3166c2189c7fc2cd2070"
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 install:
   - pip install cython
   - pip install -e .
-env:
-  - CODECLIMATE_REPO_TOKEN="7a11f42d5c4599b12fe5bec4b6bfdfb9fb3bf251e22b3166c2189c7fc2cd2070"
 script:
   - python setup.py test
+after_script:
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
