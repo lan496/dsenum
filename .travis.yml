@@ -11,7 +11,6 @@ install:
   - pip install cython
   - pip install -e .
 script:
-  # - python setup.py test
-  - pytest --cov=dsenum
+  - python setup.py test
 after_script:
     - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
