@@ -8,7 +8,7 @@ ext_modules = [
 setup(
     packages=['dsenum'],
     setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    tests_require=['pytest', 'pytest-cov'],
     ext_modules=ext_modules,
     cmdclass={'build_ext': build_ext}
 )
