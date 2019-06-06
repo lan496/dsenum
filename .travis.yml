@@ -13,4 +13,5 @@ install:
 script:
   - python setup.py test
 after_script:
-    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter format-coverage -t coverage.py coverage.xml
+  - ./cc-test-reporter upload-coverage
