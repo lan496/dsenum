@@ -20,7 +20,7 @@ def enumerate_derivative_structures(base_structure, index, num_type,
                                     mapping_color_species=None,
                                     composition_constraints=None, base_site_constraints=None,
                                     color_exchange=True, leave_superperiodic=False, use_all_colors=True,
-                                    method='direct'):
+                                    method='direct', n_jobs=1):
     """
     Parameter
     ---------
@@ -35,6 +35,7 @@ def enumerate_derivative_structures(base_structure, index, num_type,
     leave_superperiodic: do not discard superperiodic coloring
     use_all_colors: bool
     method: "direct" or "lexicographic", so far
+    n_jobs: core in lexicographic coset enumeration(only used when method='lexicographic')
 
     Returns
     -------
@@ -72,7 +73,7 @@ def enumerate_derivative_structures(base_structure, index, num_type,
         list_ds_hnf = enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
                                          cl_generator, mapping_color_species,
                                          color_exchange, leave_superperiodic, use_all_colors,
-                                         method)
+                                         method, n_jobs)
         list_ds.extend(list_ds_hnf)
 
     end = time()
@@ -84,13 +85,13 @@ def enumerate_derivative_structures(base_structure, index, num_type,
 def enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
                        cl_generator: BaseColoringGenerator, mapping_color_species,
                        color_exchange: bool, leave_superperiodic: bool, use_all_colors: bool,
-                       method='direct'):
+                       method='direct', n_jobs=1):
     displacement_set = base_structure.frac_coords
     ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
                                                    rotations, translations)
     sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
                                      color_exchange, leave_superperiodic, use_all_colors,
-                                     method=method)
+                                     method=method, n_jobs=n_jobs)
     colorings = sc_enum.unique_colorings()
 
     # convert to Structure object
@@ -141,4 +142,4 @@ if __name__ == '__main__':
                                               color_exchange=True,
                                               leave_superperiodic=False,
                                               use_all_colors=True,
-                                              method='lexicographic')
+                                              method='lexicographic', n_jobs=-1)

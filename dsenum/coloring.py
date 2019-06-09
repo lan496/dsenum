@@ -1,4 +1,5 @@
 from itertools import permutations
+from multiprocessing import Pool, cpu_count
 
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.coloring_generator import ColoringGenerator
@@ -68,6 +69,7 @@ class LexicographicColoringEnumerator:
     cl_generator: ColoringGenerator
     color_exchange: bool
     n_jobs: int
+        when n_jobs > 1, use multiprocessing but it seems slower than signle core......
     """
     def __init__(self, permutation_group, num_color, cl_generator: ColoringGenerator,
                  color_exchange=True, n_jobs=1):
@@ -75,7 +77,10 @@ class LexicographicColoringEnumerator:
         self.num_color = num_color
         self.cl_generator = cl_generator
         self.color_exchange = color_exchange
-        self.n_jobs = n_jobs
+        if n_jobs == -1:
+            self.n_jobs = cpu_count()
+        else:
+            self.n_jobs = n_jobs
 
     def _hash(self, coloring):
         return hash_in_all_configuration(coloring, self.num_color)
@@ -99,11 +104,21 @@ class LexicographicColoringEnumerator:
                     return False
         return True
 
+    def _is_champion_coloring_parallel(self, coloring):
+        return coloring, self._is_champion_coloring(coloring)
+
     def coset_enumerate(self):
-        colorings = []
-        for cl in self.cl_generator.yield_coloring():
-            if self._is_champion_coloring(cl):
-                colorings.append(cl)
+        if self.n_jobs != 1:
+            with Pool(self.n_jobs) as pool:
+                colorings = [cl for cl, keep
+                             in pool.map(self._is_champion_coloring_parallel,
+                                         self.cl_generator.yield_coloring())
+                             if keep]
+        else:
+            colorings = []
+            for cl in self.cl_generator.yield_coloring():
+                if self._is_champion_coloring(cl):
+                    colorings.append(cl)
         return colorings
 
 
