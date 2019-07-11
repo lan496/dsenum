@@ -142,4 +142,4 @@ if __name__ == '__main__':
                                               color_exchange=True,
                                               leave_superperiodic=False,
                                               use_all_colors=True,
-                                              method='lexicographic', n_jobs=-1)
+                                              method='direct')
