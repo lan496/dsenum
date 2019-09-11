@@ -48,7 +48,7 @@ class TestPermutationGroup(unittest.TestCase):
                     dsperm = DerivativeStructurePermutation(hnf, frac_coords,
                                                             rotations, translations)
                     self.assertTrue(is_permutation_group(dsperm.prm_t))
-                    prm_all = dsperm.get_symmetry_operation_permutaions()
+                    prm_all = dsperm.get_symmetry_operation_permutations()
                     self.assertTrue(is_permutation_group(prm_all))
 
 

@@ -87,15 +87,15 @@ def enumerate_with_hnf(base_structure, hnf, num_type, rotations, translations,
                        color_exchange: bool, leave_superperiodic: bool, use_all_colors: bool,
                        method='direct', n_jobs=1):
     displacement_set = base_structure.frac_coords
-    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
-                                                   rotations, translations)
-    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+    ds_permutation = DerivativeStructurePermutation(hnf, displacement_set,
+                                                    rotations, translations)
+    sc_enum = SiteColoringEnumerator(num_type, ds_permutation, cl_generator,
                                      color_exchange, leave_superperiodic, use_all_colors,
                                      method=method, n_jobs=n_jobs)
     colorings = sc_enum.unique_colorings()
 
     # convert to Structure object
-    cts = ColoringToStructure(base_structure, ds_permutaion.dhash, mapping_color_species)
+    cts = ColoringToStructure(base_structure, ds_permutation.dhash, mapping_color_species)
     list_ds = [cts.convert_to_structure(cl) for cl in colorings]
     return list_ds
 

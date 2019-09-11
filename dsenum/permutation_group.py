@@ -118,7 +118,7 @@ class DerivativeStructurePermutation(object):
         # this set of permutations is not group!
         return list_permutations
 
-    def get_symmetry_operation_permutaions(self):
+    def get_symmetry_operation_permutations(self):
         list_permutations = []
 
         for p1 in self.prm_t:

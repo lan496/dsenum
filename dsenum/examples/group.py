@@ -57,7 +57,7 @@ def plot_permutation_groups(base_structure, output_name):
     for index in range(2, 10 + 1):
         for hnf in tqdm(generate_all_superlattices(index)):
             dsperm = DerivativeStructurePermutation(hnf, displacement_set, rotations, translations)
-            perms = [Permutation(g) for g in dsperm.get_symmetry_operation_permutaions()]
+            perms = [Permutation(g) for g in dsperm.get_symmetry_operation_permutations()]
             gens = get_generators(perms)
             G = PermutationGroup(gens)
             data = {

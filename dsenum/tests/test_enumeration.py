@@ -83,9 +83,9 @@ class TestUniqueColoring(unittest.TestCase):
                 cl_generator = ColoringGenerator(num_sites, num_type)
 
                 for hnf in tqdm(list_reduced_HNF):
-                    ds_permutaion = DerivativeStructurePermutation(hnf, displacement_set,
+                    ds_permutation = DerivativeStructurePermutation(hnf, displacement_set,
                                                                    rotations, translations)
-                    sc_enum = SiteColoringEnumerator(num_type, ds_permutaion, cl_generator,
+                    sc_enum = SiteColoringEnumerator(num_type, ds_permutation, cl_generator,
                                                      color_exchange=False,
                                                      leave_superperiodic=True,
                                                      use_all_colors=False)

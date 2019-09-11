@@ -153,7 +153,7 @@ class SiteColoringEnumerator(object):
             raise ValueError('too many num_types')
         """
 
-        self.permutation_group = self.ds_permutation.get_symmetry_operation_permutaions()
+        self.permutation_group = self.ds_permutation.get_symmetry_operation_permutations()
 
         if self.method == 'direct':
             self.clenum = DirectColoringEnumerator(self.permutation_group, self.num_color,
