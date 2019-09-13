@@ -5,6 +5,8 @@ from pymatgen.core.periodic_table import DummySpecie
 from pymatgen.io.cif import CifWriter
 from pymatgen.analysis.structure_prediction.volume_predictor import DLSVolumePredictor
 
+from dsenum.permutation_group import DerivativeMultiLatticeHash
+
 
 def get_lattice(kind):
     if kind == 'hcp':
@@ -79,3 +81,30 @@ def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
         struct = sga.get_primitive_standard_structure()
 
     return struct
+
+
+def get_supercell(structure: Structure, scaling_matrix: np.ndarray):
+    """
+    Parameters
+    ----------
+    structure: pymatgen.core.Structure
+    scaling_matrix: array, lower triangular integer matrix
+        the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]
+
+    Returns
+    -------
+    ds: pymatgen.core.Structure
+    """
+    dshash = DerivativeMultiLatticeHash(scaling_matrix, structure.frac_coords)
+
+    base_lattice_matrix = structure.lattice.matrix
+    lattice = Lattice(np.dot(scaling_matrix.T, base_lattice_matrix))
+
+    species = dshash.get_species_list([site.species for site in structure])
+
+    list_dsites = dshash.get_distinct_derivative_sites_list()
+    new_cart_coords = [np.dot(dshash.get_frac_coords(dsite), base_lattice_matrix)
+                       for dsite in list_dsites]
+
+    ds = Structure(lattice, species, new_cart_coords, coords_are_cartesian=True)
+    return ds
