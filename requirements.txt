@@ -1,10 +1,10 @@
+pymatgen>=2020.1.28
+numpy==1.18.0
+sympy==1.5
+scipy==1.4.1
+matplotlib==3.1.2
 joblib==0.11
-matplotlib==3.0.2
-numpy==1.15.4
-pymatgen>=2019.3.13
 pytest==4.1.1
 pytest-cov==2.6.1
 tqdm==4.29.1
-sympy==1.1.1
-scipy==1.1.0
 cython>=0.27.3
