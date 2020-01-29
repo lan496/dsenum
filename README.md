@@ -32,13 +32,13 @@ from dsenum.enumerate import enumerate_derivative_structures
 
 latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
 coords = [[0, 0, 0]]
-struct = Structure(latt, [DummySpecie('X')] * len(coords), coords)
+structure = Structure(latt, [DummySpecie('X')] * len(coords), coords)
 
 num_type = 2
 index = 4
 
 dstructs = enumerate_derivative_structures(structure, index, num_type)
-print(len(dstructs))  # ->14
+print(len(dstructs))  # -> 12
 ```
 
 ## Official Implementation
