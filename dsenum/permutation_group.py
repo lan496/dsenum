@@ -145,7 +145,7 @@ class DerivativeMultiLatticeHash(object):
     def __init__(self, hnf, displacement_set):
         self.hnf = hnf
         self.dim = self.hnf.shape[0]
-        self.index = np.prod(self.hnf.diagonal())
+        self.index = np.around(np.linalg.det(hnf)).astype(int)
         assert(self.index != 0)
 
         self.displacement_set = displacement_set
