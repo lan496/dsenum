@@ -7,18 +7,30 @@
 Derivative structure enumerator for multilattice
 
 
-## installing
+## installation
 
 ### Requirements
 - cython
 
 ### install
 
+#### pip
 ```
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
 pip install -r requirements.txt
 pip install -e .
+pre-commit install
+```
+
+#### conda
+```script
+git clone git@github.com:lan496/dsenum.git
+cd dsenum
+conda env create -f environment.yml
+conda activate dsenum
+pip install -e .
+pre-commit install
 ```
 
 ## Usage
