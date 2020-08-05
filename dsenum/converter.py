@@ -31,7 +31,7 @@ class DerivativeMultiLatticeHash:
 
     def __init__(self, hnf: np.ndarray, displacement_set: np.ndarray):
         self._hnf = hnf
-        self._index = np.around(np.linalg.det(self.hnf)).astype(int)
+        self._index = np.around(np.abs(np.linalg.det(self.hnf))).astype(int)
         assert self.index != 0
 
         self.displacement_set = displacement_set
@@ -153,7 +153,7 @@ class DerivativeMultiLatticeHash:
 
     def embed_to_derivative_site(self, csite: CanonicalSite) -> DerivativeSite:
         jimage_base = cast_integer_matrix(np.dot(self.left_inv, csite.factor))
-        dsite = DerivativeSite(csite.site_index, jimage_base)
+        dsite = DerivativeSite(csite.site_index, tuple(jimage_base))
         return dsite
 
 

@@ -1,16 +1,30 @@
 from functools import lru_cache
 from itertools import product
+from typing import List
 
 from scipy.special import binom
 
 
-def polya_counting(permutation_group, num_color):
+def polya_counting(permutation_group: List[List[int]], num_color: int) -> int:
+    """
+    count the number of coloring with num_color kinds of colors and permutations
+
+    Parameters
+    ----------
+    permutation_group:
+        the i-th permutation permutation_group[i] permutes j to permutation_group[i][j]
+        for j = 0,...,len(permutation_group[0])-1
+
+    Returns
+    -------
+    cnt: int
+    """
     cnt = 0
     for perm in permutation_group:
         type_of_perm = get_type_of_permutation(perm)
         cnt += num_color ** sum(type_of_perm)
 
-    assert(cnt % len(permutation_group) == 0)
+    assert cnt % len(permutation_group) == 0
     cnt //= len(permutation_group)
     return cnt
 
@@ -31,8 +45,9 @@ def get_inventory_coefficient(type_of_perm: tuple, didx, num_elements_of_each_co
         if sum(list_k) != type_of_perm[didx - 1]:
             continue
         complement = tuple([e1 - e2 for e1, e2 in zip(num_elements_of_each_color, nec)])
-        ret += get_multinomial_coefficient(list_k) \
-            * get_inventory_coefficient(type_of_perm, didx - 1, complement)
+        ret += get_multinomial_coefficient(list_k) * get_inventory_coefficient(
+            type_of_perm, didx - 1, complement
+        )
 
     return ret
 
@@ -46,22 +61,41 @@ def get_multinomial_coefficient(params):
     return int(binom(sum(params), params[-1])) * get_multinomial_coefficient(params[:-1])
 
 
-def polya_fixed_degrees_counting(permutation_group, num_color, num_elements_of_each_color):
+def polya_fixed_degrees_counting(
+    permutation_group: List[List[int]], num_color: int, num_elements_of_each_color: List[int]
+):
+    """
+    count the number of coloring with num_color kinds of colors and permutations.
+    In addition, the number of each colors is fixed with num_elements_of_each_color.
+
+    Parameters
+    ----------
+    permutation_group:
+        the i-th permutation permutation_group[i] permutes j to permutation_group[i][j]
+        for j = 0,...,len(permutation_group[0])-1
+    num_color: int
+    num_elements_of_each_color: List of int, (num_color)
+
+    Returns
+    -------
+    coeffs: int
+    """
     num_elements = len(permutation_group[0])
     coeffs = 0
 
     for perm in permutation_group:
         type_of_perm = tuple(get_type_of_permutation(perm))
-        coeffs_perm = get_inventory_coefficient(type_of_perm, num_elements,
-                                                tuple(num_elements_of_each_color))
+        coeffs_perm = get_inventory_coefficient(
+            type_of_perm, num_elements, tuple(num_elements_of_each_color)
+        )
         coeffs += coeffs_perm
 
-    assert(coeffs % len(permutation_group) == 0)
+    assert coeffs % len(permutation_group) == 0
     coeffs //= len(permutation_group)
     return coeffs
 
 
-def get_type_of_permutation(permutation):
+def get_type_of_permutation(permutation: List[List[int]]):
     num_elements = len(permutation)
     type_of_perm = [0 for _ in range(num_elements)]
 

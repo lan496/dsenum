@@ -6,13 +6,11 @@ from dsenum.core import hash_in_all_configuration
 
 
 class BaseColoringGenerator:
-
     def generate_all_colorings(self):
         raise NotImplementedError
 
 
 class ColoringGenerator(BaseColoringGenerator):
-
     def __init__(self, num_elements, num_color, site_constraints=None):
         self.num_elements = num_elements
         self.num_color = num_color
@@ -28,8 +26,10 @@ class ColoringGenerator(BaseColoringGenerator):
                 flags[hash_in_all_configuration(cl, self.num_color)] = True
         else:
             list_colorings = list(product(range(self.num_color), repeat=self.num_elements))
-            flags = {hash_in_all_configuration(list(coloring), self.num_color): True
-                     for coloring in list_colorings}
+            flags = {
+                hash_in_all_configuration(list(coloring), self.num_color): True
+                for coloring in list_colorings
+            }
 
         return list_colorings, flags
 
@@ -50,13 +50,16 @@ class ListBasedColoringGenerator(BaseColoringGenerator):
     num_color: int
     list_colorings: list of generator
     """
+
     def __init__(self, num_color, list_colorings):
         self.num_color = num_color
         self.list_colorings = list_colorings
 
     def generate_all_colorings(self):
-        flags = {hash_in_all_configuration(coloring, self.num_color): True
-                 for coloring in self.list_colorings}
+        flags = {
+            hash_in_all_configuration(coloring, self.num_color): True
+            for coloring in self.list_colorings
+        }
         return self.list_colorings, flags
 
     def yield_coloring(self):
@@ -83,7 +86,7 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         self.site_constraints = site_constraints
 
         if num_elements % sum(self.color_ratio) != 0:
-            raise ValueError('incorrect composition ratio')
+            raise ValueError("incorrect composition ratio")
 
         factor = num_elements // sum(self.color_ratio)
         self.num_elements_each_color = [factor * cr for cr in self.color_ratio]
@@ -104,16 +107,17 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         else:
             # TODO: inefficient to cast to list
             list_colorings = list(multiset_permutations(first_coloring))
-            flags = {hash_in_all_configuration(coloring, self.num_color): True
-                     for coloring in list_colorings}
+            flags = {
+                hash_in_all_configuration(coloring, self.num_color): True
+                for coloring in list_colorings
+            }
         return list_colorings, flags
 
 
 class CompositionColoringGenerator(BaseColoringGenerator):
-
     def __init__(self, num_sites_base, num_color, mapping_color_speices, site_constraints=None):
         # TODO
-        pass
+        raise NotImplementedError
 
 
 def satisfy_site_constraints(site_constraints, coloring):

@@ -1,9 +1,12 @@
+from typing import List
+
 import numpy as np
+from pymatgen.core import Structure
 
 from dsenum.utils import get_symmetry_operations
 
 
-def generate_all_superlattices(index):
+def generate_all_superlattices(index: int) -> List[np.ndarray]:
     """
     enumerate 3-by-3 Hermite normal form which determinant is equal to `index`
 
@@ -15,6 +18,7 @@ def generate_all_superlattices(index):
     -------
     list_HNF: list of matrices, each element is Hermite normal form
     """
+
     def make_HNF(a, b, c, d, e, f):
         arr = np.zeros((3, 3), dtype=np.int)
         arr[np.tril_indices(3)] = np.array([a, b, c, d, e, f])
@@ -28,13 +32,16 @@ def generate_all_superlattices(index):
             if (index % c != 0) or (index % (a * c) != 0):
                 continue
             f = index // (a * c)
-            list_HNF.extend([make_HNF(a, b, c, d, e, f)
-                             for b in range(c) for d in range(f) for e in range(f)])
+            list_HNF.extend(
+                [make_HNF(a, b, c, d, e, f) for b in range(c) for d in range(f) for e in range(f)]
+            )
 
     return list_HNF
 
 
-def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
+def reduce_HNF_list_by_parent_lattice_symmetry(
+    list_HNF: List[np.ndarray], list_rotation_matrix: np.ndarray
+) -> List[np.ndarray]:
     """
     reduce equivalent HNF with parent lattice symmetry
 
@@ -50,6 +57,7 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     -------
     list_reduced_HNF: list of matrices, unique by symmetry
     """
+
     def is_equivalent(Bi, list_RBj_inv):
         if list_RBj_inv is None:
             return False
@@ -62,14 +70,13 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     list_reduced_HNF = []
     list_RBj_inv = None
 
-    sgn = (np.linalg.det(list_rotation_matrix) == 1)
+    sgn = np.linalg.det(list_rotation_matrix) == 1
     rotations = list_rotation_matrix[sgn, ...]
 
     for Bi in list_HNF:
         if not is_equivalent(Bi, list_RBj_inv):
             list_reduced_HNF.append(Bi)
-            preinv = np.linalg.solve(np.dot(rotations, Bi),
-                                     np.identity(Bi.shape[0])[None, ...])
+            preinv = np.linalg.solve(np.dot(rotations, Bi), np.identity(Bi.shape[0])[None, ...])
             if list_RBj_inv is None:
                 list_RBj_inv = preinv
             else:
@@ -78,7 +85,9 @@ def reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, list_rotation_matrix):
     return list_reduced_HNF
 
 
-def generate_symmetry_distinct_superlattices(index, structure, return_symops=False):
+def generate_symmetry_distinct_superlattices(
+    index: int, structure: Structure, return_symops=False
+):
     """
     generate symmetry distict HNF
 
