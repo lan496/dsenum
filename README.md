@@ -39,7 +39,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 
-from dsenum.enumerate import enumerate_derivative_structures
+from dsenum import StructureEnumerator
 
 latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
 coords = [[0, 0, 0]]
@@ -48,9 +48,11 @@ structure = Structure(latt, [DummySpecie('X')] * len(coords), coords)
 num_type = 2
 index = 4
 
-dstructs = enumerate_derivative_structures(structure, index, num_type)
+dstructs = StructureEnumerator(structure, index, num_type)
 print(len(dstructs))  # -> 12
 ```
+
+See `examples/Sn_oxide.py` for more complicated usecase.
 
 ## Development
 

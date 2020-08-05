@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from dsenum.enumerate import enumerate_derivative_structures
+from dsenum.enumerate import StructureEnumerator
 from dsenum.coloring_generator import ColoringGenerator, FixedConcentrationColoringGenerator
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.utils import get_lattice
@@ -75,7 +75,7 @@ def test_colorings():
             if index >= 8:
                 continue
             for method in ["direct", "lexicographic"]:
-                actual = enumerate_derivative_structures(
+                se = StructureEnumerator(
                     structure,
                     index,
                     num_type,
@@ -83,6 +83,7 @@ def test_colorings():
                     leave_superperiodic=False,
                     method=method,
                 )
+                actual = se.generate()
                 assert len(actual) == expected
 
 

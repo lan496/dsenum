@@ -1,7 +1,7 @@
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.periodic_table import Specie
 
-from dsenum.enumerate import enumerate_derivative_structures
+from dsenum.enumerate import StructureEnumerator
 from dsenum.utils import get_lattice, write_cif  # noqa
 
 
@@ -35,7 +35,7 @@ def test_hcp():
 
 def check(base_structure, num_type, indices, species, name):
     for index in indices:
-        list_ds = enumerate_derivative_structures(
+        se = StructureEnumerator(
             base_structure,
             index,
             num_type,
@@ -43,6 +43,7 @@ def check(base_structure, num_type, indices, species, name):
             color_exchange=True,
             leave_superperiodic=False,
         )
+        list_ds = se.generate()
 
         stm = StructureMatcher(ltol=1e-4, stol=1e-4)
         grouped = stm.group_structures(list_ds)

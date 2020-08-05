@@ -1,12 +1,14 @@
 from time import time
+from warnings import warn
 
 from tqdm import tqdm
+from pymatgen.core import Structure
 from pymatgen.core.periodic_table import DummySpecie
+import numpy as np
 
 from dsenum.utils import get_symmetry_operations
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.coloring_generator import (
-    BaseColoringGenerator,
     ColoringGenerator,
     FixedConcentrationColoringGenerator,
     ListBasedColoringGenerator,
@@ -15,6 +17,132 @@ from dsenum.coloring import SiteColoringEnumerator
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.converter import convert_site_constraints
 from dsenum.derivative_structure import ColoringToStructure
+
+
+class StructureEnumerator:
+    """
+    Parameter
+    ---------
+    base_structure: Structure
+    index: int
+    num_types: int
+    mapping_color_species: (Optional) if specified, use these species in derivative structures
+    composition_constraints: (Optional) None or list of int
+    base_site_constraints: (Optional) list (num_elements, num_color)
+        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+    color_exchange: identify color-exchanging
+    leave_superperiodic: do not discard superperiodic coloring
+    use_all_colors: bool
+    method: "direct" or "lexicographic", so far
+    n_jobs: core in lexicographic coset enumeration(only used when method='lexicographic')
+
+    Returns
+    -------
+    list_ds: list of derivative structure
+    """
+
+    def __init__(
+        self,
+        base_structure: Structure,
+        index: int,
+        num_types: int,
+        mapping_color_species=None,
+        composition_constraints=None,
+        base_site_constraints=None,
+        color_exchange=True,
+        leave_superperiodic=False,
+        use_all_colors=True,
+        method="direct",
+        n_jobs=1,
+    ):
+        self.base_structure = base_structure
+        self.index = index
+        self.num_types = num_types
+
+        # settings
+        self.color_exchange = color_exchange
+        self.leave_superperiodic = leave_superperiodic
+        self.use_all_colors = use_all_colors
+        self.method = method
+        self.n_jobs = n_jobs
+
+        list_reduced_HNF, rotations, translations = generate_symmetry_distinct_superlattices(
+            index, base_structure, return_symops=True
+        )
+        self.list_reduced_HNF = list_reduced_HNF
+        self.rotations = rotations
+        self.translations = translations
+
+        # site constraints
+        if base_site_constraints:
+            site_constraints = convert_site_constraints(base_site_constraints, self.index)
+        else:
+            site_constraints = None
+
+        # composition constraints
+        if composition_constraints is None:
+            cl_generator = ColoringGenerator(self.num_sites, self.num_types, site_constraints)
+        else:
+            cl_generator = FixedConcentrationColoringGenerator(
+                self.num_sites, self.num_types, composition_constraints, site_constraints
+            )
+        self.cl_generator = cl_generator
+
+        if mapping_color_species and len(mapping_color_species) != self.num_types:
+            raise ValueError("mapping_color_species must have num_type species.")
+        if mapping_color_species is None:
+            mapping_color_species = [DummySpecie(str(i)) for i in range(1, self.num_types + 1)]
+        self.mapping_color_species = mapping_color_species
+
+    @property
+    def num_sites_base(self):
+        return self.base_structure.num_sites
+
+    @property
+    def num_sites(self):
+        return self.num_sites_base * self.index
+
+    def generate(self):
+        """
+        Returns
+        -------
+        list_ds: list of derivative structure
+        """
+        start = time()
+
+        list_ds = []
+        for hnf in tqdm(self.list_reduced_HNF):
+            list_ds_hnf = self._generate_with_hnf(hnf)
+            list_ds.extend(list_ds_hnf)
+
+        end = time()
+        print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
+
+        return list_ds
+
+    def _generate_with_hnf(self, hnf: np.ndarray):
+        displacement_set = self.base_structure.frac_coords
+        ds_permutation = DerivativeStructurePermutation(
+            hnf, displacement_set, self.rotations, self.translations
+        )
+        sc_enum = SiteColoringEnumerator(
+            self.num_types,
+            ds_permutation,
+            self.cl_generator,
+            self.color_exchange,
+            self.leave_superperiodic,
+            self.use_all_colors,
+            method=self.method,
+            n_jobs=self.n_jobs,
+        )
+        colorings = sc_enum.unique_colorings()
+
+        # convert to Structure object
+        cts = ColoringToStructure(
+            self.base_structure, ds_permutation.dhash, self.mapping_color_species
+        )
+        list_ds = [cts.convert_to_structure(cl) for cl in colorings]
+        return list_ds
 
 
 def enumerate_derivative_structures(
@@ -50,90 +178,21 @@ def enumerate_derivative_structures(
     -------
     list_ds: list of derivative structure
     """
-    start = time()
-
-    list_reduced_HNF, rotations, translations = generate_symmetry_distinct_superlattices(
-        index, base_structure, return_symops=True
-    )
-
-    num_sites_base = base_structure.num_sites
-    num_sites = num_sites_base * index
-
-    # site constraints
-    if base_site_constraints:
-        site_constraints = convert_site_constraints(base_site_constraints, index)
-    else:
-        site_constraints = None
-
-    # composition constraints
-    if composition_constraints is None:
-        cl_generator = ColoringGenerator(num_sites, num_type, site_constraints)
-    else:
-        cl_generator = FixedConcentrationColoringGenerator(
-            num_sites, num_type, composition_constraints, site_constraints
-        )
-
-    if mapping_color_species and len(mapping_color_species) != num_type:
-        raise ValueError("mapping_color_species must have num_type species.")
-    if mapping_color_species is None:
-        mapping_color_species = [DummySpecie(str(i)) for i in range(1, num_type + 1)]
-
-    list_ds = []
-    for hnf in tqdm(list_reduced_HNF):
-        list_ds_hnf = enumerate_with_hnf(
-            base_structure,
-            hnf,
-            num_type,
-            rotations,
-            translations,
-            cl_generator,
-            mapping_color_species,
-            color_exchange,
-            leave_superperiodic,
-            use_all_colors,
-            method,
-            n_jobs,
-        )
-        list_ds.extend(list_ds_hnf)
-
-    end = time()
-    print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
-
-    return list_ds
-
-
-def enumerate_with_hnf(
-    base_structure,
-    hnf,
-    num_type,
-    rotations,
-    translations,
-    cl_generator: BaseColoringGenerator,
-    mapping_color_species,
-    color_exchange: bool,
-    leave_superperiodic: bool,
-    use_all_colors: bool,
-    method="direct",
-    n_jobs=1,
-):
-    displacement_set = base_structure.frac_coords
-    ds_permutation = DerivativeStructurePermutation(hnf, displacement_set, rotations, translations)
-    sc_enum = SiteColoringEnumerator(
+    warn("Deprecated. Use StructureEnumerator instead", DeprecationWarning)
+    se = StructureEnumerator(
+        base_structure,
+        index,
         num_type,
-        ds_permutation,
-        cl_generator,
+        mapping_color_species,
+        composition_constraints,
+        base_site_constraints,
         color_exchange,
         leave_superperiodic,
         use_all_colors,
-        method=method,
-        n_jobs=n_jobs,
+        method,
+        n_jobs,
     )
-    colorings = sc_enum.unique_colorings()
-
-    # convert to Structure object
-    cts = ColoringToStructure(base_structure, ds_permutation.dhash, mapping_color_species)
-    list_ds = [cts.convert_to_structure(cl) for cl in colorings]
-    return list_ds
+    return se.generate()
 
 
 def remove_symmetry_duplicates(
@@ -195,7 +254,7 @@ if __name__ == "__main__":
     index = 15
     num_type = 2
 
-    list_ds = enumerate_derivative_structures(
+    se = StructureEnumerator(
         structure,
         index,
         num_type,
@@ -204,3 +263,4 @@ if __name__ == "__main__":
         use_all_colors=True,
         method="direct",
     )
+    list_ds = se.generate()

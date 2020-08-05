@@ -3,7 +3,7 @@ import os
 from pymatgen.io.cif import CifParser
 from pymatgen.core import Specie, DummySpecie
 
-from dsenum.enumerate import enumerate_derivative_structures
+from dsenum import StructureEnumerator
 from dsenum.utils import write_cif
 
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         [0, 1],
     ]  # 4f
 
-    list_dstructs = enumerate_derivative_structures(
+    se = StructureEnumerator(
         rutile,
         index,
         num_type,
@@ -50,12 +50,14 @@ if __name__ == "__main__":
         leave_superperiodic=False,
         use_all_colors=False,
     )
+    list_dstructs = se.generate()
 
     name = "SnOx_index={}".format(index)
-    os.makedirs(os.path.join("examples", name), exist_ok=True)
+    dirname = os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+    os.makedirs(dirname, exist_ok=True)
     for i, dstruct in enumerate(list_dstructs):
         # remove void
         dstruct.remove_species([mapping_color_species[0]])
 
-        filename = os.path.join("examples", name, "SnOx_index={}_{}.cif".format(index, i))
+        filename = os.path.join(dirname, "SnOx_index={}_{}.cif".format(index, i))
         write_cif(filename, dstruct, refine_cell=True)
