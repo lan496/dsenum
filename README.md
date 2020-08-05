@@ -1,8 +1,7 @@
 # dsenum
-![Build Status](https://travis-ci.com/lan496/dsenum.svg?branch=master)
+![ci](https://github.com/lan496/dsenum/workflows/ci/badge.svg?branch=develop)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ba967883e004590a2a23/maintainability)](https://codeclimate.com/github/lan496/dsenum/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ba967883e004590a2a23/test_coverage)](https://codeclimate.com/github/lan496/dsenum/test_coverage)
+[![codecov](https://codecov.io/gh/lan496/dsenum/branch/master/graph/badge.svg)](https://codecov.io/gh/lan496/dsenum)
 
 Derivative structure enumerator for multilattice
 

@@ -3,7 +3,8 @@ from queue import Queue
 
 import joblib
 import matplotlib as mpl
-mpl.use('Agg')  # noqa
+
+mpl.use("Agg")  # noqa
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -20,7 +21,9 @@ def get_generators(perms: List[Permutation]):
     identity = Permutation([], size=perms[0].size)
 
     gens = []
-    perms_tmp = [identity, ]
+    perms_tmp = [
+        identity,
+    ]
 
     for g in perms:
         if g in perms_tmp:
@@ -45,7 +48,7 @@ def get_generators(perms: List[Permutation]):
                 que.put(hg)
                 perms_tmp.append(hg)
 
-    assert(len(perms_tmp) == len(perms))
+    assert len(perms_tmp) == len(perms)
     return gens
 
 
@@ -61,31 +64,31 @@ def plot_permutation_groups(base_structure, output_name):
             gens = get_generators(perms)
             G = PermutationGroup(gens)
             data = {
-                'index': index,
-                'hnf': hnf,
-                'generators': gens,
-                'group': G,
-                'order': G.order(),
-                'orbits': G.orbits(),
+                "index": index,
+                "hnf": hnf,
+                "generators": gens,
+                "group": G,
+                "order": G.order(),
+                "orbits": G.orbits(),
             }
             list_data.append(data)
 
     df = pd.DataFrame(list_data)
-    sns.swarmplot(x='index', y='order', data=df)
+    sns.swarmplot(x="index", y="order", data=df)
     plt.title(output_name)
-    plt.savefig(output_name + '.png')
+    plt.savefig(output_name + ".png")
     return df
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Permutation.print_cyclic = False
 
-    print('fcc')
-    base_structure = get_lattice('fcc')
-    df_fcc = plot_permutation_groups(base_structure, 'fcc')
-    joblib.dump(df_fcc, 'fcc.df.joblib')
+    print("fcc")
+    base_structure = get_lattice("fcc")
+    df_fcc = plot_permutation_groups(base_structure, "fcc")
+    joblib.dump(df_fcc, "fcc.df.joblib")
 
-    print('fcc with tetragonal and octhedral sites')
+    print("fcc with tetragonal and octhedral sites")
     base_structure = get_fcc_with_vacancy()
-    df_fcc_ot = plot_permutation_groups(base_structure, 'fcc_oct_tet')
-    joblib.dump(df_fcc_ot, 'fcc_oct_tet.df.joblib')
+    df_fcc_ot = plot_permutation_groups(base_structure, "fcc_oct_tet")
+    joblib.dump(df_fcc_ot, "fcc_oct_tet.df.joblib")
