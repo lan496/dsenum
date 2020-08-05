@@ -1,7 +1,7 @@
 # dsenum
 ![ci](https://github.com/lan496/dsenum/workflows/ci/badge.svg?branch=develop)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
-[![codecov](https://codecov.io/gh/lan496/dsenum/branch/master/graph/badge.svg)](https://codecov.io/gh/lan496/dsenum)
+[![codecov](https://codecov.io/gh/lan496/dsenum/branch/develop/graph/badge.svg)](https://codecov.io/gh/lan496/dsenum)
 
 Derivative structure enumerator for multilattice
 
