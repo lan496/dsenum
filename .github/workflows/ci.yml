@@ -26,9 +26,8 @@ jobs:
       run: |
         pip install --upgrade pip
         pip --version
-        pip install --upgrade Cython
         pip install -r requirements.txt
-        python setup.py install
+        pip install -e .
   conda-install:
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +37,6 @@ jobs:
       with:
         update-conda: true
         python-version: 3.7
-        conda-channels: 'conda-forge'
     - name: Display Conda version
       run: conda --version
     - name: Display Python version
@@ -71,16 +69,14 @@ jobs:
       run: |
         pip install --upgrade pip
         pip --version
-        pip install Cython
         pip install -r requirements.txt
-        python setup.py install
+        pip install -e .
     - name: Test with pytest
       run: |
         pytest --cov=dsenum --cov-config=.coveragerc --cov-report=xml tests/
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
         flags: unittests
         fail_ci_if_error: true

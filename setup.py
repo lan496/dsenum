@@ -1,9 +1,8 @@
 from os.path import splitext, basename, abspath, dirname, join
 from setuptools import setup, Extension, find_packages
-from Cython.Distutils import build_ext
 from glob import glob
 
-ext_modules = [Extension("dsenum.core", sources=["dsenum/core.pyx"], extra_compile_args=["-O3"])]
+ext_modules = [Extension("dsenum.core", sources=["dsenum/core.c"], extra_compile_args=["-O3"])]
 
 
 def get_version(rel_path):
@@ -28,10 +27,10 @@ setup(
     packages=find_packages("dsneum"),
     py_modules=[splitext(basename(path))[0] for path in glob("dsenum/*.py")],
     python_requires=">=3.6",
-    install_requires=["setuptools", "Cython"],
+    install_requires=["setuptools"],
     tests_require=["pytest"],
     ext_modules=ext_modules,
-    cmdclass={"build_ext": build_ext},
     include_package_data=True,
     # extras_requires={},
+    zip_safe=False,
 )
