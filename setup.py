@@ -26,7 +26,7 @@ setup(
     author_email="kohei19950508@gmail.com",
     packages=find_packages("dsneum"),
     py_modules=[splitext(basename(path))[0] for path in glob("dsenum/*.py")],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=["setuptools"],
     tests_require=["pytest"],
     ext_modules=ext_modules,

@@ -1,17 +1,13 @@
-from collections import namedtuple
 from itertools import product
 
 import numpy as np
 
+from dsenum.site import CanonicalSite
 from dsenum.converter import DerivativeMultiLatticeHash
 from dsenum.utils import cast_integer_matrix
 
 
-DerivativeSite = namedtuple("DerivativeSite", ("site_index", "jimage"))
-CanonicalSite = namedtuple("CanonicalSite", ("site_index", "factor"))
-
-
-class DerivativeStructurePermutation(object):
+class DerivativeStructurePermutation:
     """
     Permutation Representation of space group of superlattice
 
@@ -36,7 +32,13 @@ class DerivativeStructurePermutation(object):
         # of sites in unit cell of superlattice
     """
 
-    def __init__(self, hnf, displacement_set, rotations, translations):
+    def __init__(
+        self,
+        hnf: np.ndarray,
+        displacement_set: np.ndarray,
+        rotations: np.ndarray,
+        translations: np.ndarray,
+    ):
         self.hnf = hnf
         self.num_sites_base = len(displacement_set)
         # TODO: check each site in displacement_set is in [0, 1)^dim
@@ -51,7 +53,7 @@ class DerivativeStructurePermutation(object):
         self.list_dsites = self.dhash.get_distinct_derivative_sites_list()
         self.list_csites = self.dhash.get_canonical_sites_list()
 
-        self.prm_t = self._get_translation_permutations()
+        self._prm_t = self._get_translation_permutations()
         self.prm_rigid = self._get_rigid_permutations()
 
     @property
@@ -63,10 +65,16 @@ class DerivativeStructurePermutation(object):
         return self.dhash.index
 
     @property
-    def num_site(self):
-        return self.dhash.num_site
+    def num_sites(self):
+        return self.dhash.num_sites
 
-    def _get_superlattice_invariant_subgroup(self, rotations, translations):
+    @property
+    def prm_t(self):
+        return self._prm_t
+
+    def _get_superlattice_invariant_subgroup(
+        self, rotations: np.ndarray, translations: np.ndarray
+    ):
         valid_rotations = []
         valid_translations = []
 
@@ -84,9 +92,11 @@ class DerivativeStructurePermutation(object):
         list_permutations = []
         for add_factor in self.dhash.get_all_factors():
             new_list_csites = []
-            for site_index, factor in self.list_csites:
-                new_factor = self.dhash.modulus_factor(np.array(factor) + np.array(add_factor))
-                new_csite = CanonicalSite(site_index, new_factor)
+            for csite in self.list_csites:
+                new_factor = self.dhash.modulus_factor(
+                    np.array(csite.factor) + np.array(add_factor)
+                )
+                new_csite = CanonicalSite(csite.site_index, new_factor)
                 new_list_csites.append(new_csite)
 
             # permutation represenation
@@ -100,15 +110,15 @@ class DerivativeStructurePermutation(object):
         return list_permutations
 
     def _get_rigid_permutations(self):
-        identity = list(range(self.num_site))
+        identity = list(range(self.num_sites))
         list_permutations = [
             identity,
         ]
 
         for R, tau in zip(self.rotations, self.translations):
             new_list_csites = []
-            for site_index, dimage in self.list_dsites:
-                frac_coord = self.displacement_set[site_index] + np.array(dimage)
+            for dsite in self.list_dsites:
+                frac_coord = self.displacement_set[dsite.site_index] + np.array(dsite.jimage)
                 acted_frac_coord = np.dot(R, frac_coord) + tau
                 new_csite = self.dhash.hash_frac_coords(acted_frac_coord)
                 assert new_csite is not None

@@ -13,7 +13,7 @@ from dsenum.coloring_generator import (
 )
 from dsenum.coloring import SiteColoringEnumerator
 from dsenum.permutation_group import DerivativeStructurePermutation
-from dsenum.converter import DerivativeMultiLatticeHash
+from dsenum.converter import convert_site_constraints
 from dsenum.derivative_structure import ColoringToStructure
 
 
@@ -61,9 +61,7 @@ def enumerate_derivative_structures(
 
     # site constraints
     if base_site_constraints:
-        site_constraints = DerivativeMultiLatticeHash.convert_site_constraints(
-            base_site_constraints, index
-        )
+        site_constraints = convert_site_constraints(base_site_constraints, index)
     else:
         site_constraints = None
 

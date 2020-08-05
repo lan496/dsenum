@@ -3,7 +3,7 @@ from pymatgen.core import Lattice
 from pymatgen.core.structure import Structure
 from pymatgen.core.sites import PeriodicSite
 
-from dsenum.converter import DerivativeMultiLatticeHash
+from dsenum.converter import DerivativeMultiLatticeHash, get_species_list
 
 
 class ColoringToStructure:
@@ -44,7 +44,7 @@ class ColoringToStructure:
 
     def convert_to_structure(self, coloring) -> Structure:
         list_psites = [
-            self.precomputed_psites[i][coloring[i]] for i in range(self.dshash.num_site)
+            self.precomputed_psites[i][coloring[i]] for i in range(self.dshash.num_sites)
         ]
         dstruct = Structure.from_sites(list_psites)
 
@@ -68,7 +68,7 @@ def get_supercell(structure: Structure, scaling_matrix: np.ndarray):
     base_lattice_matrix = structure.lattice.matrix
     lattice = Lattice(np.dot(scaling_matrix.T, base_lattice_matrix))
 
-    species = dshash.get_species_list([site.species for site in structure])
+    species = get_species_list(dshash.index, [site.species for site in structure])
 
     list_dsites = dshash.get_distinct_derivative_sites_list()
     new_cart_coords = [

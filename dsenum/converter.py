@@ -1,15 +1,11 @@
 from itertools import product
-from typing import Optional, List
-from collections import namedtuple
+from typing import Optional, List, Tuple
 
 import numpy as np
 
+from dsenum.site import DerivativeSite, CanonicalSite
 from dsenum.smith_normal_form import smith_normal_form
 from dsenum.utils import cast_integer_matrix
-
-
-DerivativeSite = namedtuple("DerivativeSite", ("site_index", "jimage"))
-CanonicalSite = namedtuple("CanonicalSite", ("site_index", "factor"))
 
 
 class DerivativeMultiLatticeHash:
@@ -22,16 +18,15 @@ class DerivativeMultiLatticeHash:
         fractinal coordinates in primitive cell of base structure
     """
 
-    def __init__(self, hnf, displacement_set):
-        self.hnf = hnf
-        self.dim = self.hnf.shape[0]
-        self.index = np.around(np.linalg.det(hnf)).astype(int)
+    def __init__(self, hnf: np.ndarray, displacement_set: np.ndarray):
+        self._hnf = hnf
+        self._index = np.around(np.linalg.det(self.hnf)).astype(int)
         assert self.index != 0
 
         self.displacement_set = displacement_set
+        assert self.dim == self.displacement_set.shape[1]
 
         self.num_site_base = len(displacement_set)
-        self.num_site = self.num_site_base * self.index
 
         D, L, R = smith_normal_form(self.hnf)
         self.snf = D
@@ -41,6 +36,22 @@ class DerivativeMultiLatticeHash:
 
         self.invariant_factors = tuple(self.snf.diagonal())
         self.shape = (self.num_site_base,) + self.invariant_factors
+
+    @property
+    def hnf(self):
+        return self._hnf
+
+    @property
+    def dim(self):
+        return self.hnf.shape[0]
+
+    @property
+    def index(self):
+        return self._index
+
+    @property
+    def num_sites(self):
+        return self.num_site_base * self.index
 
     def hash_derivative_site(self, dsite: DerivativeSite, return_image=False) -> CanonicalSite:
         """
@@ -94,7 +105,9 @@ class DerivativeMultiLatticeHash:
         list_dsites = [self.embed_to_derivative_site(csite) for csite in list_csites]
         return list_dsites
 
-    def get_canonical_and_derivative_sites_list(self):
+    def get_canonical_and_derivative_sites_list(
+        self,
+    ) -> List[Tuple[CanonicalSite, DerivativeSite]]:
         list_csites_dsites = []
         for site_index in range(len(self.displacement_set)):
             for factor in product(*[range(f) for f in self.invariant_factors]):
@@ -104,15 +117,15 @@ class DerivativeMultiLatticeHash:
 
         return list_csites_dsites
 
-    def get_all_factors(self):
+    def get_all_factors(self) -> List[Tuple[int, ...]]:
         list_factors = list(product(*[range(f) for f in self.invariant_factors]))
         return list_factors
 
-    def modulus_factor(self, factor):
+    def modulus_factor(self, factor: np.ndarray) -> np.ndarray:
         modded_factor = np.mod(factor, np.array(self.invariant_factors))
         return modded_factor
 
-    def get_frac_coords(self, dsite: DerivativeSite):
+    def get_frac_coords(self, dsite: DerivativeSite) -> np.ndarray:
         return self.displacement_set[dsite.site_index] + np.array(dsite.jimage)
 
     def hash_canonical_site(self, csite: CanonicalSite) -> int:
@@ -128,24 +141,24 @@ class DerivativeMultiLatticeHash:
         return csite
 
     def embed_to_derivative_site(self, csite: CanonicalSite) -> DerivativeSite:
-        site_index, factor = csite
-        jimage_base = cast_integer_matrix(np.dot(self.left_inv, factor))
-        dsite = DerivativeSite(site_index, jimage_base)
+        jimage_base = cast_integer_matrix(np.dot(self.left_inv, csite.factor))
+        dsite = DerivativeSite(csite.site_index, jimage_base)
         return dsite
 
-    def get_species_list(self, list_species):
-        """
-        tile list of species for derivative structure
-        """
-        species = []
-        for sp in list_species:
-            species.extend([sp] * self.index)
-        return species
 
-    @classmethod
-    def convert_site_constraints(cls, base_site_constraints, index):
-        site_constraints = []
-        for sc in base_site_constraints:
-            for _ in range(index):
-                site_constraints.append(sc)
-        return site_constraints
+def get_species_list(index, list_species):
+    """
+    tile list of species for derivative structure
+    """
+    species = []
+    for sp in list_species:
+        species.extend([sp] * index)
+    return species
+
+
+def convert_site_constraints(base_site_constraints, index):
+    site_constraints = []
+    for sc in base_site_constraints:
+        for _ in range(index):
+            site_constraints.append(sc)
+    return site_constraints
