@@ -5,41 +5,38 @@ from pymatgen.core.periodic_table import DummySpecie
 from pymatgen.io.cif import CifWriter
 from pymatgen.analysis.structure_prediction.volume_predictor import DLSVolumePredictor
 
-from dsenum.permutation_group import DerivativeMultiLatticeHash
-
 
 def get_lattice(kind):
-    if kind == 'hcp':
-        latt = Lattice(np.array([[1, 0, 0],
-                                 [0.5, np.sqrt(3) / 2, 0],
-                                 [0, 0, 2 * np.sqrt(6) / 3]]))
+    if kind == "hcp":
+        latt = Lattice(np.array([[1, 0, 0], [0.5, np.sqrt(3) / 2, 0], [0, 0, 2 * np.sqrt(6) / 3]]))
         coords = [[0, 0, 0], [1 / 3, 1 / 3, 0.5]]
     else:
         coords = [[0, 0, 0]]
 
-    if kind == 'sc':
+    if kind == "sc":
         latt = Lattice(np.eye(3))
-    elif kind == 'fcc':
+    elif kind == "fcc":
         latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-    elif kind == 'bcc':
+    elif kind == "bcc":
         latt = Lattice(np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]]))
-    elif kind == 'hex':
+    elif kind == "hex":
         latt = Lattice.hexagonal(1, 2 * np.sqrt(6) / 3)
-    elif kind == 'tet':
+    elif kind == "tet":
         latt = Lattice(np.diag([1, 1, 1.2]))
 
-    struct = Structure(latt, [DummySpecie('X')] * len(coords), coords)
+    struct = Structure(latt, [DummySpecie("X")] * len(coords), coords)
     return struct
 
 
 def get_fcc_with_vacancy():
     latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-    displacement_set = [[0, 0, 0],  # lattice point
-                        [0.25, 0.25, 0.25],  # tetrahedral site
-                        [0.5, 0.5, 0.5],  # octahedral site
-                        [0.75, 0.75, 0.75],  # tetrahedral site
-                        ]
-    struct = Structure(latt, [DummySpecie('X')] * len(displacement_set), displacement_set)
+    displacement_set = [
+        [0, 0, 0],  # lattice point
+        [0.25, 0.25, 0.25],  # tetrahedral site
+        [0.5, 0.5, 0.5],  # octahedral site
+        [0.75, 0.75, 0.75],  # tetrahedral site
+    ]
+    struct = Structure(latt, [DummySpecie("X")] * len(displacement_set), displacement_set)
     return struct
 
 
@@ -57,8 +54,8 @@ def get_symmetry_operations(structure):
     translations: array, (# of symmetry operations, 3)
     """
     sym_dataset = SpacegroupAnalyzer(structure).get_symmetry_dataset()
-    rotations = sym_dataset['rotations']
-    translations = sym_dataset['translations']
+    rotations = sym_dataset["rotations"]
+    translations = sym_dataset["translations"]
     return rotations, translations
 
 
@@ -83,28 +80,6 @@ def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
     return struct
 
 
-def get_supercell(structure: Structure, scaling_matrix: np.ndarray):
-    """
-    Parameters
-    ----------
-    structure: pymatgen.core.Structure
-    scaling_matrix: array, lower triangular integer matrix
-        the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]
-
-    Returns
-    -------
-    ds: pymatgen.core.Structure
-    """
-    dshash = DerivativeMultiLatticeHash(scaling_matrix, structure.frac_coords)
-
-    base_lattice_matrix = structure.lattice.matrix
-    lattice = Lattice(np.dot(scaling_matrix.T, base_lattice_matrix))
-
-    species = dshash.get_species_list([site.species for site in structure])
-
-    list_dsites = dshash.get_distinct_derivative_sites_list()
-    new_cart_coords = [np.dot(dshash.get_frac_coords(dsite), base_lattice_matrix)
-                       for dsite in list_dsites]
-
-    ds = Structure(lattice, species, new_cart_coords, coords_are_cartesian=True)
-    return ds
+def cast_integer_matrix(arr: np.ndarray) -> np.ndarray:
+    arr_int = np.around(arr).astype(np.int)
+    return arr_int
