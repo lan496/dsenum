@@ -100,7 +100,7 @@ class DerivativeStructurePermutation:
                 new_list_csites.append(new_csite)
 
             # permutation represenation
-            perm = [self.dhash.hash_canonical_site(csite) for csite in new_list_csites]
+            perm = [self.dhash.ravel_canonical_site(csite) for csite in new_list_csites]
             assert is_permutation(perm)
             list_permutations.append(perm)
 
@@ -124,7 +124,7 @@ class DerivativeStructurePermutation:
                 assert new_csite is not None
                 new_list_csites.append(new_csite)
 
-            perm = [self.dhash.hash_canonical_site(csite) for csite in new_list_csites]
+            perm = [self.dhash.ravel_canonical_site(csite) for csite in new_list_csites]
             assert is_permutation(perm)
             if perm not in list_permutations:
                 list_permutations.append(perm)

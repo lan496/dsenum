@@ -10,6 +10,17 @@ from dsenum.utils import cast_integer_matrix
 
 class DerivativeMultiLatticeHash:
     """
+                hash_frac_coords               ravel_canonical_site
+    frac_coords ---------------> CanonicalSite -------------------------> Int
+       |                            |^         <-------------------------
+       |                            ||          unravel_to_canonical_site
+       |                            ||
+       |    embed_to_derivative_site||hash_derivative_site
+       |                            ||
+       |                            V|
+       |-----------------------> DerivativeSite
+            get_frac_coords
+
     Parameters
     ----------
     hnf: array, (dim, dim)
@@ -97,7 +108,7 @@ class DerivativeMultiLatticeHash:
                 csite = CanonicalSite(site_index, tuple(factor))
                 list_csites.append(csite)
 
-        assert all([self.hash_canonical_site(csite) == i for i, csite in enumerate(list_csites)])
+        assert all([self.ravel_canonical_site(csite) == i for i, csite in enumerate(list_csites)])
         return list_csites
 
     def get_distinct_derivative_sites_list(self) -> List[DerivativeSite]:
@@ -128,13 +139,13 @@ class DerivativeMultiLatticeHash:
     def get_frac_coords(self, dsite: DerivativeSite) -> np.ndarray:
         return self.displacement_set[dsite.site_index] + np.array(dsite.jimage)
 
-    def hash_canonical_site(self, csite: CanonicalSite) -> int:
+    def ravel_canonical_site(self, csite: CanonicalSite) -> int:
         # hash canonical site s.t. self.get_canonical_sites_list <=> identity
         multi_index = (csite.site_index,) + tuple(csite.factor)
         raveled = np.ravel_multi_index(multi_index, self.shape)
         return raveled
 
-    def unhash_indices_to_canonical_site(self, indices: int) -> CanonicalSite:
+    def unravel_to_canonical_site(self, indices: int) -> CanonicalSite:
         unraveled = np.unravel_index(indices, self.shape)
         site_index, factor = unraveled[0], unraveled[1:]
         csite = CanonicalSite(site_index, factor)
