@@ -18,8 +18,9 @@ Derivative structure enumerator for multilattice
 ```
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
+pip install Cython
 pip install -r requirements.txt
-pip install -e .
+python setup.py install
 pre-commit install
 ```
 
@@ -52,6 +53,25 @@ index = 4
 dstructs = enumerate_derivative_structures(structure, index, num_type)
 print(len(dstructs))  # -> 12
 ```
+
+## Development
+
+### Github Actions
+To use `actions/setup-python`, we need to use the full container (costs >18GB...)
+
+```
+act -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
+```
+
+### Pre-commit
+- black
+    see `pyproject.toml` and `.pre-commit-config.yaml`
+    if you do not want to format codes, wrap the block by `fmt: off/on`
+    ```
+    # fmt: off
+    something_you_do_not_want_to_be_formatted
+    # fmt: on
+    ```
 
 ## Official Implementation
 - https://github.com/msg-byu/enumlib

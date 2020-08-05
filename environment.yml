@@ -1,17 +1,18 @@
 name: dsenum
 channels:
-    - conda-forge
-    - defaults
+  - conda-forge
+  - defaults
 dependencies:
-    - sympy
-    - scipy
-    - matplotlib
-    - joblib
-    - pytest==5.4.1
-    - tqdm
-    - pip:
-      - cython>=0.27.3
-      - numpy==1.18.0
-      - pymatgen>=2020.1.28
-      - pre-commit==2.2.0
-      - black==19.10b0
+  - sympy
+  - scipy
+  - matplotlib
+  - joblib
+  - pytest==5.4.1
+  - pytest-cov==2.8.1
+  - tqdm
+  - pip:
+    - cython>=0.27.3
+    - numpy==1.18.0
+    - pymatgen>=2020.1.28
+    - pre-commit==2.2.0
+    - black==19.10b0

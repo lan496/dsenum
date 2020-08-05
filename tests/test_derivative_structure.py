@@ -1,5 +1,3 @@
-import os
-
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.periodic_table import Specie
 
@@ -36,7 +34,6 @@ def test_hcp():
 
 
 def check(base_structure, num_type, indices, species, name):
-    os.makedirs(os.path.join("tests", name), exist_ok=True)
     for index in indices:
         list_ds = enumerate_derivative_structures(
             base_structure,
