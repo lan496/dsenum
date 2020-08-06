@@ -27,6 +27,7 @@ jobs:
         pip install --upgrade pip
         pip --version
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
         pip install -e .
   conda-install:
     runs-on: ubuntu-latest
@@ -70,6 +71,7 @@ jobs:
         pip install --upgrade pip
         pip --version
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
         pip install -e .
     - name: Test with pytest
       run: |
