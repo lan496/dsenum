@@ -11,9 +11,7 @@ Derivative structure enumerator for multilattice
 ### Requirements
 - python>=3.7
 
-### install
-
-#### pip
+### pip
 ```
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
@@ -22,7 +20,7 @@ python setup.py install
 pre-commit install
 ```
 
-#### conda
+### conda
 ```script
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
@@ -48,7 +46,7 @@ structure = Structure(latt, [DummySpecie('X')] * len(coords), coords)
 num_type = 2
 index = 4
 
-dstructs = StructureEnumerator(structure, index, num_type)
+dstructs = StructureEnumerator(structure, index, num_type).generate()
 print(len(dstructs))  # -> 12
 ```
 
