@@ -4,6 +4,4 @@ sympy
 scipy
 matplotlib
 joblib
-pytest==5.4.1
-pytest-cov==2.8.1
 tqdm

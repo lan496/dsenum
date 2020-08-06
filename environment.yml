@@ -11,6 +11,7 @@ dependencies:
   - pytest==5.4.1
   - pytest-cov==2.8.1
   - tqdm
+  - sphinx
   - pip:
     - numpy==1.18.0
     - pymatgen>=2020.1.28
