@@ -41,6 +41,7 @@ jobs:
       - name: Build documents
         run: |
           cd docs
+          sphinx-apidoc -f -o source ../dsenum
           make html
 
       - name: Deploy
