@@ -1,0 +1,465 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dsenum.enumerate &mdash; dsenum 0.3.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> dsenum
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dsenum</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>dsenum.enumerate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for dsenum.enumerate</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">DummySpecie</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dsenum.utils</span> <span class="kn">import</span> <span class="n">get_symmetry_operations</span>
+<span class="kn">from</span> <span class="nn">dsenum.superlattice</span> <span class="kn">import</span> <span class="n">generate_symmetry_distinct_superlattices</span>
+<span class="kn">from</span> <span class="nn">dsenum.coloring_generator</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ColoringGenerator</span><span class="p">,</span>
+    <span class="n">FixedConcentrationColoringGenerator</span><span class="p">,</span>
+    <span class="n">ListBasedColoringGenerator</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">dsenum.coloring</span> <span class="kn">import</span> <span class="n">SiteColoringEnumerator</span>
+<span class="kn">from</span> <span class="nn">dsenum.permutation_group</span> <span class="kn">import</span> <span class="n">DerivativeStructurePermutation</span>
+<span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">convert_site_constraints</span>
+<span class="kn">from</span> <span class="nn">dsenum.derivative_structure</span> <span class="kn">import</span> <span class="n">ColoringToStructure</span>
+
+
+<div class="viewcode-block" id="StructureEnumerator"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator">[docs]</a><span class="k">class</span> <span class="nc">StructureEnumerator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameter</span>
+<span class="sd">    ---------</span>
+<span class="sd">    base_structure: Structure</span>
+<span class="sd">    index: int</span>
+<span class="sd">    num_types: int</span>
+<span class="sd">    mapping_color_species: (Optional) if specified, use these species in derivative structures</span>
+<span class="sd">    composition_constraints: (Optional) None or list of int</span>
+<span class="sd">    base_site_constraints: (Optional) list (num_elements, num_color)</span>
+<span class="sd">        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</span>
+<span class="sd">    color_exchange: identify color-exchanging</span>
+<span class="sd">    leave_superperiodic: do not discard superperiodic coloring</span>
+<span class="sd">    use_all_colors: bool</span>
+<span class="sd">    method: &quot;direct&quot; or &quot;lexicographic&quot;, so far</span>
+<span class="sd">    n_jobs: core in lexicographic coset enumeration(only used when method=&#39;lexicographic&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list_ds: list of derivative structure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">base_structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_types</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">mapping_color_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">composition_constraints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">base_site_constraints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">color_exchange</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">leave_superperiodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_all_colors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span> <span class="o">=</span> <span class="n">base_structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span> <span class="o">=</span> <span class="n">num_types</span>
+
+        <span class="c1"># settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color_exchange</span> <span class="o">=</span> <span class="n">color_exchange</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">leave_superperiodic</span> <span class="o">=</span> <span class="n">leave_superperiodic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_all_colors</span> <span class="o">=</span> <span class="n">use_all_colors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span> <span class="o">=</span> <span class="n">n_jobs</span>
+
+        <span class="n">list_reduced_HNF</span><span class="p">,</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span> <span class="o">=</span> <span class="n">generate_symmetry_distinct_superlattices</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">base_structure</span><span class="p">,</span> <span class="n">return_symops</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_reduced_HNF</span> <span class="o">=</span> <span class="n">list_reduced_HNF</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="o">=</span> <span class="n">rotations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">translations</span> <span class="o">=</span> <span class="n">translations</span>
+
+        <span class="c1"># site constraints</span>
+        <span class="k">if</span> <span class="n">base_site_constraints</span><span class="p">:</span>
+            <span class="n">site_constraints</span> <span class="o">=</span> <span class="n">convert_site_constraints</span><span class="p">(</span><span class="n">base_site_constraints</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">site_constraints</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># composition constraints</span>
+        <span class="k">if</span> <span class="n">composition_constraints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">ColoringGenerator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span> <span class="n">site_constraints</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">FixedConcentrationColoringGenerator</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span> <span class="n">composition_constraints</span><span class="p">,</span> <span class="n">site_constraints</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cl_generator</span> <span class="o">=</span> <span class="n">cl_generator</span>
+
+        <span class="k">if</span> <span class="n">mapping_color_species</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapping_color_species</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mapping_color_species must have num_type species.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mapping_color_species</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mapping_color_species</span> <span class="o">=</span> <span class="p">[</span><span class="n">DummySpecie</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_species</span> <span class="o">=</span> <span class="n">mapping_color_species</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_sites_base</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="o">.</span><span class="n">num_sites</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sites_base</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+
+<div class="viewcode-block" id="StructureEnumerator.generate"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list_ds: list of derivative structure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+
+        <span class="n">list_ds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">hnf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_reduced_HNF</span><span class="p">):</span>
+            <span class="n">list_ds_hnf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_with_hnf</span><span class="p">(</span><span class="n">hnf</span><span class="p">)</span>
+            <span class="n">list_ds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">list_ds_hnf</span><span class="p">)</span>
+
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;total: </span><span class="si">{}</span><span class="s2"> (Time: </span><span class="si">{:.4}</span><span class="s2">sec)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_ds</span><span class="p">),</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">list_ds</span></div>
+
+    <span class="k">def</span> <span class="nf">_generate_with_hnf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hnf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">displacement_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="o">.</span><span class="n">frac_coords</span>
+        <span class="n">ds_permutation</span> <span class="o">=</span> <span class="n">DerivativeStructurePermutation</span><span class="p">(</span>
+            <span class="n">hnf</span><span class="p">,</span> <span class="n">displacement_set</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">translations</span>
+        <span class="p">)</span>
+        <span class="n">sc_enum</span> <span class="o">=</span> <span class="n">SiteColoringEnumerator</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span>
+            <span class="n">ds_permutation</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cl_generator</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">color_exchange</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">leave_superperiodic</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">use_all_colors</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">colorings</span> <span class="o">=</span> <span class="n">sc_enum</span><span class="o">.</span><span class="n">unique_colorings</span><span class="p">()</span>
+
+        <span class="c1"># convert to Structure object</span>
+        <span class="n">cts</span> <span class="o">=</span> <span class="n">ColoringToStructure</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="p">,</span> <span class="n">ds_permutation</span><span class="o">.</span><span class="n">dhash</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_species</span>
+        <span class="p">)</span>
+        <span class="n">list_ds</span> <span class="o">=</span> <span class="p">[</span><span class="n">cts</span><span class="o">.</span><span class="n">convert_to_structure</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">colorings</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">list_ds</span></div>
+
+
+<div class="viewcode-block" id="enumerate_derivative_structures"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.enumerate_derivative_structures">[docs]</a><span class="k">def</span> <span class="nf">enumerate_derivative_structures</span><span class="p">(</span>
+    <span class="n">base_structure</span><span class="p">,</span>
+    <span class="n">index</span><span class="p">,</span>
+    <span class="n">num_type</span><span class="p">,</span>
+    <span class="n">mapping_color_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">composition_constraints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">base_site_constraints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">color_exchange</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">leave_superperiodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">use_all_colors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameter</span>
+<span class="sd">    ---------</span>
+<span class="sd">    base_structure: Structure</span>
+<span class="sd">    index: int</span>
+<span class="sd">    num_type: int</span>
+<span class="sd">    mapping_color_species: (Optional) if specified, use these species in derivative structures</span>
+<span class="sd">    composition_constraints: (Optional) None or list of int</span>
+<span class="sd">    base_site_constraints: (Optional) list (num_elements, num_color)</span>
+<span class="sd">        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</span>
+<span class="sd">    color_exchange: identify color-exchanging</span>
+<span class="sd">    leave_superperiodic: do not discard superperiodic coloring</span>
+<span class="sd">    use_all_colors: bool</span>
+<span class="sd">    method: &quot;direct&quot; or &quot;lexicographic&quot;, so far</span>
+<span class="sd">    n_jobs: core in lexicographic coset enumeration(only used when method=&#39;lexicographic&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list_ds: list of derivative structure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Deprecated. Use StructureEnumerator instead&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="n">se</span> <span class="o">=</span> <span class="n">StructureEnumerator</span><span class="p">(</span>
+        <span class="n">base_structure</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">,</span>
+        <span class="n">num_type</span><span class="p">,</span>
+        <span class="n">mapping_color_species</span><span class="p">,</span>
+        <span class="n">composition_constraints</span><span class="p">,</span>
+        <span class="n">base_site_constraints</span><span class="p">,</span>
+        <span class="n">color_exchange</span><span class="p">,</span>
+        <span class="n">leave_superperiodic</span><span class="p">,</span>
+        <span class="n">use_all_colors</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">se</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="remove_symmetry_duplicates"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.remove_symmetry_duplicates">[docs]</a><span class="k">def</span> <span class="nf">remove_symmetry_duplicates</span><span class="p">(</span>
+    <span class="n">base_structure</span><span class="p">,</span>
+    <span class="n">hnf</span><span class="p">,</span>
+    <span class="n">num_type</span><span class="p">,</span>
+    <span class="n">list_colorings</span><span class="p">,</span>
+    <span class="n">color_exchange</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">leave_superperiodic</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">use_all_colors</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">displacement_set</span> <span class="o">=</span> <span class="n">base_structure</span><span class="o">.</span><span class="n">frac_coords</span>
+    <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span> <span class="o">=</span> <span class="n">get_symmetry_operations</span><span class="p">(</span><span class="n">base_structure</span><span class="p">)</span>
+    <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">ListBasedColoringGenerator</span><span class="p">(</span><span class="n">num_type</span><span class="p">,</span> <span class="n">list_colorings</span><span class="p">)</span>
+
+    <span class="n">ds_permutation</span> <span class="o">=</span> <span class="n">DerivativeStructurePermutation</span><span class="p">(</span><span class="n">hnf</span><span class="p">,</span> <span class="n">displacement_set</span><span class="p">,</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">)</span>
+    <span class="n">sc_enum</span> <span class="o">=</span> <span class="n">SiteColoringEnumerator</span><span class="p">(</span>
+        <span class="n">num_type</span><span class="p">,</span> <span class="n">ds_permutation</span><span class="p">,</span> <span class="n">cl_generator</span><span class="p">,</span> <span class="n">color_exchange</span><span class="p">,</span> <span class="n">leave_superperiodic</span><span class="p">,</span> <span class="n">use_all_colors</span>
+    <span class="p">)</span>
+    <span class="n">colorings</span> <span class="o">=</span> <span class="n">sc_enum</span><span class="o">.</span><span class="n">unique_colorings</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">colorings</span></div>
+
+
+<div class="viewcode-block" id="remove_symmetry_duplicates_from_generator"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.remove_symmetry_duplicates_from_generator">[docs]</a><span class="k">def</span> <span class="nf">remove_symmetry_duplicates_from_generator</span><span class="p">(</span>
+    <span class="n">base_structure</span><span class="p">,</span>
+    <span class="n">hnf</span><span class="p">,</span>
+    <span class="n">num_type</span><span class="p">,</span>
+    <span class="n">list_colorings</span><span class="p">,</span>
+    <span class="n">color_exchange</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">leave_superperiodic</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">use_all_colors</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">displacement_set</span> <span class="o">=</span> <span class="n">base_structure</span><span class="o">.</span><span class="n">frac_coords</span>
+    <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span> <span class="o">=</span> <span class="n">get_symmetry_operations</span><span class="p">(</span><span class="n">base_structure</span><span class="p">)</span>
+    <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">ListBasedColoringGenerator</span><span class="p">(</span><span class="n">num_type</span><span class="p">,</span> <span class="n">list_colorings</span><span class="p">)</span>
+
+    <span class="n">ds_permutation</span> <span class="o">=</span> <span class="n">DerivativeStructurePermutation</span><span class="p">(</span><span class="n">hnf</span><span class="p">,</span> <span class="n">displacement_set</span><span class="p">,</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">)</span>
+    <span class="n">sc_enum</span> <span class="o">=</span> <span class="n">SiteColoringEnumerator</span><span class="p">(</span>
+        <span class="n">num_type</span><span class="p">,</span>
+        <span class="n">ds_permutation</span><span class="p">,</span>
+        <span class="n">cl_generator</span><span class="p">,</span>
+        <span class="n">color_exchange</span><span class="p">,</span>
+        <span class="n">leave_superperiodic</span><span class="p">,</span>
+        <span class="n">use_all_colors</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">colorings</span> <span class="o">=</span> <span class="n">sc_enum</span><span class="o">.</span><span class="n">unique_colorings</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">colorings</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">get_lattice</span>
+
+    <span class="n">structure</span> <span class="o">=</span> <span class="n">get_lattice</span><span class="p">(</span><span class="s2">&quot;fcc&quot;</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">num_type</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">se</span> <span class="o">=</span> <span class="n">StructureEnumerator</span><span class="p">(</span>
+        <span class="n">structure</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">,</span>
+        <span class="n">num_type</span><span class="p">,</span>
+        <span class="n">color_exchange</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">leave_superperiodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_all_colors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">list_ds</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Kohei Shinohara
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

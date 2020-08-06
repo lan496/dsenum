@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dsenum.permutation_group &mdash; dsenum 0.3.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> dsenum
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dsenum</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>dsenum.permutation_group</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for dsenum.permutation_group</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dsenum.site</span> <span class="kn">import</span> <span class="n">CanonicalSite</span>
+<span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">DerivativeMultiLatticeHash</span>
+<span class="kn">from</span> <span class="nn">dsenum.utils</span> <span class="kn">import</span> <span class="n">cast_integer_matrix</span>
+
+
+<div class="viewcode-block" id="DerivativeStructurePermutation"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.DerivativeStructurePermutation">[docs]</a><span class="k">class</span> <span class="nc">DerivativeStructurePermutation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Permutation Representation of space group of superlattice</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hnf: array, (dim, dim)</span>
+<span class="sd">        Hermite normal form(lower triangular)</span>
+<span class="sd">    displacement_set: array, (num_site_parent, dim)</span>
+<span class="sd">        fractinal coordinates in primitive cell of base structure</span>
+<span class="sd">    rotations: array, (# of symmetry operations, dim, dim)</span>
+<span class="sd">        rotations with primitive basis for base structure</span>
+<span class="sd">    translations: array, (# of symmetry operations, dim)</span>
+<span class="sd">        translations with primitive basis for base structure</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dim : int</span>
+<span class="sd">        dimention of lattice</span>
+<span class="sd">    index: int</span>
+<span class="sd">        # of parent multilattice in super lattice</span>
+<span class="sd">    num_site: int</span>
+<span class="sd">        # of sites in unit cell of superlattice</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hnf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">displacement_set</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rotations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">translations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hnf</span> <span class="o">=</span> <span class="n">hnf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_sites_base</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">displacement_set</span><span class="p">)</span>
+        <span class="c1"># TODO: check each site in displacement_set is in [0, 1)^dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displacement_set</span> <span class="o">=</span> <span class="n">displacement_set</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span> <span class="o">=</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hnf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacement_set</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">translations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_superlattice_invariant_subgroup</span><span class="p">(</span>
+            <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_dsites</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">get_distinct_derivative_sites_list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_csites</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">get_canonical_sites_list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prm_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_translation_permutations</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prm_rigid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_rigid_permutations</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">dim</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">num_sites</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prm_t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prm_t</span>
+
+    <span class="k">def</span> <span class="nf">_get_superlattice_invariant_subgroup</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">rotations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">translations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">):</span>
+        <span class="n">valid_rotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">valid_translations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">R</span><span class="p">,</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_same_lattice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hnf</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">hnf</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">valid_rotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+            <span class="n">valid_translations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">rotations</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_rotations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valid_rotations</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">valid_translations</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_translation_permutations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">list_permutations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">add_factor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">get_all_factors</span><span class="p">():</span>
+            <span class="n">new_list_csites</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">csite</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_csites</span><span class="p">:</span>
+                <span class="n">new_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">modulus_factor</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">csite</span><span class="o">.</span><span class="n">factor</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">add_factor</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">new_csite</span> <span class="o">=</span> <span class="n">CanonicalSite</span><span class="p">(</span><span class="n">csite</span><span class="o">.</span><span class="n">site_index</span><span class="p">,</span> <span class="n">new_factor</span><span class="p">)</span>
+                <span class="n">new_list_csites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_csite</span><span class="p">)</span>
+
+            <span class="c1"># permutation represenation</span>
+            <span class="n">perm</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">ravel_canonical_site</span><span class="p">(</span><span class="n">csite</span><span class="p">)</span> <span class="k">for</span> <span class="n">csite</span> <span class="ow">in</span> <span class="n">new_list_csites</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">is_permutation</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+            <span class="n">list_permutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+
+        <span class="c1"># assume list_permutations[0] is identity</span>
+        <span class="k">assert</span> <span class="n">is_identity_permutation</span><span class="p">(</span><span class="n">list_permutations</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">list_permutations</span>
+
+    <span class="k">def</span> <span class="nf">_get_rigid_permutations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">))</span>
+        <span class="n">list_permutations</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">identity</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">R</span><span class="p">,</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">translations</span><span class="p">):</span>
+            <span class="n">new_list_csites</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">dsite</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_dsites</span><span class="p">:</span>
+                <span class="n">frac_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacement_set</span><span class="p">[</span><span class="n">dsite</span><span class="o">.</span><span class="n">site_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dsite</span><span class="o">.</span><span class="n">jimage</span><span class="p">)</span>
+                <span class="n">acted_frac_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">frac_coord</span><span class="p">)</span> <span class="o">+</span> <span class="n">tau</span>
+                <span class="n">new_csite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">hash_frac_coords</span><span class="p">(</span><span class="n">acted_frac_coord</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">new_csite</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="n">new_list_csites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_csite</span><span class="p">)</span>
+
+            <span class="n">perm</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dhash</span><span class="o">.</span><span class="n">ravel_canonical_site</span><span class="p">(</span><span class="n">csite</span><span class="p">)</span> <span class="k">for</span> <span class="n">csite</span> <span class="ow">in</span> <span class="n">new_list_csites</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">is_permutation</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">perm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_permutations</span><span class="p">:</span>
+                <span class="n">list_permutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+
+        <span class="c1"># this set of permutations is not group!</span>
+        <span class="k">return</span> <span class="n">list_permutations</span>
+
+<div class="viewcode-block" id="DerivativeStructurePermutation.get_symmetry_operation_permutations"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.DerivativeStructurePermutation.get_symmetry_operation_permutations">[docs]</a>    <span class="k">def</span> <span class="nf">get_symmetry_operation_permutations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">list_permutations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">p1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm_t</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">p2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm_rigid</span><span class="p">:</span>
+                <span class="n">perm</span> <span class="o">=</span> <span class="n">product_permutations</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">perm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_permutations</span>
+                <span class="n">list_permutations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+
+        <span class="c1"># assume list_permutations[0] is identity</span>
+        <span class="k">assert</span> <span class="n">is_identity_permutation</span><span class="p">(</span><span class="n">list_permutations</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">list_permutations</span></div></div>
+
+
+<div class="viewcode-block" id="is_unimodular"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.is_unimodular">[docs]</a><span class="k">def</span> <span class="nf">is_unimodular</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">M</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="is_same_lattice"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.is_same_lattice">[docs]</a><span class="k">def</span> <span class="nf">is_same_lattice</span><span class="p">(</span><span class="n">H1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">H2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">H1</span><span class="p">,</span> <span class="n">H2</span><span class="p">)</span>
+    <span class="n">M_int</span> <span class="o">=</span> <span class="n">cast_integer_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">H1</span><span class="p">,</span> <span class="n">M_int</span><span class="p">),</span> <span class="n">H2</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">is_unimodular</span><span class="p">(</span><span class="n">M_int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="is_permutation"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.is_permutation">[docs]</a><span class="k">def</span> <span class="nf">is_permutation</span><span class="p">(</span><span class="n">perm</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">perm</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_identity_permutation"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.is_identity_permutation">[docs]</a><span class="k">def</span> <span class="nf">is_identity_permutation</span><span class="p">(</span><span class="n">perm</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">index</span> <span class="o">==</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">perm</span><span class="p">)]):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="is_permutation_group"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.is_permutation_group">[docs]</a><span class="k">def</span> <span class="nf">is_permutation_group</span><span class="p">(</span><span class="n">list_permutations</span><span class="p">):</span>
+    <span class="n">list_permutations_tuple</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span> <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">list_permutations</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">list_permutations_tuple</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_permutations_tuple</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">list_permutations</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;not unique permutations&quot;</span><span class="p">)</span>
+
+    <span class="c1"># identity</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">is_identity_permutation</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span> <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">list_permutations</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is not identity&quot;</span><span class="p">)</span>
+
+    <span class="c1"># close</span>
+    <span class="k">for</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">list_permutations</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">p1p2</span> <span class="o">=</span> <span class="n">product_permutations</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p1p2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_permutations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;not closed in product&quot;</span><span class="p">)</span>
+
+    <span class="c1"># inverse</span>
+    <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">list_permutations</span><span class="p">:</span>
+        <span class="n">perm_inv</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">perm</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">perm</span><span class="p">):</span>
+            <span class="n">perm_inv</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="k">if</span> <span class="n">perm_inv</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_permutations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;not contains inverse&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="product_permutations"><a class="viewcode-back" href="../../dsenum.html#dsenum.permutation_group.product_permutations">[docs]</a><span class="k">def</span> <span class="nf">product_permutations</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    (p1 p2)(i) = p1(p2(i))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">perm</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="n">p2</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">))]</span>
+    <span class="k">return</span> <span class="n">perm</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Kohei Shinohara
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

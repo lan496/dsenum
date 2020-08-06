@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dsenum.derivative_structure &mdash; dsenum 0.3.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> dsenum
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dsenum</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>dsenum.derivative_structure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for dsenum.derivative_structure</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Lattice</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.sites</span> <span class="kn">import</span> <span class="n">PeriodicSite</span>
+
+<span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">,</span> <span class="n">get_species_list</span>
+
+
+<div class="viewcode-block" id="ColoringToStructure"><a class="viewcode-back" href="../../dsenum.html#dsenum.derivative_structure.ColoringToStructure">[docs]</a><span class="k">class</span> <span class="nc">ColoringToStructure</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">base_structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span>
+        <span class="n">dshash</span><span class="p">:</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">,</span>
+        <span class="n">mapping_color_to_species</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span> <span class="o">=</span> <span class="n">base_structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dshash</span> <span class="o">=</span> <span class="n">dshash</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_to_species</span> <span class="o">=</span> <span class="n">mapping_color_to_species</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lattice_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dshash</span><span class="o">.</span><span class="n">hnf</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="c1"># lattice of derivative structure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_matrix</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">canonical_derivative_sites</span> <span class="o">=</span> <span class="n">dshash</span><span class="o">.</span><span class="n">get_canonical_and_derivative_sites_list</span><span class="p">()</span>
+
+        <span class="n">list_coords</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">dsite</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">canonical_derivative_sites</span><span class="p">:</span>
+            <span class="n">coords</span> <span class="o">=</span> <span class="n">dshash</span><span class="o">.</span><span class="n">get_frac_coords</span><span class="p">(</span><span class="n">dsite</span><span class="p">)</span>
+            <span class="n">cart_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_matrix</span><span class="p">)</span>
+            <span class="n">list_coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cart_coords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_coords</span> <span class="o">=</span> <span class="n">list_coords</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">precomputed_psites</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="n">PeriodicSite</span><span class="p">(</span><span class="n">sp</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_to_species</span>
+            <span class="p">]</span>
+            <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_coords</span>
+        <span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span>
+
+<div class="viewcode-block" id="ColoringToStructure.convert_to_structure"><a class="viewcode-back" href="../../dsenum.html#dsenum.derivative_structure.ColoringToStructure.convert_to_structure">[docs]</a>    <span class="k">def</span> <span class="nf">convert_to_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coloring</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Structure</span><span class="p">:</span>
+        <span class="n">list_psites</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">precomputed_psites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">coloring</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dshash</span><span class="o">.</span><span class="n">num_sites</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">dstruct</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_sites</span><span class="p">(</span><span class="n">list_psites</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dstruct</span></div></div>
+
+
+<div class="viewcode-block" id="get_supercell"><a class="viewcode-back" href="../../dsenum.html#dsenum.derivative_structure.get_supercell">[docs]</a><span class="k">def</span> <span class="nf">get_supercell</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">scaling_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    structure: pymatgen.core.Structure</span>
+<span class="sd">    scaling_matrix: array, lower triangular integer matrix</span>
+<span class="sd">        the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ds: pymatgen.core.Structure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dshash</span> <span class="o">=</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">(</span><span class="n">scaling_matrix</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">)</span>
+
+    <span class="n">base_lattice_matrix</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span>
+    <span class="n">lattice</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">scaling_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">base_lattice_matrix</span><span class="p">))</span>
+
+    <span class="n">species</span> <span class="o">=</span> <span class="n">get_species_list</span><span class="p">(</span><span class="n">dshash</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="p">[</span><span class="n">site</span><span class="o">.</span><span class="n">species</span> <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">])</span>
+
+    <span class="n">list_dsites</span> <span class="o">=</span> <span class="n">dshash</span><span class="o">.</span><span class="n">get_distinct_derivative_sites_list</span><span class="p">()</span>
+    <span class="n">new_cart_coords</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dshash</span><span class="o">.</span><span class="n">get_frac_coords</span><span class="p">(</span><span class="n">dsite</span><span class="p">),</span> <span class="n">base_lattice_matrix</span><span class="p">)</span> <span class="k">for</span> <span class="n">dsite</span> <span class="ow">in</span> <span class="n">list_dsites</span>
+    <span class="p">]</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">new_cart_coords</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Kohei Shinohara
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

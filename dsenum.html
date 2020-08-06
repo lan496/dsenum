@@ -1,0 +1,1080 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>dsenum package &mdash; dsenum 0.3.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> dsenum
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">dsenum package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-dsenum.coloring">dsenum.coloring module</a></li>
+<li><a class="reference internal" href="#module-dsenum.coloring_generator">dsenum.coloring_generator module</a></li>
+<li><a class="reference internal" href="#module-dsenum.converter">dsenum.converter module</a></li>
+<li><a class="reference internal" href="#module-dsenum.core">dsenum.core module</a></li>
+<li><a class="reference internal" href="#id5">dsenum.core module</a></li>
+<li><a class="reference internal" href="#module-dsenum.derivative_structure">dsenum.derivative_structure module</a></li>
+<li><a class="reference internal" href="#module-dsenum.enumerate">dsenum.enumerate module</a></li>
+<li><a class="reference internal" href="#module-dsenum.permutation_group">dsenum.permutation_group module</a></li>
+<li><a class="reference internal" href="#module-dsenum.polya">dsenum.polya module</a></li>
+<li><a class="reference internal" href="#module-dsenum.site">dsenum.site module</a></li>
+<li><a class="reference internal" href="#module-dsenum.smith_normal_form">dsenum.smith_normal_form module</a></li>
+<li><a class="reference internal" href="#module-dsenum.superlattice">dsenum.superlattice module</a></li>
+<li><a class="reference internal" href="#module-dsenum.utils">dsenum.utils module</a></li>
+<li><a class="reference internal" href="#module-dsenum">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dsenum</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>dsenum package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/dsenum.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dsenum-package">
+<h1>dsenum package<a class="headerlink" href="#dsenum-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dsenum.coloring">
+<span id="dsenum-coloring-module"></span><h2>dsenum.coloring module<a class="headerlink" href="#module-dsenum.coloring" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.coloring.DirectColoringEnumerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring.</code><code class="sig-name descname">DirectColoringEnumerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">permutation_group</span></em>, <em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">cl_generator</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator">dsenum.coloring_generator.ColoringGenerator</a></span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring.html#DirectColoringEnumerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring.DirectColoringEnumerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>permutation_group</strong> (<em>list of permutation</em>) – </p></li>
+<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
+<li><p><strong>cl_generator</strong> (<a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator"><em>ColoringGenerator</em></a>) – </p></li>
+<li><p><strong>color_exchange</strong> (<em>bool</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="dsenum.coloring.DirectColoringEnumerator.coset_enumerate">
+<code class="sig-name descname">coset_enumerate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring.html#DirectColoringEnumerator.coset_enumerate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring.DirectColoringEnumerator.coset_enumerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.coloring.LexicographicColoringEnumerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring.</code><code class="sig-name descname">LexicographicColoringEnumerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">permutation_group</span></em>, <em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">cl_generator</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator">dsenum.coloring_generator.ColoringGenerator</a></span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring.html#LexicographicColoringEnumerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring.LexicographicColoringEnumerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>this algorithm takes the most lexicographically small colorings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>permutation_group</strong> (<em>list of permutation</em>) – </p></li>
+<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
+<li><p><strong>cl_generator</strong> (<a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator"><em>ColoringGenerator</em></a>) – </p></li>
+<li><p><strong>color_exchange</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em>) – when n_jobs &gt; 1, use multiprocessing but it seems slower than signle core……</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="dsenum.coloring.LexicographicColoringEnumerator.coset_enumerate">
+<code class="sig-name descname">coset_enumerate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring.html#LexicographicColoringEnumerator.coset_enumerate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring.LexicographicColoringEnumerator.coset_enumerate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.coloring.SiteColoringEnumerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring.</code><code class="sig-name descname">SiteColoringEnumerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">ds_permutation</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.permutation_group.DerivativeStructurePermutation" title="dsenum.permutation_group.DerivativeStructurePermutation">dsenum.permutation_group.DerivativeStructurePermutation</a></span></em>, <em class="sig-param"><span class="n">cl_generator</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator">dsenum.coloring_generator.ColoringGenerator</a></span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'direct'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring.html#SiteColoringEnumerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring.SiteColoringEnumerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ds_permutation</strong> (<em>DerivativeStructurePermutation object</em>) – </p></li>
+<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
+<li><p><strong>color_exchange</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>leave_superperiodic</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>method</strong> (<em>&quot;direct&quot;</em><em> or </em><em>&quot;lexicographic&quot;</em><em>, </em><em>so far</em>) – </p></li>
+<li><p><strong>n_jobs</strong> (<em>int</em><em>, </em><em>use only when method is &quot;lexicographic&quot;</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="dsenum.coloring.SiteColoringEnumerator.n_jobs">
+<code class="sig-name descname">n_jobs</code><a class="headerlink" href="#dsenum.coloring.SiteColoringEnumerator.n_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>if self.ds_permutation.num_site &lt; self.num_color:
+raise ValueError(‘too many num_types’)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.coloring.SiteColoringEnumerator.translation_permutations">
+<em class="property">property </em><code class="sig-name descname">translation_permutations</code><a class="headerlink" href="#dsenum.coloring.SiteColoringEnumerator.translation_permutations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.coloring.SiteColoringEnumerator.unique_colorings">
+<code class="sig-name descname">unique_colorings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring.html#SiteColoringEnumerator.unique_colorings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring.SiteColoringEnumerator.unique_colorings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.coloring_generator">
+<span id="dsenum-coloring-generator-module"></span><h2>dsenum.coloring_generator module<a class="headerlink" href="#module-dsenum.coloring_generator" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.coloring_generator.BaseColoringGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring_generator.</code><code class="sig-name descname">BaseColoringGenerator</code><a class="reference internal" href="_modules/dsenum/coloring_generator.html#BaseColoringGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.BaseColoringGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="dsenum.coloring_generator.BaseColoringGenerator.generate_all_colorings">
+<code class="sig-name descname">generate_all_colorings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#BaseColoringGenerator.generate_all_colorings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.BaseColoringGenerator.generate_all_colorings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.coloring_generator.ColoringGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring_generator.</code><code class="sig-name descname">ColoringGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_elements</span></em>, <em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">site_constraints</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#ColoringGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.ColoringGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dsenum.coloring_generator.BaseColoringGenerator" title="dsenum.coloring_generator.BaseColoringGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">dsenum.coloring_generator.BaseColoringGenerator</span></code></a></p>
+<dl class="py method">
+<dt id="dsenum.coloring_generator.ColoringGenerator.generate_all_colorings">
+<code class="sig-name descname">generate_all_colorings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#ColoringGenerator.generate_all_colorings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.ColoringGenerator.generate_all_colorings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.coloring_generator.ColoringGenerator.yield_coloring">
+<code class="sig-name descname">yield_coloring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#ColoringGenerator.yield_coloring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.ColoringGenerator.yield_coloring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.coloring_generator.CompositionColoringGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring_generator.</code><code class="sig-name descname">CompositionColoringGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_sites_base</span></em>, <em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">mapping_color_speices</span></em>, <em class="sig-param"><span class="n">site_constraints</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#CompositionColoringGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.CompositionColoringGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dsenum.coloring_generator.BaseColoringGenerator" title="dsenum.coloring_generator.BaseColoringGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">dsenum.coloring_generator.BaseColoringGenerator</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.coloring_generator.FixedConcentrationColoringGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring_generator.</code><code class="sig-name descname">FixedConcentrationColoringGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_elements</span></em>, <em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">color_ratio</span></em>, <em class="sig-param"><span class="n">site_constraints</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#FixedConcentrationColoringGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.FixedConcentrationColoringGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dsenum.coloring_generator.BaseColoringGenerator" title="dsenum.coloring_generator.BaseColoringGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">dsenum.coloring_generator.BaseColoringGenerator</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_elements</strong> (<em>int</em>) – </p></li>
+<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
+<li><p><strong>color_ratio</strong> (<em>list of int</em>) – num_elements % sum(color_ratio) == 0</p></li>
+<li><p><strong>site_constraints</strong> (<em>(</em><em>Optional</em><em>)</em><em>, </em><em>list</em><em> (</em><em>num_elements</em><em>, </em><em>num_color</em><em>)</em>) – e.g. site_constraints[2] = [0, 3, 4] means color of site-2 must be 0, 3, or 4.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="dsenum.coloring_generator.FixedConcentrationColoringGenerator.generate_all_colorings">
+<code class="sig-name descname">generate_all_colorings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#FixedConcentrationColoringGenerator.generate_all_colorings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.FixedConcentrationColoringGenerator.generate_all_colorings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.coloring_generator.ListBasedColoringGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.coloring_generator.</code><code class="sig-name descname">ListBasedColoringGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_color</span></em>, <em class="sig-param"><span class="n">list_colorings</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#ListBasedColoringGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.ListBasedColoringGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#dsenum.coloring_generator.BaseColoringGenerator" title="dsenum.coloring_generator.BaseColoringGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">dsenum.coloring_generator.BaseColoringGenerator</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
+<li><p><strong>list_colorings</strong> (<em>list of generator</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="dsenum.coloring_generator.ListBasedColoringGenerator.generate_all_colorings">
+<code class="sig-name descname">generate_all_colorings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#ListBasedColoringGenerator.generate_all_colorings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.ListBasedColoringGenerator.generate_all_colorings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.coloring_generator.ListBasedColoringGenerator.yield_coloring">
+<code class="sig-name descname">yield_coloring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#ListBasedColoringGenerator.yield_coloring"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.ListBasedColoringGenerator.yield_coloring" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.coloring_generator.satisfy_site_constraints">
+<code class="sig-prename descclassname">dsenum.coloring_generator.</code><code class="sig-name descname">satisfy_site_constraints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_constraints</span></em>, <em class="sig-param"><span class="n">coloring</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/coloring_generator.html#satisfy_site_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.coloring_generator.satisfy_site_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.converter">
+<span id="dsenum-converter-module"></span><h2>dsenum.converter module<a class="headerlink" href="#module-dsenum.converter" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.converter.</code><code class="sig-name descname">DerivativeMultiLatticeHash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hnf</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">displacement_set</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<blockquote>
+<div><p>hash_frac_coords               ravel_canonical_site</p>
+</div></blockquote>
+<dl>
+<dt>frac_coords —————&gt; CanonicalSite ————————-&gt; Int</dt><dd><div class="line-block">
+<div class="line-block">
+<div class="line"><a href="#id1"><span class="problematic" id="id2">|</span></a>^         &lt;————————-</div>
+<div class="line">||          unravel_to_canonical_site</div>
+<div class="line">||</div>
+</div>
+<div class="line">embed_to_derivative_site||hash_derivative_site</div>
+<div class="line-block">
+<div class="line">||</div>
+<div class="line">V|</div>
+</div>
+</div>
+<dl class="simple">
+<dt><a href="#id3"><span class="problematic" id="id4">|</span></a>———————–&gt; DerivativeSite</dt><dd><p>get_frac_coords</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hnf</strong> (<em>array</em><em>, </em><em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – Hermite normal form(lower triangular)</p></li>
+<li><p><strong>displacement_set</strong> (<em>array</em><em>, </em><em>(</em><em>num_site_parent</em><em>, </em><em>dim</em><em>)</em>) – fractinal coordinates in primitive cell of base structure</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.dim">
+<em class="property">property </em><code class="sig-name descname">dim</code><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.dim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.embed_to_derivative_site">
+<code class="sig-name descname">embed_to_derivative_site</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">csite</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite">dsenum.site.DerivativeSite</a><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.embed_to_derivative_site"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.embed_to_derivative_site" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.get_all_factors">
+<code class="sig-name descname">get_all_factors</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[Tuple[int, …]]<a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_all_factors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_all_factors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.get_canonical_and_derivative_sites_list">
+<code class="sig-name descname">get_canonical_and_derivative_sites_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">[</span><a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a><span class="p">, </span><a class="reference internal" href="#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite">dsenum.site.DerivativeSite</a><span class="p">]</span><span class="p">]</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_canonical_and_derivative_sites_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_canonical_and_derivative_sites_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.get_canonical_sites_list">
+<code class="sig-name descname">get_canonical_sites_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a><span class="p">]</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_canonical_sites_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_canonical_sites_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.get_distinct_derivative_sites_list">
+<code class="sig-name descname">get_distinct_derivative_sites_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference internal" href="#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite">dsenum.site.DerivativeSite</a><span class="p">]</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_distinct_derivative_sites_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_distinct_derivative_sites_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.get_frac_coords">
+<code class="sig-name descname">get_frac_coords</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dsite</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite">dsenum.site.DerivativeSite</a></span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_frac_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_frac_coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.get_lattice_points">
+<code class="sig-name descname">get_lattice_points</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_lattice_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_lattice_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>return list of lattice points with the supercell
+Note that the returned lattice points are not guaranteed to be “within” the supercell</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.hash_derivative_site">
+<code class="sig-name descname">hash_derivative_site</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dsite</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite">dsenum.site.DerivativeSite</a></span></em>, <em class="sig-param"><span class="n">return_image</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.hash_derivative_site"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.hash_derivative_site" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>csite</strong> (<em>CanoncalSite</em>)</p></li>
+<li><p><strong>derivative_jimage</strong> (<em>(Optional), array</em>)</p></li>
+<li><p><em>self.get_frac_coords(dsite) == self.displacement_set[dsite.site_index]</em> –</p>
+<ul>
+<li><p>np.dot(self.left_inv, csite.factor)</p></li>
+<li><p>np.dot(self.hnf, derivative_jimage)</p></li>
+</ul>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.hash_frac_coords">
+<code class="sig-name descname">hash_frac_coords</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frac_coord</span></em><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span><a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a><span class="p">]</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.hash_frac_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.hash_frac_coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.hnf">
+<em class="property">property </em><code class="sig-name descname">hnf</code><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.hnf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.index">
+<em class="property">property </em><code class="sig-name descname">index</code><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.modulus_factor">
+<code class="sig-name descname">modulus_factor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.modulus_factor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.modulus_factor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.num_sites">
+<em class="property">property </em><code class="sig-name descname">num_sites</code><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.num_sites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.ravel_canonical_site">
+<code class="sig-name descname">ravel_canonical_site</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">csite</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a></span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.ravel_canonical_site"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.ravel_canonical_site" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.converter.DerivativeMultiLatticeHash.unravel_to_canonical_site">
+<code class="sig-name descname">unravel_to_canonical_site</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#dsenum.site.CanonicalSite" title="dsenum.site.CanonicalSite">dsenum.site.CanonicalSite</a><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.unravel_to_canonical_site"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.unravel_to_canonical_site" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.converter.convert_site_constraints">
+<code class="sig-prename descclassname">dsenum.converter.</code><code class="sig-name descname">convert_site_constraints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_site_constraints</span></em>, <em class="sig-param"><span class="n">index</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/converter.html#convert_site_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.convert_site_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.converter.get_species_list">
+<code class="sig-prename descclassname">dsenum.converter.</code><code class="sig-name descname">get_species_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">list_species</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/converter.html#get_species_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.get_species_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>tile list of species for derivative structure</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.core">
+<span id="dsenum-core-module"></span><h2>dsenum.core module<a class="headerlink" href="#module-dsenum.core" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dsenum.core.act_permutation">
+<code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">act_permutation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dsenum.core.act_permutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.core.hash_in_all_configuration">
+<code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">hash_in_all_configuration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dsenum.core.hash_in_all_configuration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="id5">
+<h2>dsenum.core module<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-0"></span><dl class="py function">
+<dt id="id0">
+<code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">act_permutation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="id6">
+<code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">hash_in_all_configuration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.derivative_structure">
+<span id="dsenum-derivative-structure-module"></span><h2>dsenum.derivative_structure module<a class="headerlink" href="#module-dsenum.derivative_structure" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.derivative_structure.ColoringToStructure">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.derivative_structure.</code><code class="sig-name descname">ColoringToStructure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em>, <em class="sig-param"><span class="n">dshash</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#dsenum.converter.DerivativeMultiLatticeHash" title="dsenum.converter.DerivativeMultiLatticeHash">dsenum.converter.DerivativeMultiLatticeHash</a></span></em>, <em class="sig-param"><span class="n">mapping_color_to_species</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/derivative_structure.html#ColoringToStructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.derivative_structure.ColoringToStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="dsenum.derivative_structure.ColoringToStructure.base_matrix">
+<em class="property">property </em><code class="sig-name descname">base_matrix</code><a class="headerlink" href="#dsenum.derivative_structure.ColoringToStructure.base_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.derivative_structure.ColoringToStructure.convert_to_structure">
+<code class="sig-name descname">convert_to_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coloring</span></em><span class="sig-paren">)</span> &#x2192; pymatgen.core.structure.Structure<a class="reference internal" href="_modules/dsenum/derivative_structure.html#ColoringToStructure.convert_to_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.derivative_structure.ColoringToStructure.convert_to_structure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.derivative_structure.get_supercell">
+<code class="sig-prename descclassname">dsenum.derivative_structure.</code><code class="sig-name descname">get_supercell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em>, <em class="sig-param"><span class="n">scaling_matrix</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/derivative_structure.html#get_supercell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.derivative_structure.get_supercell" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>pymatgen.core.Structure</em>) – </p></li>
+<li><p><strong>scaling_matrix</strong> (<em>array</em><em>, </em><em>lower triangular integer matrix</em>) – the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ds</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pymatgen.core.Structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.enumerate">
+<span id="dsenum-enumerate-module"></span><h2>dsenum.enumerate module<a class="headerlink" href="#module-dsenum.enumerate" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.enumerate.StructureEnumerator">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.enumerate.</code><code class="sig-name descname">StructureEnumerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em>, <em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_types</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">mapping_color_species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">composition_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_site_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'direct'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#StructureEnumerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>base_structure: Structure
+index: int
+num_types: int
+mapping_color_species: (Optional) if specified, use these species in derivative structures
+composition_constraints: (Optional) None or list of int
+base_site_constraints: (Optional) list (num_elements, num_color)</p>
+<blockquote>
+<div><p>e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p>
+</div></blockquote>
+<p>color_exchange: identify color-exchanging
+leave_superperiodic: do not discard superperiodic coloring
+use_all_colors: bool
+method: “direct” or “lexicographic”, so far
+n_jobs: core in lexicographic coset enumeration(only used when method=’lexicographic’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>list_ds</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of derivative structure</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="dsenum.enumerate.StructureEnumerator.generate">
+<code class="sig-name descname">generate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#StructureEnumerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator.generate" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>list_ds</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of derivative structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.enumerate.StructureEnumerator.num_sites">
+<em class="property">property </em><code class="sig-name descname">num_sites</code><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator.num_sites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.enumerate.StructureEnumerator.num_sites_base">
+<em class="property">property </em><code class="sig-name descname">num_sites_base</code><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator.num_sites_base" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.enumerate.enumerate_derivative_structures">
+<code class="sig-prename descclassname">dsenum.enumerate.</code><code class="sig-name descname">enumerate_derivative_structures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span></em>, <em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">num_type</span></em>, <em class="sig-param"><span class="n">mapping_color_species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">composition_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_site_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'direct'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#enumerate_derivative_structures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.enumerate_derivative_structures" title="Permalink to this definition">¶</a></dt>
+<dd><p>base_structure: Structure
+index: int
+num_type: int
+mapping_color_species: (Optional) if specified, use these species in derivative structures
+composition_constraints: (Optional) None or list of int
+base_site_constraints: (Optional) list (num_elements, num_color)</p>
+<blockquote>
+<div><p>e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p>
+</div></blockquote>
+<p>color_exchange: identify color-exchanging
+leave_superperiodic: do not discard superperiodic coloring
+use_all_colors: bool
+method: “direct” or “lexicographic”, so far
+n_jobs: core in lexicographic coset enumeration(only used when method=’lexicographic’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>list_ds</strong></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of derivative structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.enumerate.remove_symmetry_duplicates">
+<code class="sig-prename descclassname">dsenum.enumerate.</code><code class="sig-name descname">remove_symmetry_duplicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span></em>, <em class="sig-param"><span class="n">hnf</span></em>, <em class="sig-param"><span class="n">num_type</span></em>, <em class="sig-param"><span class="n">list_colorings</span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#remove_symmetry_duplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.remove_symmetry_duplicates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.enumerate.remove_symmetry_duplicates_from_generator">
+<code class="sig-prename descclassname">dsenum.enumerate.</code><code class="sig-name descname">remove_symmetry_duplicates_from_generator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span></em>, <em class="sig-param"><span class="n">hnf</span></em>, <em class="sig-param"><span class="n">num_type</span></em>, <em class="sig-param"><span class="n">list_colorings</span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'direct'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#remove_symmetry_duplicates_from_generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.remove_symmetry_duplicates_from_generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.permutation_group">
+<span id="dsenum-permutation-group-module"></span><h2>dsenum.permutation_group module<a class="headerlink" href="#module-dsenum.permutation_group" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">DerivativeStructurePermutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hnf</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">displacement_set</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">rotations</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">translations</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/permutation_group.html#DerivativeStructurePermutation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Permutation Representation of space group of superlattice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hnf</strong> (<em>array</em><em>, </em><em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – Hermite normal form(lower triangular)</p></li>
+<li><p><strong>displacement_set</strong> (<em>array</em><em>, </em><em>(</em><em>num_site_parent</em><em>, </em><em>dim</em><em>)</em>) – fractinal coordinates in primitive cell of base structure</p></li>
+<li><p><strong>rotations</strong> (<em>array</em><em>, </em><em>(</em><em># of symmetry operations</em><em>, </em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – rotations with primitive basis for base structure</p></li>
+<li><p><strong>translations</strong> (<em>array</em><em>, </em><em>(</em><em># of symmetry operations</em><em>, </em><em>dim</em><em>)</em>) – translations with primitive basis for base structure</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation.dim">
+<code class="sig-name descname">dim</code><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>dimention of lattice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation.index">
+<code class="sig-name descname">index</code><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation.index" title="Permalink to this definition">¶</a></dt>
+<dd><p># of parent multilattice in super lattice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation.num_site">
+<code class="sig-name descname">num_site</code><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation.num_site" title="Permalink to this definition">¶</a></dt>
+<dd><p># of sites in unit cell of superlattice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="id7">
+<em class="property">property </em><code class="sig-name descname">dim</code><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation.get_symmetry_operation_permutations">
+<code class="sig-name descname">get_symmetry_operation_permutations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/permutation_group.html#DerivativeStructurePermutation.get_symmetry_operation_permutations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation.get_symmetry_operation_permutations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="id8">
+<em class="property">property </em><code class="sig-name descname">index</code><a class="headerlink" href="#id8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation.num_sites">
+<em class="property">property </em><code class="sig-name descname">num_sites</code><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation.num_sites" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="dsenum.permutation_group.DerivativeStructurePermutation.prm_t">
+<em class="property">property </em><code class="sig-name descname">prm_t</code><a class="headerlink" href="#dsenum.permutation_group.DerivativeStructurePermutation.prm_t" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.permutation_group.is_identity_permutation">
+<code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">is_identity_permutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">perm</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/permutation_group.html#is_identity_permutation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.is_identity_permutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.permutation_group.is_permutation">
+<code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">is_permutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">perm</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/permutation_group.html#is_permutation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.is_permutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.permutation_group.is_permutation_group">
+<code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">is_permutation_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_permutations</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/permutation_group.html#is_permutation_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.is_permutation_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.permutation_group.is_same_lattice">
+<code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">is_same_lattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H1</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">H2</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/dsenum/permutation_group.html#is_same_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.is_same_lattice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.permutation_group.is_unimodular">
+<code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">is_unimodular</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/dsenum/permutation_group.html#is_unimodular"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.is_unimodular" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.permutation_group.product_permutations">
+<code class="sig-prename descclassname">dsenum.permutation_group.</code><code class="sig-name descname">product_permutations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p1</span></em>, <em class="sig-param"><span class="n">p2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/permutation_group.html#product_permutations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.permutation_group.product_permutations" title="Permalink to this definition">¶</a></dt>
+<dd><p>(p1 p2)(i) = p1(p2(i))</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.polya">
+<span id="dsenum-polya-module"></span><h2>dsenum.polya module<a class="headerlink" href="#module-dsenum.polya" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dsenum.polya.get_inventory_coefficient">
+<code class="sig-prename descclassname">dsenum.polya.</code><code class="sig-name descname">get_inventory_coefficient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_of_perm</span><span class="p">:</span> <span class="n">tuple</span></em>, <em class="sig-param"><span class="n">didx</span></em>, <em class="sig-param"><span class="n">num_elements_of_each_color</span><span class="p">:</span> <span class="n">tuple</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/polya.html#get_inventory_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.polya.get_inventory_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.polya.get_multinomial_coefficient">
+<code class="sig-prename descclassname">dsenum.polya.</code><code class="sig-name descname">get_multinomial_coefficient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/polya.html#get_multinomial_coefficient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.polya.get_multinomial_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.polya.get_type_of_permutation">
+<code class="sig-prename descclassname">dsenum.polya.</code><code class="sig-name descname">get_type_of_permutation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">permutation</span><span class="p">:</span> <span class="n">List<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/polya.html#get_type_of_permutation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.polya.get_type_of_permutation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.polya.polya_counting">
+<code class="sig-prename descclassname">dsenum.polya.</code><code class="sig-name descname">polya_counting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">permutation_group</span><span class="p">:</span> <span class="n">List<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">num_color</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="_modules/dsenum/polya.html#polya_counting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.polya.polya_counting" title="Permalink to this definition">¶</a></dt>
+<dd><p>count the number of coloring with num_color kinds of colors and permutations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>permutation_group</strong> – the i-th permutation permutation_group[i] permutes j to permutation_group[i][j]
+for j = 0,…,len(permutation_group[0])-1</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>cnt</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.polya.polya_fixed_degrees_counting">
+<code class="sig-prename descclassname">dsenum.polya.</code><code class="sig-name descname">polya_fixed_degrees_counting</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">permutation_group</span><span class="p">:</span> <span class="n">List<span class="p">[</span>List<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">num_color</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_elements_of_each_color</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/polya.html#polya_fixed_degrees_counting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.polya.polya_fixed_degrees_counting" title="Permalink to this definition">¶</a></dt>
+<dd><p>count the number of coloring with num_color kinds of colors and permutations.
+In addition, the number of each colors is fixed with num_elements_of_each_color.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>permutation_group</strong> – the i-th permutation permutation_group[i] permutes j to permutation_group[i][j]
+for j = 0,…,len(permutation_group[0])-1</p></li>
+<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
+<li><p><strong>num_elements_of_each_color</strong> (<em>List of int</em><em>, </em><em>(</em><em>num_color</em><em>)</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>coeffs</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.site">
+<span id="dsenum-site-module"></span><h2>dsenum.site module<a class="headerlink" href="#module-dsenum.site" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="dsenum.site.CanonicalSite">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.site.</code><code class="sig-name descname">CanonicalSite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">Tuple[int, …]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/site.html#CanonicalSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.site.CanonicalSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="dsenum.site.CanonicalSite.factor">
+<code class="sig-name descname">factor</code><em class="property">: Tuple[int, …]</em><a class="headerlink" href="#dsenum.site.CanonicalSite.factor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="dsenum.site.CanonicalSite.site_index">
+<code class="sig-name descname">site_index</code><em class="property">: int</em><a class="headerlink" href="#dsenum.site.CanonicalSite.site_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="dsenum.site.DerivativeSite">
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.site.</code><code class="sig-name descname">DerivativeSite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">jimage</span><span class="p">:</span> <span class="n">Tuple[int, …]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/site.html#DerivativeSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.site.DerivativeSite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="dsenum.site.DerivativeSite.jimage">
+<code class="sig-name descname">jimage</code><em class="property">: Tuple[int, …]</em><a class="headerlink" href="#dsenum.site.DerivativeSite.jimage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="dsenum.site.DerivativeSite.site_index">
+<code class="sig-name descname">site_index</code><em class="property">: int</em><a class="headerlink" href="#dsenum.site.DerivativeSite.site_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.smith_normal_form">
+<span id="dsenum-smith-normal-form-module"></span><h2>dsenum.smith_normal_form module<a class="headerlink" href="#module-dsenum.smith_normal_form" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.add_to_column">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">add_to_column</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#add_to_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.add_to_column" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.add_to_row">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">add_to_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#add_to_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.add_to_row" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.change_sign_column">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">change_sign_column</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#change_sign_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.change_sign_column" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.change_sign_row">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">change_sign_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#change_sign_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.change_sign_row" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.get_min_abs">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">get_min_abs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#get_min_abs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.get_min_abs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.get_nextentry">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">get_nextentry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#get_nextentry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.get_nextentry" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.is_lone">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">is_lone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#is_lone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.is_lone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.smith_normal_form">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">smith_normal_form</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#smith_normal_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.smith_normal_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate Smith normal form</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>M</strong> (<em>array</em><em>, </em><em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>D</strong> (<em>array, (dim)</em>)</p></li>
+<li><p><strong>L</strong> (<em>array, (dim)</em>)</p></li>
+<li><p><strong>R</strong> (<em>array, (dim)</em>) – D = np.dot(L, np.dot(M, R))
+L, R are unimodular.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.swap_columns">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">swap_columns</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#swap_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.swap_columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.smith_normal_form.swap_rows">
+<code class="sig-prename descclassname">dsenum.smith_normal_form.</code><code class="sig-name descname">swap_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">j</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/smith_normal_form.html#swap_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.smith_normal_form.swap_rows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.superlattice">
+<span id="dsenum-superlattice-module"></span><h2>dsenum.superlattice module<a class="headerlink" href="#module-dsenum.superlattice" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dsenum.superlattice.generate_all_superlattices">
+<code class="sig-prename descclassname">dsenum.superlattice.</code><code class="sig-name descname">generate_all_superlattices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/dsenum/superlattice.html#generate_all_superlattices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.superlattice.generate_all_superlattices" title="Permalink to this definition">¶</a></dt>
+<dd><p>enumerate 3-by-3 Hermite normal form which determinant is equal to <cite>index</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>positive integer</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>list_HNF</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of matrices, each element is Hermite normal form</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.superlattice.generate_symmetry_distinct_superlattices">
+<code class="sig-prename descclassname">dsenum.superlattice.</code><code class="sig-name descname">generate_symmetry_distinct_superlattices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">structure</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em>, <em class="sig-param"><span class="n">return_symops</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/superlattice.html#generate_symmetry_distinct_superlattices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.superlattice.generate_symmetry_distinct_superlattices" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate symmetry distict HNF</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>positive integer</em>) – </p></li>
+<li><p><strong>structure</strong> (<em>pymatgen.core.Structure</em>) – </p></li>
+<li><p><strong>return_symops</strong> (<em>bool</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>list_reduced_HNF</strong> (<em>list of matrices, unique by symmetry</em>)</p></li>
+<li><p><strong>(Optional) rotations</strong> (<em>array, (# of symmetry operations, 3, 3)</em>)</p></li>
+<li><p><strong>(Optional) translations</strong> (<em>array, (# of symmetry operations, 3)</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.superlattice.reduce_HNF_list_by_parent_lattice_symmetry">
+<code class="sig-prename descclassname">dsenum.superlattice.</code><code class="sig-name descname">reduce_HNF_list_by_parent_lattice_symmetry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_HNF</span><span class="p">:</span> <span class="n">List<span class="p">[</span>numpy.ndarray<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">list_rotation_matrix</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>numpy.ndarray<span class="p">]</span><a class="reference internal" href="_modules/dsenum/superlattice.html#reduce_HNF_list_by_parent_lattice_symmetry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.superlattice.reduce_HNF_list_by_parent_lattice_symmetry" title="Permalink to this definition">¶</a></dt>
+<dd><p>reduce equivalent HNF with parent lattice symmetry</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list_HNF</strong> (<em>list of matrices</em><em>, </em><em>each element is Hermite normal form</em>) – </p></li>
+<li><p><strong>list_rotation_matrix</strong> (<em>list of matrices</em>) – each element represents the symmetry of parent lattice</p></li>
+<li><p><strong>lattice_vector</strong> (<em>array</em><em>, </em><em>(</em><em>3</em><em>, </em><em>3</em><em>)</em>) – lattice_vector[:, i] is the i-th lattice vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>list_reduced_HNF</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of matrices, unique by symmetry</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dsenum.utils">
+<span id="dsenum-utils-module"></span><h2>dsenum.utils module<a class="headerlink" href="#module-dsenum.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="dsenum.utils.cast_integer_matrix">
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">cast_integer_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/dsenum/utils.html#cast_integer_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.cast_integer_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.utils.get_fcc_with_vacancy">
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">get_fcc_with_vacancy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#get_fcc_with_vacancy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.get_fcc_with_vacancy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.utils.get_lattice">
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">get_lattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kind</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#get_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.get_lattice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.utils.get_symmetry_operations">
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">get_symmetry_operations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">structure</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#get_symmetry_operations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.get_symmetry_operations" title="Permalink to this definition">¶</a></dt>
+<dd><p>find symmetry operations for a given structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>structure</strong> (<em>pymatgen.core.Structure</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>rotations</strong> (<em>array, (# of symmetry operations, 3, 3)</em>)</p></li>
+<li><p><strong>translations</strong> (<em>array, (# of symmetry operations, 3)</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.utils.refine_and_resize_structure">
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">refine_and_resize_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">struct</span></em>, <em class="sig-param"><span class="n">refine_cell</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">resize_volume</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#refine_and_resize_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.refine_and_resize_structure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="dsenum.utils.write_cif">
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">write_cif</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">struct</span></em>, <em class="sig-param"><span class="n">refine_cell</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resize_volume</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#write_cif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.write_cif" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-dsenum">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dsenum" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Kohei Shinohara
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
