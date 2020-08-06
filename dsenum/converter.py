@@ -128,6 +128,17 @@ class DerivativeMultiLatticeHash:
 
         return list_csites_dsites
 
+    def get_lattice_points(self) -> List[np.ndarray]:
+        """
+        return list of lattice points with the supercell
+        Note that the returned lattice points are not guaranteed to be "within" the supercell
+        """
+        lattice_points = []
+        for factor in self.get_all_factors():
+            lp = cast_integer_matrix(np.dot(self.left_inv, factor))
+            lattice_points.append(lp)
+        return lattice_points
+
     def get_all_factors(self) -> List[Tuple[int, ...]]:
         list_factors = list(product(*[range(f) for f in self.invariant_factors]))
         return list_factors
