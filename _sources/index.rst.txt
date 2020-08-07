@@ -6,17 +6,14 @@
 Welcome to dsenum's documentation!
 ==================================
 
-Contents:
+dsenum enumerates derivative structures for primitive multilattice
+
+github: https://github.com/lan496/dsenum/tree/master/dsenum
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+   install
+   supercell
+   modules
