@@ -1,5 +1,7 @@
 from itertools import product
+from typing import List
 
+import numpy as np
 from sympy.utilities.iterables import multiset_permutations
 
 from dsenum.core import hash_in_all_configuration
@@ -90,21 +92,26 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
     num_elements: int
     num_color: int
     color_ratio: list of int
+        length of `color_ratio` should be equal to `num_color`.
         num_elements % sum(color_ratio) == 0
     site_constraints: (Optional), list (num_elements, num_color)
         e.g. site_constraints[2] = [0, 3, 4] means color of site-2 must be 0, 3, or 4.
     """
 
-    def __init__(self, num_elements, num_color, color_ratio, site_constraints=None):
+    def __init__(
+        self, num_elements: int, num_color: int, color_ratio: List[float], site_constraints=None
+    ):
         self.num_elements = num_elements
         self.num_color = num_color
-        self.color_ratio = color_ratio
+
         self.site_constraints = site_constraints
 
-        if num_elements % sum(self.color_ratio) != 0:
+        self.color_ratio = color_ratio
+        ratio_sum = int(np.around(sum(self.color_ratio)))
+        if num_elements % ratio_sum != 0:
             raise ValueError("incorrect composition ratio")
 
-        factor = num_elements // sum(self.color_ratio)
+        factor = num_elements // ratio_sum
         self.num_elements_each_color = [factor * cr for cr in self.color_ratio]
 
     def generate_all_colorings(self):
@@ -128,6 +135,21 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
                 for coloring in list_colorings
             }
         return list_colorings, flags
+
+    def yield_coloring(self):
+        # create one of colorings to use multiset_permutations
+        first_coloring = []
+        for i in range(self.num_color):
+            first_coloring.extend([i for _ in range(self.num_elements_each_color[i])])
+
+        if self.site_constraints:
+            for cl in multiset_permutations(first_coloring):
+                # TODO: more efficient way to adopt site_constraints
+                if satisfy_site_constraints(self.site_constraints, cl):
+                    yield cl
+        else:
+            for cl in multiset_permutations(first_coloring):
+                yield cl
 
 
 def satisfy_site_constraints(site_constraints, coloring):
