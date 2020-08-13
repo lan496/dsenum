@@ -14,9 +14,22 @@ class BaseColoringGenerator:
 
 
 class ColoringGenerator(BaseColoringGenerator):
-    def __init__(self, num_elements, num_color, site_constraints=None):
+    def __init__(self, num_elements: int, num_color: int, site_constraints=None):
+        """
+        Parameters
+        ----------
+        num_elements:
+            the number of elements to color
+        num_color:
+            the number of color
+        site_constraints: list of list of int, optional
+            the length of this list should be equal to `num_elements`
+        """
         self.num_elements = num_elements
         self.num_color = num_color
+
+        if site_constraints is not None:
+            assert len(site_constraints) == self.num_elements
         self.site_constraints = site_constraints
 
     def generate_all_colorings(self):
