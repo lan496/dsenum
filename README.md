@@ -76,6 +76,11 @@ act -P ubuntu-latest=nektos/act-environments-ubuntu:18.04
     # fmt: on
     ```
 
+### Benchmark
+```
+pytest --benchmark-only --benchmark-columns=mean,stddev tests/
+```
+
 ## Official Implementation
 - https://github.com/msg-byu/enumlib
 
