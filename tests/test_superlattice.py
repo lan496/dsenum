@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from pymatgen.core import Structure, Lattice
 
@@ -106,7 +105,6 @@ def test_reduce_HNF_list_by_parent_lattice_symmetry():
             assert len(list_reduced_HNF) == expected
 
 
-@pytest.mark.skip
 def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc():
     # https://oeis.org/A045790
     lst_num = [
@@ -168,6 +166,8 @@ def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc():
 
     for name, dct in obj.items():
         for index, expected in zip(range(1, len(dct["num_expected"]) + 1), dct["num_expected"]):
+            if index >= 20:
+                continue
             structure = dct["structure"]
             list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
             assert len(list_reduced_HNF) == expected

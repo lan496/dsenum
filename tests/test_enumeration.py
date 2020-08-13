@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import pytest
 
 from dsenum.enumerate import StructureEnumerator
 from dsenum.coloring_generator import ColoringGenerator, FixedConcentrationColoringGenerator
@@ -66,13 +67,12 @@ obj = {
 }
 
 
-def test_colorings():
+def reproduce_results(max_index=None):
     for name, dct in obj.items():
         structure = dct["structure"]
-        # displacement_set = structure.frac_coords
         num_type = dct["num_type"]
         for index, expected in zip(dct["indices"], dct["num_expected"]):
-            if index >= 8:
+            if (max_index is not None) and (index > max_index):
                 continue
             for method in ["direct", "lexicographic"]:
                 se = StructureEnumerator(
@@ -85,6 +85,15 @@ def test_colorings():
                 )
                 actual = se.generate()
                 assert len(actual) == expected
+
+
+def test_colorings_small():
+    reproduce_results(max_index=7)
+
+
+@pytest.mark.skip("takes very long time")
+def test_colorings_full():
+    reproduce_results()
 
 
 def test_colorings_with_polya():
