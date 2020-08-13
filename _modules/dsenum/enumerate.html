@@ -155,6 +155,7 @@
   <h1>Source code for dsenum.enumerate</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span>
@@ -176,24 +177,33 @@
 
 <div class="viewcode-block" id="StructureEnumerator"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator">[docs]</a><span class="k">class</span> <span class="nc">StructureEnumerator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameter</span>
-<span class="sd">    ---------</span>
-<span class="sd">    base_structure: Structure</span>
-<span class="sd">    index: int</span>
-<span class="sd">    num_types: int</span>
-<span class="sd">    mapping_color_species: (Optional) if specified, use these species in derivative structures</span>
-<span class="sd">    composition_constraints: (Optional) None or list of int</span>
-<span class="sd">    base_site_constraints: (Optional) list (num_elements, num_color)</span>
-<span class="sd">        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</span>
-<span class="sd">    color_exchange: identify color-exchanging</span>
-<span class="sd">    leave_superperiodic: do not discard superperiodic coloring</span>
-<span class="sd">    use_all_colors: bool</span>
-<span class="sd">    method: &quot;direct&quot; or &quot;lexicographic&quot;, so far</span>
-<span class="sd">    n_jobs: core in lexicographic coset enumeration(only used when method=&#39;lexicographic&#39;)</span>
+<span class="sd">    Enumerate derivative structures.</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    list_ds: list of derivative structure</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    base_structure: pymatgen.core.Structure</span>
+<span class="sd">        Aristotype for derivative structures</span>
+<span class="sd">    index: int</span>
+<span class="sd">        How many times to expand unit cell</span>
+<span class="sd">    num_types: int</span>
+<span class="sd">        The number of species in derivative structures.</span>
+<span class="sd">        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.</span>
+<span class="sd">    mapping_color_species: (Optional) List[Union[pymatgen.core.Specie, pymatgen.core.DummySpecie]]</span>
+<span class="sd">        If specified, use these species in derivative structures.</span>
+<span class="sd">        The length of this list should be equal to `num_types`</span>
+<span class="sd">    composition_constraints: (Optional) List[int]</span>
+<span class="sd">        composition_constraints[i] is the ratio of the i-th species in mapping_color_species</span>
+<span class="sd">    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)</span>
+<span class="sd">        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</span>
+<span class="sd">    color_exchange: (Optional) bool</span>
+<span class="sd">        identify color-exchanging</span>
+<span class="sd">    leave_superperiodic: (Optional) bool</span>
+<span class="sd">        do not discard superperiodic coloring</span>
+<span class="sd">    use_all_colors: (Optional) bool</span>
+<span class="sd">    method: (Optional) str</span>
+<span class="sd">        &quot;direct&quot; or &quot;lexicographic&quot;, so far</span>
+<span class="sd">    n_jobs: (Optional) int</span>
+<span class="sd">        core in lexicographic coset enumeration(only used when method=&#39;lexicographic&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -257,7 +267,7 @@
     <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sites_base</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
 
-<div class="viewcode-block" id="StructureEnumerator.generate"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StructureEnumerator.generate"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Structure</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -314,8 +324,8 @@
     <span class="n">n_jobs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameter</span>
-<span class="sd">    ---------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    base_structure: Structure</span>
 <span class="sd">    index: int</span>
 <span class="sd">    num_type: int</span>

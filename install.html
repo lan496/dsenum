@@ -193,7 +193,7 @@ pip install -e .
 <h2>for development<a class="headerlink" href="#for-development" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:lan496/dsenum.git
 <span class="nb">cd</span> dsenum
-pip install -r requirements.txt
+conda env create -f environment.yml
 pip install -r requirements-dev.txt
 pip install -e .
 pre-commit install

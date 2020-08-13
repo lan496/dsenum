@@ -214,11 +214,26 @@
     <span class="k">return</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span></div>
 
 
-<div class="viewcode-block" id="write_cif"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.write_cif">[docs]</a><span class="k">def</span> <span class="nf">write_cif</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">struct</span><span class="p">,</span> <span class="n">refine_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resize_volume</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="write_cif"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.write_cif">[docs]</a><span class="k">def</span> <span class="nf">write_cif</span><span class="p">(</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">struct</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">refine_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resize_volume</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-2</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    dump structure in CIF format after resizing to feasible volume and refing cell by symmetry.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename: str</span>
+<span class="sd">    struct: pymatgen.core.Structure</span>
+<span class="sd">    refine_cell: bool, optional</span>
+<span class="sd">        if true, refine cell setting by spglib</span>
+<span class="sd">    resize_volume: bool, optional</span>
+<span class="sd">        if true, resize lattice by DLSVolumePredictor in pymatgen</span>
+<span class="sd">    symprec: float, optional</span>
+<span class="sd">        symprec in spglib</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">struct</span> <span class="o">=</span> <span class="n">refine_and_resize_structure</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">refine_cell</span><span class="p">,</span> <span class="n">resize_volume</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">struct</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">):</span>
-        <span class="k">return</span>
-    <span class="n">cw</span> <span class="o">=</span> <span class="n">CifWriter</span><span class="p">(</span><span class="n">struct</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">struct</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">)</span>
+    <span class="n">cw</span> <span class="o">=</span> <span class="n">CifWriter</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">)</span>
     <span class="n">cw</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
 
 

@@ -96,7 +96,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-dsenum.coloring_generator">dsenum.coloring_generator module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-dsenum.converter">dsenum.converter module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-dsenum.core">dsenum.core module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">dsenum.core module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">dsenum.core module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-dsenum.derivative_structure">dsenum.derivative_structure module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-dsenum.enumerate">dsenum.enumerate module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-dsenum.permutation_group">dsenum.permutation_group module</a></li>
@@ -191,10 +191,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>permutation_group</strong> (<em>list of permutation</em>) – </p></li>
-<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
-<li><p><strong>cl_generator</strong> (<a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator"><em>ColoringGenerator</em></a>) – </p></li>
-<li><p><strong>color_exchange</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>permutation_group</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">permutation</span></code>) – </p></li>
+<li><p><strong>num_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>cl_generator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ColoringGenerator</span></code>) – </p></li>
+<li><p><strong>color_exchange</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -213,11 +213,11 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>permutation_group</strong> (<em>list of permutation</em>) – </p></li>
-<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
-<li><p><strong>cl_generator</strong> (<a class="reference internal" href="#dsenum.coloring_generator.ColoringGenerator" title="dsenum.coloring_generator.ColoringGenerator"><em>ColoringGenerator</em></a>) – </p></li>
-<li><p><strong>color_exchange</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em>) – when n_jobs &gt; 1, use multiprocessing but it seems slower than signle core……</p></li>
+<li><p><strong>permutation_group</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">permutation</span></code>) – </p></li>
+<li><p><strong>num_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>cl_generator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ColoringGenerator</span></code>) – </p></li>
+<li><p><strong>color_exchange</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
+<li><p><strong>n_jobs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – when n_jobs &gt; 1, use multiprocessing but it seems slower than signle core……</p></li>
 </ul>
 </dd>
 </dl>
@@ -235,12 +235,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ds_permutation</strong> (<em>DerivativeStructurePermutation object</em>) – </p></li>
-<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
-<li><p><strong>color_exchange</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>leave_superperiodic</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>method</strong> (<em>&quot;direct&quot;</em><em> or </em><em>&quot;lexicographic&quot;</em><em>, </em><em>so far</em>) – </p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em><em>, </em><em>use only when method is &quot;lexicographic&quot;</em>) – </p></li>
+<li><p><strong>ds_permutation</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DerivativeStructurePermutation</span> <span class="pre">object</span></code>) – </p></li>
+<li><p><strong>num_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>color_exchange</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
+<li><p><strong>leave_superperiodic</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
+<li><p><strong>method</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;direct&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;lexicographic&quot;</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">so</span> <span class="pre">far</span></code>) – </p></li>
+<li><p><strong>n_jobs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, use only when method is <code class="docutils literal notranslate"><span class="pre">&quot;lexicographic&quot;</span></code>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -306,10 +306,10 @@ raise ValueError(‘too many num_types’)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_elements</strong> (<em>int</em>) – </p></li>
-<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
-<li><p><strong>color_ratio</strong> (<em>list of int</em>) – num_elements % sum(color_ratio) == 0</p></li>
-<li><p><strong>site_constraints</strong> (<em>(</em><em>Optional</em><em>)</em><em>, </em><em>list</em><em> (</em><em>num_elements</em><em>, </em><em>num_color</em><em>)</em>) – e.g. site_constraints[2] = [0, 3, 4] means color of site-2 must be 0, 3, or 4.</p></li>
+<li><p><strong>num_elements</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>num_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>color_ratio</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – num_elements % sum(color_ratio) == 0</p></li>
+<li><p><strong>site_constraints</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span> <span class="pre">(num_elements</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">num_color)</span></code>) – e.g. site_constraints[2] = [0, 3, 4] means color of site-2 must be 0, 3, or 4.</p></li>
 </ul>
 </dd>
 </dl>
@@ -327,8 +327,8 @@ raise ValueError(‘too many num_types’)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
-<li><p><strong>list_colorings</strong> (<em>list of generator</em>) – </p></li>
+<li><p><strong>num_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>list_colorings</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">generator</span></code>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -356,33 +356,11 @@ raise ValueError(‘too many num_types’)</p>
 <dt id="dsenum.converter.DerivativeMultiLatticeHash">
 <em class="property">class </em><code class="sig-prename descclassname">dsenum.converter.</code><code class="sig-name descname">DerivativeMultiLatticeHash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hnf</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em>, <em class="sig-param"><span class="n">displacement_set</span><span class="p">:</span> <span class="n">numpy.ndarray</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<blockquote>
-<div><p>hash_frac_coords               ravel_canonical_site</p>
-</div></blockquote>
-<dl>
-<dt>frac_coords —————&gt; CanonicalSite ————————-&gt; Int</dt><dd><div class="line-block">
-<div class="line-block">
-<div class="line"><a href="#id1"><span class="problematic" id="id2">|</span></a>^         &lt;————————-</div>
-<div class="line">||          unravel_to_canonical_site</div>
-<div class="line">||</div>
-</div>
-<div class="line">embed_to_derivative_site||hash_derivative_site</div>
-<div class="line-block">
-<div class="line">||</div>
-<div class="line">V|</div>
-</div>
-</div>
-<dl class="simple">
-<dt><a href="#id3"><span class="problematic" id="id4">|</span></a>———————–&gt; DerivativeSite</dt><dd><p>get_frac_coords</p>
-</dd>
-</dl>
-</dd>
-</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hnf</strong> (<em>array</em><em>, </em><em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – Hermite normal form(lower triangular)</p></li>
-<li><p><strong>displacement_set</strong> (<em>array</em><em>, </em><em>(</em><em>num_site_parent</em><em>, </em><em>dim</em><em>)</em>) – fractinal coordinates in primitive cell of base structure</p></li>
+<li><p><strong>hnf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(dim</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – Hermite normal form(lower triangular)</p></li>
+<li><p><strong>displacement_set</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(num_site_parent</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – fractinal coordinates in primitive cell of base structure</p></li>
 </ul>
 </dd>
 </dl>
@@ -398,7 +376,7 @@ raise ValueError(‘too many num_types’)</p>
 
 <dl class="py method">
 <dt id="dsenum.converter.DerivativeMultiLatticeHash.get_all_factors">
-<code class="sig-name descname">get_all_factors</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[Tuple[int, …]]<a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_all_factors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_all_factors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_all_factors</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span><span class="p">]</span><a class="reference internal" href="_modules/dsenum/converter.html#DerivativeMultiLatticeHash.get_all_factors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.converter.DerivativeMultiLatticeHash.get_all_factors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -434,8 +412,8 @@ Note that the returned lattice points are not guaranteed to be “within” the 
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
-<li><p><strong>csite</strong> (<em>CanoncalSite</em>)</p></li>
-<li><p><strong>derivative_jimage</strong> (<em>(Optional), array</em>)</p></li>
+<li><p><strong>csite</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">CanoncalSite</span></code>)</p></li>
+<li><p><strong>derivative_jimage</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>)</p></li>
 <li><p><em>self.get_frac_coords(dsite) == self.displacement_set[dsite.site_index]</em> –</p>
 <ul>
 <li><p>np.dot(self.left_inv, csite.factor)</p></li>
@@ -510,16 +488,16 @@ Note that the returned lattice points are not guaranteed to be “within” the 
 <dd></dd></dl>
 
 </div>
-<div class="section" id="id5">
-<h2>dsenum.core module<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h2>dsenum.core module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-0"></span><dl class="py function">
 <dt id="id0">
 <code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">act_permutation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="id6">
-<code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">hash_in_all_configuration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dt id="id2">
+<code class="sig-prename descclassname">dsenum.core.</code><code class="sig-name descname">hash_in_all_configuration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -547,15 +525,15 @@ Note that the returned lattice points are not guaranteed to be “within” the 
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>structure</strong> (<em>pymatgen.core.Structure</em>) – </p></li>
-<li><p><strong>scaling_matrix</strong> (<em>array</em><em>, </em><em>lower triangular integer matrix</em>) – the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]</p></li>
+<li><p><strong>structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.Structure</span></code>) – </p></li>
+<li><p><strong>scaling_matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">lower</span> <span class="pre">triangular</span> <span class="pre">integer</span> <span class="pre">matrix</span></code>) – the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>ds</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pymatgen.core.Structure</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.Structure</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -567,37 +545,35 @@ Note that the returned lattice points are not guaranteed to be “within” the 
 <dt id="dsenum.enumerate.StructureEnumerator">
 <em class="property">class </em><code class="sig-prename descclassname">dsenum.enumerate.</code><code class="sig-name descname">StructureEnumerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em>, <em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">num_types</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">mapping_color_species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">composition_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_site_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'direct'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#StructureEnumerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>base_structure: Structure
-index: int
-num_types: int
-mapping_color_species: (Optional) if specified, use these species in derivative structures
-composition_constraints: (Optional) None or list of int
-base_site_constraints: (Optional) list (num_elements, num_color)</p>
-<blockquote>
-<div><p>e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p>
-</div></blockquote>
-<p>color_exchange: identify color-exchanging
-leave_superperiodic: do not discard superperiodic coloring
-use_all_colors: bool
-method: “direct” or “lexicographic”, so far
-n_jobs: core in lexicographic coset enumeration(only used when method=’lexicographic’)</p>
+<p>Enumerate derivative structures.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>list_ds</strong></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of derivative structure</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.Structure</span></code>) – Aristotype for derivative structures</p></li>
+<li><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – How many times to expand unit cell</p></li>
+<li><p><strong>num_types</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The number of species in derivative structures.
+<cite>num_types</cite> may be larger than the number of the kinds of species in <cite>base_structure</cite>: for example, you consider vacancies in derivative structures.</p></li>
+<li><p><strong>mapping_color_species</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">List[Union[pymatgen.core.Specie</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.DummySpecie]]</span></code>) – If specified, use these species in derivative structures.
+The length of this list should be equal to <cite>num_types</cite></p></li>
+<li><p><strong>composition_constraints</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">List[int]</span></code>) – composition_constraints[i] is the ratio of the i-th species in mapping_color_species</p></li>
+<li><p><strong>base_site_constraints</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">List[List[int]]</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(num_elements</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">num_color)</span></code>) – e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p></li>
+<li><p><strong>color_exchange</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">bool</span></code>) – identify color-exchanging</p></li>
+<li><p><strong>leave_superperiodic</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">bool</span></code>) – do not discard superperiodic coloring</p></li>
+<li><p><strong>use_all_colors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">bool</span></code>) – </p></li>
+<li><p><strong>method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">str</span></code>) – “direct” or “lexicographic”, so far</p></li>
+<li><p><strong>n_jobs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">int</span></code>) – core in lexicographic coset enumeration(only used when method=’lexicographic’)</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt id="dsenum.enumerate.StructureEnumerator.generate">
-<code class="sig-name descname">generate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#StructureEnumerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator.generate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">generate</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>pymatgen.core.structure.Structure<span class="p">]</span><a class="reference internal" href="_modules/dsenum/enumerate.html#StructureEnumerator.generate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.StructureEnumerator.generate" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>list_ds</strong></p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of derivative structure</p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">derivative</span> <span class="pre">structure</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -617,26 +593,27 @@ n_jobs: core in lexicographic coset enumeration(only used when method=’lexicog
 <dl class="py function">
 <dt id="dsenum.enumerate.enumerate_derivative_structures">
 <code class="sig-prename descclassname">dsenum.enumerate.</code><code class="sig-name descname">enumerate_derivative_structures</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_structure</span></em>, <em class="sig-param"><span class="n">index</span></em>, <em class="sig-param"><span class="n">num_type</span></em>, <em class="sig-param"><span class="n">mapping_color_species</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">composition_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">base_site_constraints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color_exchange</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">leave_superperiodic</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_all_colors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'direct'</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#enumerate_derivative_structures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.enumerate.enumerate_derivative_structures" title="Permalink to this definition">¶</a></dt>
-<dd><p>base_structure: Structure
-index: int
-num_type: int
-mapping_color_species: (Optional) if specified, use these species in derivative structures
-composition_constraints: (Optional) None or list of int
-base_site_constraints: (Optional) list (num_elements, num_color)</p>
-<blockquote>
-<div><p>e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p>
-</div></blockquote>
-<p>color_exchange: identify color-exchanging
-leave_superperiodic: do not discard superperiodic coloring
-use_all_colors: bool
-method: “direct” or “lexicographic”, so far
-n_jobs: core in lexicographic coset enumeration(only used when method=’lexicographic’)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>list_ds</strong></p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Structure</span></code>) – </p></li>
+<li><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>num_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>mapping_color_species</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">if</span> <span class="pre">specified</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">use</span> <span class="pre">these</span> <span class="pre">species</span> <span class="pre">in</span> <span class="pre">derivative</span> <span class="pre">structures</span></code>) – </p></li>
+<li><p><strong>composition_constraints</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">None</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>base_site_constraints</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">(Optional)</span> <span class="pre">list</span> <span class="pre">(num_elements</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">num_color)</span></code>) – e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p></li>
+<li><p><strong>color_exchange</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">identify</span> <span class="pre">color-exchanging</span></code>) – </p></li>
+<li><p><strong>leave_superperiodic</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">do</span> <span class="pre">not</span> <span class="pre">discard</span> <span class="pre">superperiodic</span> <span class="pre">coloring</span></code>) – </p></li>
+<li><p><strong>use_all_colors</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
+<li><p><strong>method</strong> (<code class="docutils literal notranslate"><span class="pre">&quot;direct&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;lexicographic&quot;</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">so</span> <span class="pre">far</span></code>) – </p></li>
+<li><p><strong>n_jobs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">core</span> <span class="pre">in</span> <span class="pre">lexicographic</span> <span class="pre">coset</span> <span class="pre">enumeration(only</span> <span class="pre">used</span> <span class="pre">when</span> <span class="pre">method=``</span></code>’lexicographic’<a href="#id3"><span class="problematic" id="id4">``</span></a><code class="xref py py-class docutils literal notranslate"><span class="pre">)</span></code>) – </p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of derivative structure</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>list_ds</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">derivative</span> <span class="pre">structure</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -662,10 +639,10 @@ n_jobs: core in lexicographic coset enumeration(only used when method=’lexicog
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hnf</strong> (<em>array</em><em>, </em><em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – Hermite normal form(lower triangular)</p></li>
-<li><p><strong>displacement_set</strong> (<em>array</em><em>, </em><em>(</em><em>num_site_parent</em><em>, </em><em>dim</em><em>)</em>) – fractinal coordinates in primitive cell of base structure</p></li>
-<li><p><strong>rotations</strong> (<em>array</em><em>, </em><em>(</em><em># of symmetry operations</em><em>, </em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – rotations with primitive basis for base structure</p></li>
-<li><p><strong>translations</strong> (<em>array</em><em>, </em><em>(</em><em># of symmetry operations</em><em>, </em><em>dim</em><em>)</em>) – translations with primitive basis for base structure</p></li>
+<li><p><strong>hnf</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(dim</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – Hermite normal form(lower triangular)</p></li>
+<li><p><strong>displacement_set</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(num_site_parent</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – fractinal coordinates in primitive cell of base structure</p></li>
+<li><p><strong>rotations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(#</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">symmetry</span> <span class="pre">operations</span></code>, <a class="reference internal" href="#id5" title="dsenum.permutation_group.DerivativeStructurePermutation.dim"><code class="xref py py-class docutils literal notranslate"><span class="pre">dim</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – rotations with primitive basis for base structure</p></li>
+<li><p><strong>translations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(#</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">symmetry</span> <span class="pre">operations</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – translations with primitive basis for base structure</p></li>
 </ul>
 </dd>
 </dl>
@@ -675,7 +652,7 @@ n_jobs: core in lexicographic coset enumeration(only used when method=’lexicog
 <dd><p>dimention of lattice</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -686,7 +663,7 @@ n_jobs: core in lexicographic coset enumeration(only used when method=’lexicog
 <dd><p># of parent multilattice in super lattice</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -697,14 +674,14 @@ n_jobs: core in lexicographic coset enumeration(only used when method=’lexicog
 <dd><p># of sites in unit cell of superlattice</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="id7">
-<em class="property">property </em><code class="sig-name descname">dim</code><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dt id="id5">
+<em class="property">property </em><code class="sig-name descname">dim</code><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -713,8 +690,8 @@ n_jobs: core in lexicographic coset enumeration(only used when method=’lexicog
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="id8">
-<em class="property">property </em><code class="sig-name descname">index</code><a class="headerlink" href="#id8" title="Permalink to this definition">¶</a></dt>
+<dt id="id6">
+<em class="property">property </em><code class="sig-name descname">index</code><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -791,7 +768,7 @@ for j = 0,…,len(permutation_group[0])-1</p>
 <dd class="field-even"><p><strong>cnt</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -806,15 +783,15 @@ In addition, the number of each colors is fixed with num_elements_of_each_color.
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>permutation_group</strong> – the i-th permutation permutation_group[i] permutes j to permutation_group[i][j]
 for j = 0,…,len(permutation_group[0])-1</p></li>
-<li><p><strong>num_color</strong> (<em>int</em>) – </p></li>
-<li><p><strong>num_elements_of_each_color</strong> (<em>List of int</em><em>, </em><em>(</em><em>num_color</em><em>)</em>) – </p></li>
+<li><p><strong>num_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>num_elements_of_each_color</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(num_color)</span></code>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>coeffs</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -824,11 +801,11 @@ for j = 0,…,len(permutation_group[0])-1</p></li>
 <span id="dsenum-site-module"></span><h2>dsenum.site module<a class="headerlink" href="#module-dsenum.site" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="dsenum.site.CanonicalSite">
-<em class="property">class </em><code class="sig-prename descclassname">dsenum.site.</code><code class="sig-name descname">CanonicalSite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">Tuple[int, …]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/site.html#CanonicalSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.site.CanonicalSite" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.site.</code><code class="sig-name descname">CanonicalSite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/site.html#CanonicalSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.site.CanonicalSite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt id="dsenum.site.CanonicalSite.factor">
-<code class="sig-name descname">factor</code><em class="property">: Tuple[int, …]</em><a class="headerlink" href="#dsenum.site.CanonicalSite.factor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">factor</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#dsenum.site.CanonicalSite.factor" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -840,11 +817,11 @@ for j = 0,…,len(permutation_group[0])-1</p></li>
 
 <dl class="py class">
 <dt id="dsenum.site.DerivativeSite">
-<em class="property">class </em><code class="sig-prename descclassname">dsenum.site.</code><code class="sig-name descname">DerivativeSite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">jimage</span><span class="p">:</span> <span class="n">Tuple[int, …]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/site.html#DerivativeSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.site.DerivativeSite" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">dsenum.site.</code><code class="sig-name descname">DerivativeSite</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site_index</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">jimage</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/site.html#DerivativeSite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.site.DerivativeSite" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt id="dsenum.site.DerivativeSite.jimage">
-<code class="sig-name descname">jimage</code><em class="property">: Tuple[int, …]</em><a class="headerlink" href="#dsenum.site.DerivativeSite.jimage" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jimage</code><em class="property">: Tuple<span class="p">[</span>int<span class="p">, </span><span class="p">…</span><span class="p">]</span></em><a class="headerlink" href="#dsenum.site.DerivativeSite.jimage" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -898,13 +875,13 @@ for j = 0,…,len(permutation_group[0])-1</p></li>
 <dd><p>calculate Smith normal form</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>M</strong> (<em>array</em><em>, </em><em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – </p>
+<dd class="field-odd"><p><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(dim</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dim)</span></code>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>D</strong> (<em>array, (dim)</em>)</p></li>
-<li><p><strong>L</strong> (<em>array, (dim)</em>)</p></li>
-<li><p><strong>R</strong> (<em>array, (dim)</em>) – D = np.dot(L, np.dot(M, R))
+<li><p><strong>D</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(dim)</span></code>)</p></li>
+<li><p><strong>L</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(dim)</span></code>)</p></li>
+<li><p><strong>R</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(dim)</span></code>) – D = np.dot(L, np.dot(M, R))
 L, R are unimodular.</p></li>
 </ul>
 </p>
@@ -931,13 +908,13 @@ L, R are unimodular.</p></li>
 <dd><p>enumerate 3-by-3 Hermite normal form which determinant is equal to <cite>index</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>positive integer</em>) – </p>
+<dd class="field-odd"><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">positive</span> <span class="pre">integer</span></code>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>list_HNF</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of matrices, each element is Hermite normal form</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">matrices</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">each</span> <span class="pre">element</span> <span class="pre">is</span> <span class="pre">Hermite</span> <span class="pre">normal</span> <span class="pre">form</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -949,16 +926,16 @@ L, R are unimodular.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>index</strong> (<em>positive integer</em>) – </p></li>
-<li><p><strong>structure</strong> (<em>pymatgen.core.Structure</em>) – </p></li>
-<li><p><strong>return_symops</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">positive</span> <span class="pre">integer</span></code>) – </p></li>
+<li><p><strong>structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.Structure</span></code>) – </p></li>
+<li><p><strong>return_symops</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>list_reduced_HNF</strong> (<em>list of matrices, unique by symmetry</em>)</p></li>
-<li><p><strong>(Optional) rotations</strong> (<em>array, (# of symmetry operations, 3, 3)</em>)</p></li>
-<li><p><strong>(Optional) translations</strong> (<em>array, (# of symmetry operations, 3)</em>)</p></li>
+<li><p><strong>list_reduced_HNF</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">matrices</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unique</span> <span class="pre">by</span> <span class="pre">symmetry</span></code>)</p></li>
+<li><p><strong>(Optional) rotations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(#</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">symmetry</span> <span class="pre">operations</span></code>, <code class="docutils literal notranslate"><span class="pre">3</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">3)</span></code>)</p></li>
+<li><p><strong>(Optional) translations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(#</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">symmetry</span> <span class="pre">operations</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">3)</span></code>)</p></li>
 </ul>
 </p>
 </dd>
@@ -972,16 +949,16 @@ L, R are unimodular.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>list_HNF</strong> (<em>list of matrices</em><em>, </em><em>each element is Hermite normal form</em>) – </p></li>
-<li><p><strong>list_rotation_matrix</strong> (<em>list of matrices</em>) – each element represents the symmetry of parent lattice</p></li>
-<li><p><strong>lattice_vector</strong> (<em>array</em><em>, </em><em>(</em><em>3</em><em>, </em><em>3</em><em>)</em>) – lattice_vector[:, i] is the i-th lattice vector.</p></li>
+<li><p><strong>list_HNF</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">matrices</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">each</span> <span class="pre">element</span> <span class="pre">is</span> <span class="pre">Hermite</span> <span class="pre">normal</span> <span class="pre">form</span></code>) – </p></li>
+<li><p><strong>list_rotation_matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">matrices</span></code>) – each element represents the symmetry of parent lattice</p></li>
+<li><p><strong>lattice_vector</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(3</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">3)</span></code>) – lattice_vector[:, i] is the i-th lattice vector.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>list_reduced_HNF</strong></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of matrices, unique by symmetry</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">matrices</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unique</span> <span class="pre">by</span> <span class="pre">symmetry</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1010,12 +987,12 @@ L, R are unimodular.</p></li>
 <dd><p>find symmetry operations for a given structure</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>structure</strong> (<em>pymatgen.core.Structure</em>) – </p>
+<dd class="field-odd"><p><strong>structure</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.Structure</span></code>) – </p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>rotations</strong> (<em>array, (# of symmetry operations, 3, 3)</em>)</p></li>
-<li><p><strong>translations</strong> (<em>array, (# of symmetry operations, 3)</em>)</p></li>
+<li><p><strong>rotations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(#</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">symmetry</span> <span class="pre">operations</span></code>, <code class="docutils literal notranslate"><span class="pre">3</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">3)</span></code>)</p></li>
+<li><p><strong>translations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">(#</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">symmetry</span> <span class="pre">operations</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">3)</span></code>)</p></li>
 </ul>
 </p>
 </dd>
@@ -1029,8 +1006,20 @@ L, R are unimodular.</p></li>
 
 <dl class="py function">
 <dt id="dsenum.utils.write_cif">
-<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">write_cif</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">struct</span></em>, <em class="sig-param"><span class="n">refine_cell</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resize_volume</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#write_cif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.write_cif" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname">dsenum.utils.</code><code class="sig-name descname">write_cif</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">struct</span><span class="p">:</span> <span class="n">pymatgen.core.structure.Structure</span></em>, <em class="sig-param"><span class="n">refine_cell</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">resize_volume</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">symprec</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/utils.html#write_cif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dsenum.utils.write_cif" title="Permalink to this definition">¶</a></dt>
+<dd><p>dump structure in CIF format after resizing to feasible volume and refing cell by symmetry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </p></li>
+<li><p><strong>struct</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pymatgen.core.Structure</span></code>) – </p></li>
+<li><p><strong>refine_cell</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – if true, refine cell setting by spglib</p></li>
+<li><p><strong>resize_volume</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – if true, resize lattice by DLSVolumePredictor in pymatgen</p></li>
+<li><p><strong>symprec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – symprec in spglib</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-dsenum">
