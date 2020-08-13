@@ -37,7 +37,7 @@ for development
 
     git clone git@github.com:lan496/dsenum.git
     cd dsenum
-    pip install -r requirements.txt
+    conda env create -f environment.yml
     pip install -r requirements-dev.txt
     pip install -e .
     pre-commit install
