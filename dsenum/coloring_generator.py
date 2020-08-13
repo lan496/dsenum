@@ -9,6 +9,9 @@ class BaseColoringGenerator:
     def generate_all_colorings(self):
         raise NotImplementedError
 
+    def yield_coloring(self):
+        raise NotImplementedError
+
 
 class ColoringGenerator(BaseColoringGenerator):
     def __init__(self, num_elements, num_color, site_constraints=None):
@@ -112,12 +115,6 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
                 for coloring in list_colorings
             }
         return list_colorings, flags
-
-
-class CompositionColoringGenerator(BaseColoringGenerator):
-    def __init__(self, num_sites_base, num_color, mapping_color_speices, site_constraints=None):
-        # TODO
-        raise NotImplementedError
 
 
 def satisfy_site_constraints(site_constraints, coloring):

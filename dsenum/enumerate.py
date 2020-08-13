@@ -91,10 +91,15 @@ class StructureEnumerator:
 
         # composition constraints
         if composition_constraints is None:
-            cl_generator = ColoringGenerator(self.num_sites, self.num_types, site_constraints)
+            cl_generator = ColoringGenerator(
+                self.num_sites, self.num_types, site_constraints=site_constraints
+            )
         else:
             cl_generator = FixedConcentrationColoringGenerator(
-                self.num_sites, self.num_types, composition_constraints, site_constraints
+                self.num_sites,
+                self.num_types,
+                composition_constraints,
+                site_constraints=site_constraints,
             )
         self.cl_generator = cl_generator
 
@@ -255,22 +260,3 @@ def remove_symmetry_duplicates_from_generator(
 
     colorings = sc_enum.unique_colorings()
     return colorings
-
-
-if __name__ == "__main__":
-    from utils import get_lattice
-
-    structure = get_lattice("fcc")
-    index = 15
-    num_type = 2
-
-    se = StructureEnumerator(
-        structure,
-        index,
-        num_type,
-        color_exchange=True,
-        leave_superperiodic=False,
-        use_all_colors=True,
-        method="direct",
-    )
-    list_ds = se.generate()

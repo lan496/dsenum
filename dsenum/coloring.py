@@ -2,21 +2,32 @@ from itertools import permutations
 from multiprocessing import Pool, cpu_count
 
 from dsenum.permutation_group import DerivativeStructurePermutation
-from dsenum.coloring_generator import ColoringGenerator
+from dsenum.coloring_generator import BaseColoringGenerator
 from dsenum.core import hash_in_all_configuration, act_permutation
 
 
-class DirectColoringEnumerator:
+class AbstractEnumerator:
+    def coset_enumerate(self):
+        raise NotImplementedError
+
+
+class DirectColoringEnumerator(AbstractEnumerator):
     """
     Parameters
     ----------
     permutation_group: list of permutation
     num_color: int
-    cl_generator: ColoringGenerator
+    cl_generator: BaseColoringGenerator
     color_exchange: bool
     """
-    def __init__(self, permutation_group, num_color, cl_generator: ColoringGenerator,
-                 color_exchange=True):
+
+    def __init__(
+        self,
+        permutation_group,
+        num_color,
+        cl_generator: BaseColoringGenerator,
+        color_exchange=True,
+    ):
         self.permutation_group = permutation_group
         self.num_color = num_color
         self.cl_generator = cl_generator
@@ -58,7 +69,7 @@ class DirectColoringEnumerator:
         return colorings
 
 
-class LexicographicColoringEnumerator:
+class LexicographicColoringEnumerator(AbstractEnumerator):
     """
     this algorithm takes the most lexicographically small colorings
 
@@ -66,13 +77,20 @@ class LexicographicColoringEnumerator:
     ----------
     permutation_group: list of permutation
     num_color: int
-    cl_generator: ColoringGenerator
+    cl_generator: BaseColoringGenerator
     color_exchange: bool
     n_jobs: int
         when n_jobs > 1, use multiprocessing but it seems slower than signle core......
     """
-    def __init__(self, permutation_group, num_color, cl_generator: ColoringGenerator,
-                 color_exchange=True, n_jobs=1):
+
+    def __init__(
+        self,
+        permutation_group,
+        num_color,
+        cl_generator: BaseColoringGenerator,
+        color_exchange=True,
+        n_jobs=1,
+    ):
         self.permutation_group = permutation_group
         self.num_color = num_color
         self.cl_generator = cl_generator
@@ -110,10 +128,13 @@ class LexicographicColoringEnumerator:
     def coset_enumerate(self):
         if self.n_jobs != 1:
             with Pool(self.n_jobs) as pool:
-                colorings = [cl for cl, keep
-                             in pool.map(self._is_champion_coloring_parallel,
-                                         self.cl_generator.yield_coloring())
-                             if keep]
+                colorings = [
+                    cl
+                    for cl, keep in pool.map(
+                        self._is_champion_coloring_parallel, self.cl_generator.yield_coloring()
+                    )
+                    if keep
+                ]
         else:
             colorings = []
             for cl in self.cl_generator.yield_coloring():
@@ -134,11 +155,17 @@ class SiteColoringEnumerator(object):
     n_jobs: int, use only when method is "lexicographic"
     """
 
-    def __init__(self, num_color,
-                 ds_permutation: DerivativeStructurePermutation,
-                 cl_generator: ColoringGenerator,
-                 color_exchange=True, leave_superperiodic=False, use_all_colors=True,
-                 method='direct', n_jobs=1):
+    def __init__(
+        self,
+        num_color,
+        ds_permutation: DerivativeStructurePermutation,
+        cl_generator: BaseColoringGenerator,
+        color_exchange=True,
+        leave_superperiodic=False,
+        use_all_colors=True,
+        method="direct",
+        n_jobs=1,
+    ):
         self.num_color = num_color
         self.ds_permutation = ds_permutation
         self.cl_generator = cl_generator
@@ -148,21 +175,23 @@ class SiteColoringEnumerator(object):
         self.method = method
         self.n_jobs = n_jobs
 
-        """
-        if self.ds_permutation.num_site < self.num_color:
-            raise ValueError('too many num_types')
-        """
-
         self.permutation_group = self.ds_permutation.get_symmetry_operation_permutations()
 
-        if self.method == 'direct':
-            self.clenum = DirectColoringEnumerator(self.permutation_group, self.num_color,
-                                                   self.cl_generator, color_exchange=color_exchange)
-        elif self.method == 'lexicographic':
-            self.clenum = LexicographicColoringEnumerator(self.permutation_group, self.num_color,
-                                                          self.cl_generator,
-                                                          color_exchange=color_exchange,
-                                                          n_jobs=self.n_jobs)
+        if self.method == "direct":
+            self.clenum = DirectColoringEnumerator(
+                self.permutation_group,
+                self.num_color,
+                self.cl_generator,
+                color_exchange=color_exchange,
+            )
+        elif self.method == "lexicographic":
+            self.clenum = LexicographicColoringEnumerator(
+                self.permutation_group,
+                self.num_color,
+                self.cl_generator,
+                color_exchange=color_exchange,
+                n_jobs=self.n_jobs,
+            )
         else:
             raise ValueError("Unknown method: ", self.method)
 
@@ -194,8 +223,12 @@ class SiteColoringEnumerator(object):
 
     def _is_superperiodic(self, coloring):
         # assume self.translation_permutations[0] is identity
-        if any([self._hash(act_permutation(prm, coloring)) == self._hash(coloring)
-               for prm in self.translation_permutations[1:]]):
+        if any(
+            [
+                self._hash(act_permutation(prm, coloring)) == self._hash(coloring)
+                for prm in self.translation_permutations[1:]
+            ]
+        ):
             return True
         else:
             return False

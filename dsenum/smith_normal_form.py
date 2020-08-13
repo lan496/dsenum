@@ -32,12 +32,6 @@ def change_sign_row(M, i):
     return ret
 
 
-def change_sign_column(M, i):
-    ret = M.copy()
-    ret[:, i] *= -1
-    return ret
-
-
 def get_min_abs(M, s):
     ret = (s, s)
     valmin = np.max(np.abs(M[s:, s:])) + 1
@@ -50,9 +44,9 @@ def get_min_abs(M, s):
 
 
 def is_lone(M, s):
-    if np.nonzero(M[s, (s + 1):])[0].size != 0:
+    if np.nonzero(M[s, (s + 1) :])[0].size != 0:
         return False
-    if np.nonzero(M[(s + 1):, s])[0].size != 0:
+    if np.nonzero(M[(s + 1) :, s])[0].size != 0:
         return False
     return True
 
