@@ -59,11 +59,26 @@ def get_symmetry_operations(structure):
     return rotations, translations
 
 
-def write_cif(filename, struct, refine_cell=False, resize_volume=False):
+def write_cif(
+    filename: str, struct: Structure, refine_cell=False, resize_volume=False, symprec=1e-2
+):
+    """
+    dump structure in CIF format after resizing to feasible volume and refing cell by symmetry.
+
+    Parameters
+    ----------
+    filename: str
+    struct: pymatgen.core.Structure
+    refine_cell: bool, optional
+        if true, refine cell setting by spglib
+    resize_volume: bool, optional
+        if true, resize lattice by DLSVolumePredictor in pymatgen
+    symprec: float, optional
+        symprec in spglib
+    """
     struct = refine_and_resize_structure(struct, refine_cell, resize_volume)
-    if not struct.is_valid(1e-4):
-        return
-    cw = CifWriter(struct)
+    assert struct.is_valid(1e-4)
+    cw = CifWriter(struct, symprec=symprec)
     cw.write_file(filename)
 
 

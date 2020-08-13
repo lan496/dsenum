@@ -7,9 +7,7 @@ from dsenum.site import DerivativeSite, CanonicalSite
 from dsenum.smith_normal_form import smith_normal_form
 from dsenum.utils import cast_integer_matrix
 
-
-class DerivativeMultiLatticeHash:
-    """
+"""
                 hash_frac_coords               ravel_canonical_site
     frac_coords ---------------> CanonicalSite -------------------------> Int
        |                            |^         <-------------------------
@@ -20,7 +18,11 @@ class DerivativeMultiLatticeHash:
        |                            V|
        |-----------------------> DerivativeSite
             get_frac_coords
+"""
 
+
+class DerivativeMultiLatticeHash:
+    """
     Parameters
     ----------
     hnf: array, (dim, dim)

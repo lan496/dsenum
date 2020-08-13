@@ -1,5 +1,6 @@
 from time import time
 from warnings import warn
+from typing import List
 
 from tqdm import tqdm
 from pymatgen.core import Structure
@@ -21,24 +22,33 @@ from dsenum.derivative_structure import ColoringToStructure
 
 class StructureEnumerator:
     """
-    Parameter
-    ---------
-    base_structure: Structure
-    index: int
-    num_types: int
-    mapping_color_species: (Optional) if specified, use these species in derivative structures
-    composition_constraints: (Optional) None or list of int
-    base_site_constraints: (Optional) list (num_elements, num_color)
-        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
-    color_exchange: identify color-exchanging
-    leave_superperiodic: do not discard superperiodic coloring
-    use_all_colors: bool
-    method: "direct" or "lexicographic", so far
-    n_jobs: core in lexicographic coset enumeration(only used when method='lexicographic')
+    Enumerate derivative structures.
 
-    Returns
-    -------
-    list_ds: list of derivative structure
+    Parameters
+    ----------
+    base_structure: pymatgen.core.Structure
+        Aristotype for derivative structures
+    index: int
+        How many times to expand unit cell
+    num_types: int
+        The number of species in derivative structures.
+        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
+    mapping_color_species: (Optional) List[Union[pymatgen.core.Specie, pymatgen.core.DummySpecie]]
+        If specified, use these species in derivative structures.
+        The length of this list should be equal to `num_types`
+    composition_constraints: (Optional) List[int]
+        composition_constraints[i] is the ratio of the i-th species in mapping_color_species
+    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)
+        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+    color_exchange: (Optional) bool
+        identify color-exchanging
+    leave_superperiodic: (Optional) bool
+        do not discard superperiodic coloring
+    use_all_colors: (Optional) bool
+    method: (Optional) str
+        "direct" or "lexicographic", so far
+    n_jobs: (Optional) int
+        core in lexicographic coset enumeration(only used when method='lexicographic')
     """
 
     def __init__(
@@ -102,7 +112,7 @@ class StructureEnumerator:
     def num_sites(self):
         return self.num_sites_base * self.index
 
-    def generate(self):
+    def generate(self) -> List[Structure]:
         """
         Returns
         -------
@@ -159,8 +169,8 @@ def enumerate_derivative_structures(
     n_jobs=1,
 ):
     """
-    Parameter
-    ---------
+    Parameters
+    ----------
     base_structure: Structure
     index: int
     num_type: int
