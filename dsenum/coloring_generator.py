@@ -112,7 +112,7 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
             raise ValueError("incorrect composition ratio")
 
         factor = num_elements // ratio_sum
-        self.num_elements_each_color = [factor * cr for cr in self.color_ratio]
+        self.num_elements_each_color = [int(np.around(factor * cr)) for cr in self.color_ratio]
 
     def generate_all_colorings(self):
         first_coloring = []

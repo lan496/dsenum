@@ -2,5 +2,6 @@ sphinx
 sphinx-rtd-theme
 pytest==5.4.1
 pytest-cov==2.8.1
+pytest-benchmark==3.2.3
 pre-commit==2.2.0
 black==19.10b0
