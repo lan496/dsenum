@@ -4,17 +4,33 @@ from queue import Queue
 import joblib
 import matplotlib as mpl
 
-mpl.use("Agg")  # noqa
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from sympy.combinatorics import Permutation
 from sympy.combinatorics.perm_groups import PermutationGroup
 from tqdm import tqdm
+from pymatgen.core import Lattice, Structure, DummySpecie
+import numpy as np
 
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.superlattice import generate_all_superlattices
-from dsenum.utils import get_lattice, get_symmetry_operations, get_fcc_with_vacancy
+from dsenum.utils import get_lattice, get_symmetry_operations
+
+
+mpl.use("Agg")  # noqa
+
+
+def get_fcc_with_vacancy():
+    latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
+    displacement_set = [
+        [0, 0, 0],  # lattice point
+        [0.25, 0.25, 0.25],  # tetrahedral site
+        [0.5, 0.5, 0.5],  # octahedral site
+        [0.75, 0.75, 0.75],  # tetrahedral site
+    ]
+    struct = Structure(latt, [DummySpecie("X")] * len(displacement_set), displacement_set)
+    return struct
 
 
 def get_generators(perms: List[Permutation]):

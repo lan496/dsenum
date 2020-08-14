@@ -28,18 +28,6 @@ def get_lattice(kind):
     return struct
 
 
-def get_fcc_with_vacancy():
-    latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-    displacement_set = [
-        [0, 0, 0],  # lattice point
-        [0.25, 0.25, 0.25],  # tetrahedral site
-        [0.5, 0.5, 0.5],  # octahedral site
-        [0.75, 0.75, 0.75],  # tetrahedral site
-    ]
-    struct = Structure(latt, [DummySpecie("X")] * len(displacement_set), displacement_set)
-    return struct
-
-
 def get_symmetry_operations(structure):
     """
     find symmetry operations for a given structure
