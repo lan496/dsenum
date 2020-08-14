@@ -117,12 +117,18 @@ class StructureEnumerator:
     def num_sites(self):
         return self.num_sites_base * self.index
 
-    def generate(self, return_transformations=False) -> List[Structure]:
+    def generate(
+        self, return_transformations=False, additional_species=None, additional_frac_coords=None
+    ) -> List[Structure]:
         """
         Parameters
         ----------
         return_transformations: bool, optional
             if true, return transformation matrices in addition
+        additional_species: list of pymatgen.core.Species, optional
+            species which are nothing to do with ordering
+        additional_frac_coords: np.ndarray, optional
+            fractional coordinates of species which are nothing to do with ordering
 
         Returns
         -------
@@ -133,7 +139,7 @@ class StructureEnumerator:
 
         list_ds = []
         for hnf in tqdm(self.list_reduced_HNF):
-            list_ds_hnf = self._generate_with_hnf(hnf, return_transformations)
+            list_ds_hnf = self._generate_with_hnf(hnf, additional_species, additional_frac_coords)
             list_ds.extend(list_ds_hnf)
 
         end = time()
@@ -144,7 +150,7 @@ class StructureEnumerator:
         else:
             return list_ds
 
-    def _generate_with_hnf(self, hnf: np.ndarray):
+    def _generate_with_hnf(self, hnf: np.ndarray, additional_species, additional_frac_coords):
         displacement_set = self.base_structure.frac_coords
         ds_permutation = DerivativeStructurePermutation(
             hnf, displacement_set, self.rotations, self.translations
@@ -163,7 +169,11 @@ class StructureEnumerator:
 
         # convert to Structure object
         cts = ColoringToStructure(
-            self.base_structure, ds_permutation.dhash, self.mapping_color_species
+            self.base_structure,
+            ds_permutation.dhash,
+            self.mapping_color_species,
+            additional_species=additional_species,
+            additional_frac_coords=additional_frac_coords,
         )
         list_ds = [cts.convert_to_structure(cl) for cl in colorings]
         return list_ds

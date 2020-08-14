@@ -60,7 +60,12 @@ def get_symmetry_operations(structure):
 
 
 def write_cif(
-    filename: str, struct: Structure, refine_cell=False, resize_volume=False, symprec=1e-2
+    filename: str,
+    struct: Structure,
+    refine_cell=False,
+    resize_volume=False,
+    symprec=1e-2,
+    comment="",
 ):
     """
     dump structure in CIF format after resizing to feasible volume and refing cell by symmetry.
@@ -77,9 +82,12 @@ def write_cif(
         symprec in spglib
     """
     struct = refine_and_resize_structure(struct, refine_cell, resize_volume)
-    assert struct.is_valid(1e-4)
     cw = CifWriter(struct, symprec=symprec)
-    cw.write_file(filename)
+    with open(filename, "w") as f:
+        if comment:
+            f.write(comment + "\n" + cw.__str__())
+        else:
+            f.write(cw.__str__())
 
 
 def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
@@ -89,8 +97,10 @@ def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
         struct.apply_strain(0.5)
 
     if refine_cell:
-        sga = SpacegroupAnalyzer(struct, symprec=1e-6, angle_tolerance=1e-2)
-        struct = sga.get_primitive_standard_structure()
+        sga = SpacegroupAnalyzer(struct)
+        # SpacegroupAnalyzer.get_primitive_standard_structure may return incorrect structures
+        # So we avoid to use SpacegroupAnalyzer.get_primitive_standard_structure
+        struct = sga.get_refined_structure()
 
     return struct
 
