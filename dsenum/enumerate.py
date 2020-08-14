@@ -117,23 +117,32 @@ class StructureEnumerator:
     def num_sites(self):
         return self.num_sites_base * self.index
 
-    def generate(self) -> List[Structure]:
+    def generate(self, return_transformations=False) -> List[Structure]:
         """
+        Parameters
+        ----------
+        return_transformations: bool, optional
+            if true, return transformation matrices in addition
+
         Returns
         -------
         list_ds: list of derivative structure
+        list_transformations: list of transformation matrices, optional
         """
         start = time()
 
         list_ds = []
         for hnf in tqdm(self.list_reduced_HNF):
-            list_ds_hnf = self._generate_with_hnf(hnf)
+            list_ds_hnf = self._generate_with_hnf(hnf, return_transformations)
             list_ds.extend(list_ds_hnf)
 
         end = time()
         print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
 
-        return list_ds
+        if return_transformations:
+            return list_ds, self.list_reduced_HNF
+        else:
+            return list_ds
 
     def _generate_with_hnf(self, hnf: np.ndarray):
         displacement_set = self.base_structure.frac_coords
