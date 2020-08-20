@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union, cast
 
 import numpy as np
 
@@ -66,7 +66,9 @@ class DerivativeMultiLatticeHash:
     def num_sites(self):
         return self.num_site_base * self.index
 
-    def hash_derivative_site(self, dsite: DerivativeSite, return_image=False) -> CanonicalSite:
+    def hash_derivative_site(
+        self, dsite: DerivativeSite, return_image=False
+    ) -> Union[CanonicalSite, Tuple[CanonicalSite, np.ndarray]]:
         """
         Returns
         -------
@@ -99,7 +101,7 @@ class DerivativeMultiLatticeHash:
             jimage = cast_integer_matrix(frac_coord - fc)
             if np.allclose(fc + jimage, frac_coord):
                 dsite = DerivativeSite(site_index, jimage)
-                csite = self.hash_derivative_site(dsite)
+                csite = cast(CanonicalSite, self.hash_derivative_site(dsite))
                 return csite
         return None
 

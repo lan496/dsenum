@@ -1,16 +1,19 @@
+from abc import ABCMeta, abstractmethod
 from itertools import product
 from typing import List
 
 import numpy as np
 from sympy.utilities.iterables import multiset_permutations
 
-from dsenum.core import hash_in_all_configuration
+from dsenum.core import hash_in_all_configuration  # type: ignore
 
 
-class BaseColoringGenerator:
+class BaseColoringGenerator(metaclass=ABCMeta):
+    @abstractmethod
     def generate_all_colorings(self):
         raise NotImplementedError
 
+    @abstractmethod
     def yield_coloring(self):
         raise NotImplementedError
 

@@ -1,12 +1,15 @@
+from abc import ABCMeta, abstractmethod
 from itertools import permutations
 from multiprocessing import Pool, cpu_count
+from typing import cast
 
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.coloring_generator import BaseColoringGenerator
-from dsenum.core import hash_in_all_configuration, act_permutation
+from dsenum.core import hash_in_all_configuration, act_permutation  # type: ignore
 
 
-class AbstractEnumerator:
+class AbstractEnumerator(metaclass=ABCMeta):
+    @abstractmethod
     def coset_enumerate(self):
         raise NotImplementedError
 
@@ -177,20 +180,27 @@ class SiteColoringEnumerator(object):
 
         self.permutation_group = self.ds_permutation.get_symmetry_operation_permutations()
 
+        # typing.cast causes no runtime effect
         if self.method == "direct":
-            self.clenum = DirectColoringEnumerator(
-                self.permutation_group,
-                self.num_color,
-                self.cl_generator,
-                color_exchange=color_exchange,
+            self.clenum = cast(
+                AbstractEnumerator,
+                DirectColoringEnumerator(
+                    self.permutation_group,
+                    self.num_color,
+                    self.cl_generator,
+                    color_exchange=color_exchange,
+                ),
             )
         elif self.method == "lexicographic":
-            self.clenum = LexicographicColoringEnumerator(
-                self.permutation_group,
-                self.num_color,
-                self.cl_generator,
-                color_exchange=color_exchange,
-                n_jobs=self.n_jobs,
+            self.clenum = cast(
+                AbstractEnumerator,
+                LexicographicColoringEnumerator(
+                    self.permutation_group,
+                    self.num_color,
+                    self.cl_generator,
+                    color_exchange=color_exchange,
+                    n_jobs=self.n_jobs,
+                ),
             )
         else:
             raise ValueError("Unknown method: ", self.method)

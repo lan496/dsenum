@@ -1,6 +1,6 @@
 from time import time
 from warnings import warn
-from typing import List
+from typing import List, Union, Tuple, cast
 
 from tqdm import tqdm
 from pymatgen.core import Structure
@@ -10,6 +10,7 @@ import numpy as np
 from dsenum.utils import get_symmetry_operations
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.coloring_generator import (
+    BaseColoringGenerator,
     ColoringGenerator,
     FixedConcentrationColoringGenerator,
     ListBasedColoringGenerator,
@@ -90,16 +91,23 @@ class StructureEnumerator:
             site_constraints = None
 
         # composition constraints
+        # typing.cast causes no runtime effect
         if composition_constraints is None:
-            cl_generator = ColoringGenerator(
-                self.num_sites, self.num_types, site_constraints=site_constraints
+            cl_generator = cast(
+                BaseColoringGenerator,
+                ColoringGenerator(
+                    self.num_sites, self.num_types, site_constraints=site_constraints
+                ),
             )
         else:
-            cl_generator = FixedConcentrationColoringGenerator(
-                self.num_sites,
-                self.num_types,
-                composition_constraints,
-                site_constraints=site_constraints,
+            cl_generator = cast(
+                BaseColoringGenerator,
+                FixedConcentrationColoringGenerator(
+                    self.num_sites,
+                    self.num_types,
+                    composition_constraints,
+                    site_constraints=site_constraints,
+                ),
             )
         self.cl_generator = cl_generator
 
@@ -119,7 +127,7 @@ class StructureEnumerator:
 
     def generate(
         self, return_transformations=False, additional_species=None, additional_frac_coords=None
-    ) -> List[Structure]:
+    ) -> Union[List[Structure], Tuple[List[Structure], List[np.ndarray]]]:
         """
         Parameters
         ----------

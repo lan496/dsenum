@@ -95,7 +95,7 @@ def polya_fixed_degrees_counting(
     return coeffs
 
 
-def get_type_of_permutation(permutation: List[List[int]]):
+def get_type_of_permutation(permutation: List[int]):
     num_elements = len(permutation)
     type_of_perm = [0 for _ in range(num_elements)]
 
