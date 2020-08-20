@@ -4,7 +4,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure, Specie, DummySpecie
 from pymatgen.core.sites import PeriodicSite
 
-from dsenum.converter import DerivativeMultiLatticeHash, get_species_list
+from dsenum.converter import DerivativeMultiLatticeHash
 
 
 class ColoringToStructure:

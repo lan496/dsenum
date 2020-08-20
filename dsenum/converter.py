@@ -51,23 +51,23 @@ class DerivativeMultiLatticeHash:
         self.shape = (self.num_site_base,) + self.invariant_factors
 
     @property
-    def hnf(self):
+    def hnf(self) -> np.ndarray:
         return self._hnf
 
     @property
-    def dim(self):
+    def dim(self) -> int:
         return self.hnf.shape[0]
 
     @property
-    def index(self):
+    def index(self) -> int:
         return self._index
 
     @property
-    def num_sites(self):
+    def num_sites(self) -> int:
         return self.num_site_base * self.index
 
     def hash_derivative_site(
-        self, dsite: DerivativeSite, return_image=False
+        self, dsite: DerivativeSite, return_image: bool = False
     ) -> Union[CanonicalSite, Tuple[CanonicalSite, np.ndarray]]:
         """
         Returns
@@ -96,7 +96,7 @@ class DerivativeMultiLatticeHash:
         else:
             return csite
 
-    def hash_frac_coords(self, frac_coord) -> Optional[CanonicalSite]:
+    def hash_frac_coords(self, frac_coord: np.ndarray) -> Optional[CanonicalSite]:
         for site_index, fc in enumerate(self.displacement_set):
             jimage = cast_integer_matrix(frac_coord - fc)
             if np.allclose(fc + jimage, frac_coord):
@@ -172,7 +172,7 @@ class DerivativeMultiLatticeHash:
         return dsite
 
 
-def get_species_list(index, list_species):
+def get_species_list(index: int, list_species: List[str]) -> List[str]:
     """
     tile list of species for derivative structure
     """
@@ -182,7 +182,9 @@ def get_species_list(index, list_species):
     return species
 
 
-def convert_site_constraints(base_site_constraints, index):
+def convert_site_constraints(
+    base_site_constraints: List[List[int]], index: int
+) -> List[List[int]]:
     site_constraints = []
     for sc in base_site_constraints:
         for _ in range(index):
