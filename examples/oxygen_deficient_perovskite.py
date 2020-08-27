@@ -4,7 +4,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure, Specie, DummySpecie
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
-from dsenum import StructureEnumerator, get_version
+from dsenum import StructureEnumerator
 from dsenum.utils import write_cif, refine_and_resize_structure
 
 
@@ -54,5 +54,4 @@ if __name__ == "__main__":
         dstruct.remove_species([mapping_color_species[0]])
 
         filename = os.path.join(dirname, f"{index}_{i}.cif")
-        comment = "# generated using dsenum " + get_version()
-        write_cif(filename, dstruct, refine_cell=True, comment=comment)
+        write_cif(filename, dstruct, refine_cell=True)

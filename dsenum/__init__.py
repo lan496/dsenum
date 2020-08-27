@@ -1,10 +1,13 @@
-# setup.py reflects the below version string.
-__version__ = "0.3.2"
-
 import os
 import subprocess
 
+from ._version import get_versions  # type: ignore
+
 from dsenum.enumerate import StructureEnumerator
+
+
+__version__ = get_versions()["version"]
+del get_versions
 
 
 def get_git_commit_hash() -> str:

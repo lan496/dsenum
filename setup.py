@@ -1,24 +1,16 @@
-from os.path import splitext, basename, abspath, dirname, join
+from os.path import splitext, basename
 from setuptools import setup, Extension, find_packages
 from glob import glob
+
+import versioneer
+
 
 ext_modules = [Extension("dsenum.core", sources=["dsenum/core.c"], extra_compile_args=["-O3"])]
 
 
-def get_version(rel_path):
-    here = abspath(dirname(__file__))
-    with open(join(here, rel_path), "r") as f:
-        for line in f.read().splitlines():
-            if line.startswith("__version__"):
-                # e.g. __version__ = "0.1.0"
-                delim = '"' if line else "'"
-                return line.split(delim)[1]
-    raise RuntimeError("Unable to find version string.")
-
-
 setup(
     name="dsenum",
-    version=get_version("dsenum/__init__.py"),
+    version=versioneer.get_version(),  # type: ignore
     license="MIT",
     description="Derivative structure enumerator for multilattice",
     # long_description="",
