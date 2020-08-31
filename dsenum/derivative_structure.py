@@ -1,7 +1,7 @@
 from typing import List, Union
 
 import numpy as np
-from pymatgen.core import Lattice, Structure, Specie, DummySpecie
+from pymatgen.core import Lattice, Structure, Specie, DummySpecie, Element
 from pymatgen.core.sites import PeriodicSite
 
 from dsenum.converter import DerivativeMultiLatticeHash
@@ -12,7 +12,7 @@ class ColoringToStructure:
         self,
         base_structure: Structure,
         dshash: DerivativeMultiLatticeHash,
-        mapping_color_to_species: List[Union[Specie, DummySpecie]],
+        mapping_color_to_species: List[Union[str, Element, Specie, DummySpecie]],
         additional_species=None,
         additional_frac_coords=None,
     ):
@@ -21,8 +21,8 @@ class ColoringToStructure:
         ----------
         base_structure:
             Structure with only ordering species
-        dshash
-        mapping_color_to_species
+        dshash:
+        mapping_color_to_species:
         additional_species: list of pymatgen.core.Species, optional
             species which are nothing to do with ordering
         additional_frac_coords: np.ndarray, optional

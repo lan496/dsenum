@@ -4,7 +4,7 @@ from typing import List, Union, Tuple, cast
 
 from tqdm import tqdm
 from pymatgen.core import Structure
-from pymatgen.core.periodic_table import DummySpecie
+from pymatgen.core.periodic_table import DummySpecie, Specie, Element
 import numpy as np
 
 from dsenum.utils import get_symmetry_operations
@@ -34,7 +34,7 @@ class StructureEnumerator:
     num_types: int
         The number of species in derivative structures.
         `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
-    mapping_color_species: (Optional) List[Union[pymatgen.core.Specie, pymatgen.core.DummySpecie]]
+    mapping_color_species: optional
         If specified, use these species in derivative structures.
         The length of this list should be equal to `num_types`
     composition_constraints: (Optional) List[int]
@@ -57,7 +57,7 @@ class StructureEnumerator:
         base_structure: Structure,
         index: int,
         num_types: int,
-        mapping_color_species=None,
+        mapping_color_species: List[Union[str, Element, Specie, DummySpecie]] = None,
         composition_constraints=None,
         base_site_constraints=None,
         color_exchange=True,

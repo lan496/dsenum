@@ -1,6 +1,6 @@
 import numpy as np
 from pymatgen.analysis.structure_matcher import StructureMatcher
-from pymatgen.core import Lattice, Structure, Specie, DummySpecie
+from pymatgen.core import Lattice, Structure, Specie, DummySpecie, Element
 import pytest
 
 from dsenum import StructureEnumerator
@@ -11,7 +11,7 @@ def test_fcc():
     base_structure = get_lattice("fcc")
     num_type = 2
     indices = [2, 3, 4]
-    species = [Specie("Cu"), Specie("Au")]
+    species = ["Cu", "Au"]
 
     check(base_structure, num_type, indices, species, "fcc")
 
@@ -20,7 +20,7 @@ def test_sc():
     base_structure = get_lattice("sc")
     num_type = 2
     indices = [2, 3, 4]
-    species = [Specie("Cu"), Specie("Au")]
+    species = [Element("Cu"), Element("Au")]
 
     check(base_structure, num_type, indices, species, "sc")
 
@@ -30,7 +30,6 @@ def test_hcp():
     num_type = 2
     indices = [2, 3, 4]
     species = [Specie("Cu"), Specie("Au")]
-    # inconsistent with StructureMatcher in index=4
 
     check(base_structure, num_type, indices, species, "hcp")
 
