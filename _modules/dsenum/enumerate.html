@@ -137,6 +137,8 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../dsenum.html">dsenum</a> &raquo;</li>
+        
       <li>dsenum.enumerate</li>
     
     
@@ -155,7 +157,7 @@
   <h1>Source code for dsenum.enumerate</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span>
@@ -165,6 +167,7 @@
 <span class="kn">from</span> <span class="nn">dsenum.utils</span> <span class="kn">import</span> <span class="n">get_symmetry_operations</span>
 <span class="kn">from</span> <span class="nn">dsenum.superlattice</span> <span class="kn">import</span> <span class="n">generate_symmetry_distinct_superlattices</span>
 <span class="kn">from</span> <span class="nn">dsenum.coloring_generator</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseColoringGenerator</span><span class="p">,</span>
     <span class="n">ColoringGenerator</span><span class="p">,</span>
     <span class="n">FixedConcentrationColoringGenerator</span><span class="p">,</span>
     <span class="n">ListBasedColoringGenerator</span><span class="p">,</span>
@@ -245,11 +248,23 @@
             <span class="n">site_constraints</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># composition constraints</span>
+        <span class="c1"># typing.cast causes no runtime effect</span>
         <span class="k">if</span> <span class="n">composition_constraints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">ColoringGenerator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span> <span class="n">site_constraints</span><span class="p">)</span>
+            <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="n">BaseColoringGenerator</span><span class="p">,</span>
+                <span class="n">ColoringGenerator</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span> <span class="n">site_constraints</span><span class="o">=</span><span class="n">site_constraints</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">FixedConcentrationColoringGenerator</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span> <span class="n">composition_constraints</span><span class="p">,</span> <span class="n">site_constraints</span>
+            <span class="n">cl_generator</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="n">BaseColoringGenerator</span><span class="p">,</span>
+                <span class="n">FixedConcentrationColoringGenerator</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">num_types</span><span class="p">,</span>
+                    <span class="n">composition_constraints</span><span class="p">,</span>
+                    <span class="n">site_constraints</span><span class="o">=</span><span class="n">site_constraints</span><span class="p">,</span>
+                <span class="p">),</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cl_generator</span> <span class="o">=</span> <span class="n">cl_generator</span>
 
@@ -267,25 +282,40 @@
     <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sites_base</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
 
-<div class="viewcode-block" id="StructureEnumerator.generate"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Structure</span><span class="p">]:</span>
+<div class="viewcode-block" id="StructureEnumerator.generate"><a class="viewcode-back" href="../../dsenum.html#dsenum.enumerate.StructureEnumerator.generate">[docs]</a>    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">return_transformations</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">additional_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">additional_frac_coords</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Structure</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Structure</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        return_transformations: bool, optional</span>
+<span class="sd">            if true, return transformation matrices in addition</span>
+<span class="sd">        additional_species: list of pymatgen.core.Species, optional</span>
+<span class="sd">            species which are nothing to do with ordering</span>
+<span class="sd">        additional_frac_coords: np.ndarray, optional</span>
+<span class="sd">            fractional coordinates of species which are nothing to do with ordering</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list_ds: list of derivative structure</span>
+<span class="sd">        list_transformations: list of transformation matrices, optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
 
         <span class="n">list_ds</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">hnf</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_reduced_HNF</span><span class="p">):</span>
-            <span class="n">list_ds_hnf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_with_hnf</span><span class="p">(</span><span class="n">hnf</span><span class="p">)</span>
+            <span class="n">list_ds_hnf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_with_hnf</span><span class="p">(</span><span class="n">hnf</span><span class="p">,</span> <span class="n">additional_species</span><span class="p">,</span> <span class="n">additional_frac_coords</span><span class="p">)</span>
             <span class="n">list_ds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">list_ds_hnf</span><span class="p">)</span>
 
         <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;total: </span><span class="si">{}</span><span class="s2"> (Time: </span><span class="si">{:.4}</span><span class="s2">sec)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_ds</span><span class="p">),</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">list_ds</span></div>
+        <span class="k">if</span> <span class="n">return_transformations</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">list_ds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_reduced_HNF</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">list_ds</span></div>
 
-    <span class="k">def</span> <span class="nf">_generate_with_hnf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hnf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_with_hnf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hnf</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">additional_species</span><span class="p">,</span> <span class="n">additional_frac_coords</span><span class="p">):</span>
         <span class="n">displacement_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="o">.</span><span class="n">frac_coords</span>
         <span class="n">ds_permutation</span> <span class="o">=</span> <span class="n">DerivativeStructurePermutation</span><span class="p">(</span>
             <span class="n">hnf</span><span class="p">,</span> <span class="n">displacement_set</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">translations</span>
@@ -304,7 +334,11 @@
 
         <span class="c1"># convert to Structure object</span>
         <span class="n">cts</span> <span class="o">=</span> <span class="n">ColoringToStructure</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="p">,</span> <span class="n">ds_permutation</span><span class="o">.</span><span class="n">dhash</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_species</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="p">,</span>
+            <span class="n">ds_permutation</span><span class="o">.</span><span class="n">dhash</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_species</span><span class="p">,</span>
+            <span class="n">additional_species</span><span class="o">=</span><span class="n">additional_species</span><span class="p">,</span>
+            <span class="n">additional_frac_coords</span><span class="o">=</span><span class="n">additional_frac_coords</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">list_ds</span> <span class="o">=</span> <span class="p">[</span><span class="n">cts</span><span class="o">.</span><span class="n">convert_to_structure</span><span class="p">(</span><span class="n">cl</span><span class="p">)</span> <span class="k">for</span> <span class="n">cl</span> <span class="ow">in</span> <span class="n">colorings</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">list_ds</span></div>
@@ -410,25 +444,6 @@
 
     <span class="n">colorings</span> <span class="o">=</span> <span class="n">sc_enum</span><span class="o">.</span><span class="n">unique_colorings</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">colorings</span></div>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">get_lattice</span>
-
-    <span class="n">structure</span> <span class="o">=</span> <span class="n">get_lattice</span><span class="p">(</span><span class="s2">&quot;fcc&quot;</span><span class="p">)</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="mi">15</span>
-    <span class="n">num_type</span> <span class="o">=</span> <span class="mi">2</span>
-
-    <span class="n">se</span> <span class="o">=</span> <span class="n">StructureEnumerator</span><span class="p">(</span>
-        <span class="n">structure</span><span class="p">,</span>
-        <span class="n">index</span><span class="p">,</span>
-        <span class="n">num_type</span><span class="p">,</span>
-        <span class="n">color_exchange</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">leave_superperiodic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">use_all_colors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;direct&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">list_ds</span> <span class="o">=</span> <span class="n">se</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
 </pre></div>
 
            </div>

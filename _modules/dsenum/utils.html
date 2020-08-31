@@ -137,6 +137,8 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../dsenum.html">dsenum</a> &raquo;</li>
+        
       <li>dsenum.utils</li>
     
     
@@ -159,6 +161,8 @@
 <span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">DummySpecie</span>
 <span class="kn">from</span> <span class="nn">pymatgen.io.cif</span> <span class="kn">import</span> <span class="n">CifWriter</span>
 <span class="kn">from</span> <span class="nn">pymatgen.analysis.structure_prediction.volume_predictor</span> <span class="kn">import</span> <span class="n">DLSVolumePredictor</span>
+
+<span class="kn">from</span> <span class="nn">._version</span> <span class="kn">import</span> <span class="n">get_versions</span>  <span class="c1"># type: ignore</span>
 
 
 <div class="viewcode-block" id="get_lattice"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.get_lattice">[docs]</a><span class="k">def</span> <span class="nf">get_lattice</span><span class="p">(</span><span class="n">kind</span><span class="p">):</span>
@@ -183,18 +187,6 @@
     <span class="k">return</span> <span class="n">struct</span></div>
 
 
-<div class="viewcode-block" id="get_fcc_with_vacancy"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.get_fcc_with_vacancy">[docs]</a><span class="k">def</span> <span class="nf">get_fcc_with_vacancy</span><span class="p">():</span>
-    <span class="n">latt</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]))</span>
-    <span class="n">displacement_set</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>  <span class="c1"># lattice point</span>
-        <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>  <span class="c1"># tetrahedral site</span>
-        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>  <span class="c1"># octahedral site</span>
-        <span class="p">[</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>  <span class="c1"># tetrahedral site</span>
-    <span class="p">]</span>
-    <span class="n">struct</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">latt</span><span class="p">,</span> <span class="p">[</span><span class="n">DummySpecie</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">displacement_set</span><span class="p">),</span> <span class="n">displacement_set</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">struct</span></div>
-
-
 <div class="viewcode-block" id="get_symmetry_operations"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.get_symmetry_operations">[docs]</a><span class="k">def</span> <span class="nf">get_symmetry_operations</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    find symmetry operations for a given structure</span>
@@ -215,7 +207,12 @@
 
 
 <div class="viewcode-block" id="write_cif"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.write_cif">[docs]</a><span class="k">def</span> <span class="nf">write_cif</span><span class="p">(</span>
-    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">struct</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">refine_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resize_volume</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-2</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">struct</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span>
+    <span class="n">refine_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">resize_volume</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+    <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    dump structure in CIF format after resizing to feasible volume and refing cell by symmetry.</span>
@@ -232,9 +229,14 @@
 <span class="sd">        symprec in spglib</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">struct</span> <span class="o">=</span> <span class="n">refine_and_resize_structure</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">refine_cell</span><span class="p">,</span> <span class="n">resize_volume</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">struct</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">)</span>
     <span class="n">cw</span> <span class="o">=</span> <span class="n">CifWriter</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">)</span>
-    <span class="n">cw</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;# generated by </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">comment</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">comment</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">comment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">cw</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cw</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="refine_and_resize_structure"><a class="viewcode-back" href="../../dsenum.html#dsenum.utils.refine_and_resize_structure">[docs]</a><span class="k">def</span> <span class="nf">refine_and_resize_structure</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">refine_cell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">resize_volume</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -244,8 +246,10 @@
         <span class="n">struct</span><span class="o">.</span><span class="n">apply_strain</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">refine_cell</span><span class="p">:</span>
-        <span class="n">sga</span> <span class="o">=</span> <span class="n">SpacegroupAnalyzer</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">angle_tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
-        <span class="n">struct</span> <span class="o">=</span> <span class="n">sga</span><span class="o">.</span><span class="n">get_primitive_standard_structure</span><span class="p">()</span>
+        <span class="n">sga</span> <span class="o">=</span> <span class="n">SpacegroupAnalyzer</span><span class="p">(</span><span class="n">struct</span><span class="p">)</span>
+        <span class="c1"># SpacegroupAnalyzer.get_primitive_standard_structure may return incorrect structures</span>
+        <span class="c1"># So we avoid to use SpacegroupAnalyzer.get_primitive_standard_structure</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="n">sga</span><span class="o">.</span><span class="n">get_refined_structure</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">struct</span></div>
 

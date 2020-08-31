@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; dsenum 0.3.2 documentation</title>
+  <title>dsenum &mdash; dsenum 0.3.2 documentation</title>
   
 
   
@@ -135,7 +135,9 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Overview: module code</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>dsenum</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -150,21 +152,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="dsenum.html">dsenum</a></li>
-<ul><li><a href="dsenum/coloring.html">dsenum.coloring</a></li>
-<li><a href="dsenum/coloring_generator.html">dsenum.coloring_generator</a></li>
-<li><a href="dsenum/converter.html">dsenum.converter</a></li>
-<li><a href="dsenum/core.html">dsenum.core</a></li>
-<li><a href="dsenum/derivative_structure.html">dsenum.derivative_structure</a></li>
-<li><a href="dsenum/enumerate.html">dsenum.enumerate</a></li>
-<li><a href="dsenum/permutation_group.html">dsenum.permutation_group</a></li>
-<li><a href="dsenum/polya.html">dsenum.polya</a></li>
-<li><a href="dsenum/site.html">dsenum.site</a></li>
-<li><a href="dsenum/smith_normal_form.html">dsenum.smith_normal_form</a></li>
-<li><a href="dsenum/superlattice.html">dsenum.superlattice</a></li>
-<li><a href="dsenum/utils.html">dsenum.utils</a></li>
-</ul></ul>
+  <h1>Source code for dsenum</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">._version</span> <span class="kn">import</span> <span class="n">get_versions</span>  <span class="c1"># type: ignore</span>
+
+<span class="kn">from</span> <span class="nn">dsenum.enumerate</span> <span class="kn">import</span> <span class="n">StructureEnumerator</span>
+
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+<span class="k">del</span> <span class="n">get_versions</span>
+
+
+<div class="viewcode-block" id="get_git_commit_hash"><a class="viewcode-back" href="../dsenum.html#dsenum.get_git_commit_hash">[docs]</a><span class="k">def</span> <span class="nf">get_git_commit_hash</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;rev-parse&quot;</span><span class="p">,</span> <span class="s2">&quot;--short&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_version"><a class="viewcode-back" href="../dsenum.html#dsenum.get_version">[docs]</a><span class="k">def</span> <span class="nf">get_version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">__version__</span> <span class="o">+</span> <span class="s2">&quot;+&quot;</span> <span class="o">+</span> <span class="n">get_git_commit_hash</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+</pre></div>
 
            </div>
            

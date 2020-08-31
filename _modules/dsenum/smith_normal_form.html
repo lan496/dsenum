@@ -137,6 +137,8 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../dsenum.html">dsenum</a> &raquo;</li>
+        
       <li>dsenum.smith_normal_form</li>
     
     
@@ -187,12 +189,6 @@
     <span class="k">return</span> <span class="n">ret</span></div>
 
 
-<div class="viewcode-block" id="change_sign_column"><a class="viewcode-back" href="../../dsenum.html#dsenum.smith_normal_form.change_sign_column">[docs]</a><span class="k">def</span> <span class="nf">change_sign_column</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">ret</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-
 <div class="viewcode-block" id="get_min_abs"><a class="viewcode-back" href="../../dsenum.html#dsenum.smith_normal_form.get_min_abs">[docs]</a><span class="k">def</span> <span class="nf">get_min_abs</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
     <span class="n">valmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">s</span><span class="p">:,</span> <span class="n">s</span><span class="p">:]))</span> <span class="o">+</span> <span class="mi">1</span>
@@ -205,9 +201,9 @@
 
 
 <div class="viewcode-block" id="is_lone"><a class="viewcode-back" href="../../dsenum.html#dsenum.smith_normal_form.is_lone">[docs]</a><span class="k">def</span> <span class="nf">is_lone</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">M</span><span class="p">[(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):,</span> <span class="n">s</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">M</span><span class="p">[(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:,</span> <span class="n">s</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 

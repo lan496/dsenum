@@ -137,6 +137,8 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../dsenum.html">dsenum</a> &raquo;</li>
+        
       <li>dsenum.converter</li>
     
     
@@ -154,7 +156,7 @@
             
   <h1>Source code for dsenum.converter</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -206,22 +208,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_site_base</span><span class="p">,)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">invariant_factors</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">hnf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">hnf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hnf</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hnf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_site_base</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
 
-<div class="viewcode-block" id="DerivativeMultiLatticeHash.hash_derivative_site"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.hash_derivative_site">[docs]</a>    <span class="k">def</span> <span class="nf">hash_derivative_site</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsite</span><span class="p">:</span> <span class="n">DerivativeSite</span><span class="p">,</span> <span class="n">return_image</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CanonicalSite</span><span class="p">:</span>
+<div class="viewcode-block" id="DerivativeMultiLatticeHash.hash_derivative_site"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.hash_derivative_site">[docs]</a>    <span class="k">def</span> <span class="nf">hash_derivative_site</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dsite</span><span class="p">:</span> <span class="n">DerivativeSite</span><span class="p">,</span> <span class="n">return_image</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CanonicalSite</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CanonicalSite</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -249,12 +253,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">csite</span></div>
 
-<div class="viewcode-block" id="DerivativeMultiLatticeHash.hash_frac_coords"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.hash_frac_coords">[docs]</a>    <span class="k">def</span> <span class="nf">hash_frac_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frac_coord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CanonicalSite</span><span class="p">]:</span>
+<div class="viewcode-block" id="DerivativeMultiLatticeHash.hash_frac_coords"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.hash_frac_coords">[docs]</a>    <span class="k">def</span> <span class="nf">hash_frac_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frac_coord</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CanonicalSite</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">site_index</span><span class="p">,</span> <span class="n">fc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">displacement_set</span><span class="p">):</span>
             <span class="n">jimage</span> <span class="o">=</span> <span class="n">cast_integer_matrix</span><span class="p">(</span><span class="n">frac_coord</span> <span class="o">-</span> <span class="n">fc</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fc</span> <span class="o">+</span> <span class="n">jimage</span><span class="p">,</span> <span class="n">frac_coord</span><span class="p">):</span>
                 <span class="n">dsite</span> <span class="o">=</span> <span class="n">DerivativeSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="n">jimage</span><span class="p">)</span>
-                <span class="n">csite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_derivative_site</span><span class="p">(</span><span class="n">dsite</span><span class="p">)</span>
+                <span class="n">csite</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">CanonicalSite</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_derivative_site</span><span class="p">(</span><span class="n">dsite</span><span class="p">))</span>
                 <span class="k">return</span> <span class="n">csite</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -325,7 +329,7 @@
         <span class="k">return</span> <span class="n">dsite</span></div></div>
 
 
-<div class="viewcode-block" id="get_species_list"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.get_species_list">[docs]</a><span class="k">def</span> <span class="nf">get_species_list</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">list_species</span><span class="p">):</span>
+<div class="viewcode-block" id="get_species_list"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.get_species_list">[docs]</a><span class="k">def</span> <span class="nf">get_species_list</span><span class="p">(</span><span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">list_species</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    tile list of species for derivative structure</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -335,7 +339,9 @@
     <span class="k">return</span> <span class="n">species</span></div>
 
 
-<div class="viewcode-block" id="convert_site_constraints"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.convert_site_constraints">[docs]</a><span class="k">def</span> <span class="nf">convert_site_constraints</span><span class="p">(</span><span class="n">base_site_constraints</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_site_constraints"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.convert_site_constraints">[docs]</a><span class="k">def</span> <span class="nf">convert_site_constraints</span><span class="p">(</span>
+    <span class="n">base_site_constraints</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
     <span class="n">site_constraints</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">base_site_constraints</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>

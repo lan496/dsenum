@@ -137,6 +137,8 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
+          <li><a href="../dsenum.html">dsenum</a> &raquo;</li>
+        
       <li>dsenum.derivative_structure</li>
     
     
@@ -153,12 +155,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for dsenum.derivative_structure</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Lattice</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core.sites</span> <span class="kn">import</span> <span class="n">PeriodicSite</span>
 
-<span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">,</span> <span class="n">get_species_list</span>
+<span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">DerivativeMultiLatticeHash</span>
 
 
 <div class="viewcode-block" id="ColoringToStructure"><a class="viewcode-back" href="../../dsenum.html#dsenum.derivative_structure.ColoringToStructure">[docs]</a><span class="k">class</span> <span class="nc">ColoringToStructure</span><span class="p">:</span>
@@ -166,8 +169,22 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">base_structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span>
         <span class="n">dshash</span><span class="p">:</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">,</span>
-        <span class="n">mapping_color_to_species</span><span class="p">,</span>
+        <span class="n">mapping_color_to_species</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span><span class="p">]],</span>
+        <span class="n">additional_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">additional_frac_coords</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        base_structure:</span>
+<span class="sd">            Structure with only ordering species</span>
+<span class="sd">        dshash</span>
+<span class="sd">        mapping_color_to_species</span>
+<span class="sd">        additional_species: list of pymatgen.core.Species, optional</span>
+<span class="sd">            species which are nothing to do with ordering</span>
+<span class="sd">        additional_frac_coords: np.ndarray, optional</span>
+<span class="sd">            fractional coordinates of species which are nothing to do with ordering</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span> <span class="o">=</span> <span class="n">base_structure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dshash</span> <span class="o">=</span> <span class="n">dshash</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping_color_to_species</span> <span class="o">=</span> <span class="n">mapping_color_to_species</span>
@@ -193,6 +210,27 @@
             <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_coords</span>
         <span class="p">]</span>
 
+        <span class="c1"># additional fixed sites</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_species</span> <span class="o">=</span> <span class="n">additional_species</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_frac_coords</span> <span class="o">=</span> <span class="n">additional_frac_coords</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_species</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_species</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_frac_coords</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">additional_psites</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_species</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lattice_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dshash</span><span class="o">.</span><span class="n">get_lattice_points</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">sp</span><span class="p">,</span> <span class="n">disp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_species</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_frac_coords</span><span class="p">):</span>
+                <span class="n">cart_coords</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">disp</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lp</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_matrix</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">lattice_points</span>
+                <span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">additional_psites</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">PeriodicSite</span><span class="p">(</span><span class="n">sp</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">cart_coords</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">base_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span>
@@ -201,37 +239,12 @@
         <span class="n">list_psites</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">precomputed_psites</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">coloring</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dshash</span><span class="o">.</span><span class="n">num_sites</span><span class="p">)</span>
         <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_psites</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">list_psites</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_psites</span><span class="p">)</span>
+
         <span class="n">dstruct</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_sites</span><span class="p">(</span><span class="n">list_psites</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">dstruct</span></div></div>
-
-
-<div class="viewcode-block" id="get_supercell"><a class="viewcode-back" href="../../dsenum.html#dsenum.derivative_structure.get_supercell">[docs]</a><span class="k">def</span> <span class="nf">get_supercell</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">scaling_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    structure: pymatgen.core.Structure</span>
-<span class="sd">    scaling_matrix: array, lower triangular integer matrix</span>
-<span class="sd">        the i-th new lattice vector is np.dot(scaling_matrix.T, structure.lattice.matrix)[i, :]</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    ds: pymatgen.core.Structure</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dshash</span> <span class="o">=</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">(</span><span class="n">scaling_matrix</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">)</span>
-
-    <span class="n">base_lattice_matrix</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span>
-    <span class="n">lattice</span> <span class="o">=</span> <span class="n">Lattice</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">scaling_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">base_lattice_matrix</span><span class="p">))</span>
-
-    <span class="n">species</span> <span class="o">=</span> <span class="n">get_species_list</span><span class="p">(</span><span class="n">dshash</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="p">[</span><span class="n">site</span><span class="o">.</span><span class="n">species</span> <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">])</span>
-
-    <span class="n">list_dsites</span> <span class="o">=</span> <span class="n">dshash</span><span class="o">.</span><span class="n">get_distinct_derivative_sites_list</span><span class="p">()</span>
-    <span class="n">new_cart_coords</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dshash</span><span class="o">.</span><span class="n">get_frac_coords</span><span class="p">(</span><span class="n">dsite</span><span class="p">),</span> <span class="n">base_lattice_matrix</span><span class="p">)</span> <span class="k">for</span> <span class="n">dsite</span> <span class="ow">in</span> <span class="n">list_dsites</span>
-    <span class="p">]</span>
-
-    <span class="n">ds</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">new_cart_coords</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ds</span></div>
 </pre></div>
 
            </div>
