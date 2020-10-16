@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dsenum.derivative_structure &mdash; dsenum 0.3.2 documentation</title>
+  <title>dsenum.derivative_structure &mdash; dsenum 0+untagged.1.g104e0d9 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.3.2
+                0
               </div>
             
           
@@ -158,7 +158,8 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span><span class="p">,</span> <span class="n">Element</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core.sites</span> <span class="kn">import</span> <span class="n">PeriodicSite</span>
 
 <span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">DerivativeMultiLatticeHash</span>
@@ -169,7 +170,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">base_structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span>
         <span class="n">dshash</span><span class="p">:</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">,</span>
-        <span class="n">mapping_color_to_species</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span><span class="p">]],</span>
+        <span class="n">mapping_color_to_species</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span><span class="p">]],</span>
         <span class="n">additional_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">additional_frac_coords</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -178,8 +179,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        base_structure:</span>
 <span class="sd">            Structure with only ordering species</span>
-<span class="sd">        dshash</span>
-<span class="sd">        mapping_color_to_species</span>
+<span class="sd">        dshash:</span>
+<span class="sd">        mapping_color_to_species:</span>
 <span class="sd">        additional_species: list of pymatgen.core.Species, optional</span>
 <span class="sd">            species which are nothing to do with ordering</span>
 <span class="sd">        additional_frac_coords: np.ndarray, optional</span>

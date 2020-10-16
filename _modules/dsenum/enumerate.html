@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>dsenum.enumerate &mdash; dsenum 0.3.2 documentation</title>
+  <title>dsenum.enumerate &mdash; dsenum 0+untagged.1.g104e0d9 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.3.2
+                0
               </div>
             
           
@@ -161,7 +161,7 @@
 
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">DummySpecie</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">DummySpecie</span><span class="p">,</span> <span class="n">Specie</span><span class="p">,</span> <span class="n">Element</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">dsenum.utils</span> <span class="kn">import</span> <span class="n">get_symmetry_operations</span>
@@ -191,11 +191,13 @@
 <span class="sd">    num_types: int</span>
 <span class="sd">        The number of species in derivative structures.</span>
 <span class="sd">        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.</span>
-<span class="sd">    mapping_color_species: (Optional) List[Union[pymatgen.core.Specie, pymatgen.core.DummySpecie]]</span>
+<span class="sd">    mapping_color_species: optional</span>
 <span class="sd">        If specified, use these species in derivative structures.</span>
 <span class="sd">        The length of this list should be equal to `num_types`</span>
 <span class="sd">    composition_constraints: (Optional) List[int]</span>
-<span class="sd">        composition_constraints[i] is the ratio of the i-th species in mapping_color_species</span>
+<span class="sd">        composition_constraints[i] is the ratio of the i-th species in mapping_color_species.</span>
+<span class="sd">        For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with</span>
+<span class="sd">        `mapping_color_species = [&quot;Ti&quot;, &quot;O&quot;]`.</span>
 <span class="sd">    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)</span>
 <span class="sd">        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</span>
 <span class="sd">    color_exchange: (Optional) bool</span>
@@ -214,7 +216,7 @@
         <span class="n">base_structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span>
         <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">num_types</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">mapping_color_species</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mapping_color_species</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Specie</span><span class="p">,</span> <span class="n">DummySpecie</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">composition_constraints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">base_site_constraints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color_exchange</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -243,6 +245,7 @@
 
         <span class="c1"># site constraints</span>
         <span class="k">if</span> <span class="n">base_site_constraints</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">base_site_constraints</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_sites_base</span>
             <span class="n">site_constraints</span> <span class="o">=</span> <span class="n">convert_site_constraints</span><span class="p">(</span><span class="n">base_site_constraints</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">site_constraints</span> <span class="o">=</span> <span class="kc">None</span>
