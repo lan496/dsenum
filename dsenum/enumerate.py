@@ -38,7 +38,9 @@ class StructureEnumerator:
         If specified, use these species in derivative structures.
         The length of this list should be equal to `num_types`
     composition_constraints: (Optional) List[int]
-        composition_constraints[i] is the ratio of the i-th species in mapping_color_species
+        composition_constraints[i] is the ratio of the i-th species in mapping_color_species.
+        For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with
+        `mapping_color_species = ["Ti", "O"]`.
     base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)
         e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
     color_exchange: (Optional) bool
