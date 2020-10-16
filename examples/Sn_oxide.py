@@ -1,7 +1,8 @@
 import os
 
 import numpy as np
-from pymatgen.core import Lattice, Structure, Specie, DummySpecie
+from pymatgen.core import Lattice, Structure
+from pymatgen.core.periodic_table import Specie, DummySpecie
 
 from dsenum import StructureEnumerator
 from dsenum.utils import write_cif

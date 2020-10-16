@@ -86,6 +86,7 @@ class StructureEnumerator:
 
         # site constraints
         if base_site_constraints:
+            assert len(base_site_constraints) == self.num_sites_base
             site_constraints = convert_site_constraints(base_site_constraints, self.index)
         else:
             site_constraints = None

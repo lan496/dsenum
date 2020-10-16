@@ -1,5 +1,5 @@
 pymatgen>=2020.4.29
-numpy==1.18.3
+numpy
 sympy
 scipy
 matplotlib

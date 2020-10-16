@@ -1,7 +1,8 @@
 from typing import List, Union
 
 import numpy as np
-from pymatgen.core import Lattice, Structure, Specie, DummySpecie, Element
+from pymatgen.core import Lattice, Structure
+from pymatgen.core.periodic_table import Specie, DummySpecie, Element
 from pymatgen.core.sites import PeriodicSite
 
 from dsenum.converter import DerivativeMultiLatticeHash

@@ -11,5 +11,5 @@ dependencies:
   - joblib
   - tqdm
   - pip:
-    - numpy==1.18.3
+    - numpy
     - pymatgen>=2020.4.29
