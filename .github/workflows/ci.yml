@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.7
+        python-version: 3.8
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Lint with flake8
@@ -37,7 +37,7 @@ jobs:
       uses: s-weigand/setup-conda@v1
       with:
         update-conda: true
-        python-version: 3.7
+        python-version: 3.8
     - name: Display Conda version
       run: conda --version
     - name: Display Python version
@@ -60,10 +60,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.7
+        python-version: 3.8
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Install cedd
