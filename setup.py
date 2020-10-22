@@ -16,8 +16,8 @@ ext_modules = [
         # (https://github.com/pybind/python_example/pull/53)
         sorted(glob("src/*.cpp")),
         include_dirs=[
-            # Path to pybind11 headers
-            "extern/pybind11/include"
+            "extern/pybind11/include",
+            "extern/TdZdd/include",
         ],
         language='c++'
     ),
