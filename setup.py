@@ -4,6 +4,7 @@ from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 import sys
 from glob import glob
+import versioneer
 
 __version__ = '0.0.1'
 
@@ -93,7 +94,7 @@ class BuildExt(build_ext):
 
 setup(
     name='pyzdd',
-    version=__version__,
+    version=versioneer.get_version(),
     license="MIT",
     author='Kohei Shinohara',
     author_email='kohei19950508@gmail.com',

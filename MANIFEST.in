@@ -1,0 +1,5 @@
+include versioneer.py
+include pyzdd/_version.py
+include LICENSE
+include requirements.txt
+include setup.cfg
