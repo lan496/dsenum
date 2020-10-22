@@ -1,0 +1,6 @@
+[submodule "TdZdd"]
+	path = extern/TdZdd
+	url = git@github.com:kunisura/TdZdd.git
+[submodule "extern/pybind11"]
+	path = extern/pybind11
+	url = git@github.com:pybind/pybind11.git
