@@ -1,3 +1,4 @@
+from _pyzdd import Universe, Combination
 from ._version import get_versions  # type: ignore
 
 
