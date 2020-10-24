@@ -12,6 +12,7 @@ def test_combination():
     universe.zddReduce()
     size = universe.size()
 
+    # test items
     count = 0
     items_expect = [
         [False, False, True, True],
@@ -25,8 +26,10 @@ def test_combination():
         assert items == expect
         count += 1
 
+    # test count
     count_expect = factorial(n) // factorial(k) // factorial(n - k)
     assert count == count_expect
+    assert universe.cardinality() == str(count_expect)
 
 
 def test_choice():
@@ -39,6 +42,7 @@ def test_choice():
     universe.zddSubset(spec)
     universe.zddReduce()
 
+    # test items
     count = 0
     items_expect = [
         [False, False, True, True],
@@ -52,5 +56,7 @@ def test_choice():
         assert items == expect
         count += 1
 
+    # test count
     count_expect = factorial(len(v)) // factorial(k) // factorial(len(v) - k) * (2 ** (n - len(v)))
     assert count == count_expect
+    assert universe.cardinality() == str(count_expect)
