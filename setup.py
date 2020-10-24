@@ -6,8 +6,6 @@ import sys
 from glob import glob
 import versioneer
 
-__version__ = '0.0.1'
-
 
 ext_modules = [
     Extension(

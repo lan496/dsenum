@@ -91,7 +91,7 @@ public:
             }
         }
         // sentinel
-        bags.insert(std::set<Vertex>(bag));
+        bags.push_back(std::set<Vertex>(bag));
 
         assert(edge_count == E);
         assert(bag.empty());

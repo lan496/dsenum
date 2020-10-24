@@ -2,3 +2,4 @@ pre-commit
 black
 versioneer
 pytest
+pytest-cov
