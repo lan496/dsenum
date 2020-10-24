@@ -4,7 +4,7 @@
 #include <tdzdd/DdSpec.hpp>
 #include "type.hpp"
 
-namespace pyzdd {
+namespace tdzdd {
 class Combination: public tdzdd::DdSpec<Combination, int, 2> {
     const int n;
     const int k;
@@ -31,5 +31,5 @@ public:
         return level;
     }
 };
-} // namespace pyzdd
+} // namespace tdzdd
 #endif // PYZDD_COMBINATION_H

@@ -6,14 +6,14 @@
 #include <tdzdd/DdStructure.hpp>
 #include "type.hpp"
 
-namespace pyzdd {
+namespace tdzdd {
 class Choice: public tdzdd::DdSpec<Choice, int, 2> {
 public:
     int n;  // number of variables
-    int k;  // number of choosen variables
+    int k;  // number of selected variables
     std::vector<Variable> group;  // list of 0-indexed variables
 
-    Choice(int n, int k, const std::vector<int>& group) : n(n), k(k), group(group) {
+    Choice(int n, int k, const std::vector<int>& v) : n(n), k(k), group(v) {
         std::sort(group.begin(), group.end());
     }
 
@@ -22,7 +22,7 @@ public:
         return n;
     }
 
-    int getChild(int& state, int level, int value) const {
+    int getChild(int& state, Level level, int value) const {
         Variable idx = n - level;
         auto bounds = std::equal_range(group.begin(), group.end(), idx);
         if (bounds.second - bounds.first != 0) {
@@ -36,5 +36,5 @@ public:
         return level;
     }
 };
-} // namespace pyzdd
+} // namespace tdzdd
 #endif // PYZDD_CHOISE_H
