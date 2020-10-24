@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -7,6 +8,7 @@
 #include <tdzdd/DdStructure.hpp>
 
 #include "iterator.hpp"
+#include "graph.hpp"
 #include "spec/combination.hpp"
 #include "spec/choice.hpp"
 
@@ -34,6 +36,20 @@ PYBIND11_MODULE(_pyzdd, m) {
     PyDdStructure2.def("begin", &tdzdd::DdStructure<2>::begin);
     PyDdStructure2.def("end", &tdzdd::DdStructure<2>::end);
     m.def("variable_choice", &tdzdd::variable_choice);
+
+    // Graph
+    py::class_<graph::Edge> (m, "Edge")
+        .def(py::init<int,int>())
+        .def(py::init<int,int,int>())
+        .def("__repr__", [](const graph::Edge &e) {
+            return "<Edge(src=" + std::to_string(e.src) + ", dst=" + std::to_string(e.dst) + ", weight=" + std::to_string(e.weight) + ")>";
+        });
+    py::class_<graph::Graph> (m, "Graph");
+    py::class_<graph::GraphAuxiliary> (m, "GraphAuxiliary")
+        .def(py::init<const graph::Graph&>())
+        .def_property_readonly("edge_order", &graph::GraphAuxiliary::get_edge_order)
+        .def_property_readonly("bags", &graph::GraphAuxiliary::get_bags)
+        .def_property_readonly("width", &graph::GraphAuxiliary::get_width);
 
     // Specifications
     // Combination spec

@@ -1,6 +1,11 @@
 from typing import Generator, Set
 
-from _pyzdd import Universe, Combination, Choice, variable_choice
+from _pyzdd import (
+    Universe,
+    Combination,
+    Choice,
+    variable_choice,
+)
 from ._version import get_versions  # type: ignore
 
 

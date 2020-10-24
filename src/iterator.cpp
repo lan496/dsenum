@@ -1,6 +1,6 @@
 #include "iterator.hpp"
 #include <set>
-#include "spec/type.hpp"
+#include "type.hpp"
 
 namespace tdzdd {
     std::vector<bool> variable_choice(tdzdd::DdStructure<2>::const_iterator const &itr, int n) {
