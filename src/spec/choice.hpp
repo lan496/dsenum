@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <tdzdd/DdSpec.hpp>
 #include <tdzdd/DdStructure.hpp>
-#include "type.hpp"
+#include "../type.hpp"
 
 namespace tdzdd {
 class Choice: public tdzdd::DdSpec<Choice, int, 2> {

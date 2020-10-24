@@ -2,7 +2,7 @@
 #ifndef PYZDD_COMBINATION_H
 #define PYZDD_COMBINATION_H
 #include <tdzdd/DdSpec.hpp>
-#include "type.hpp"
+#include "../type.hpp"
 
 namespace tdzdd {
 class Combination: public tdzdd::DdSpec<Combination, int, 2> {
