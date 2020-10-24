@@ -14,14 +14,14 @@ def test_combination():
 
     count = 0
     items_expect = [
-        set([1, 2]),
-        set([1, 3]),
-        set([2, 3]),
-        set([1, 4]),
-        set([2, 4]),
-        set([3, 4]),
+        [False, False, True, True],
+        [False, True, False, True],
+        [False, True, True, False],
+        [True, False, False, True],
+        [True, False, True, False],
+        [True, True, False, False],
     ]
-    for items, expect in zip(enumerate_sets(universe), items_expect):
+    for items, expect in zip(enumerate_sets(universe, n), items_expect):
         assert items == expect
         count += 1
 
@@ -40,9 +40,17 @@ def test_choice():
     universe.zddReduce()
 
     count = 0
-    for items in enumerate_sets(universe):
+    items_expect = [
+        [False, False, True, True],
+        [False, True, True, True],
+        [True, False, False, True],
+        [True, False, True, False],
+        [True, True, False, True],
+        [True, True, True, False],
+    ]
+    for items, expect in zip(enumerate_sets(universe, n), items_expect):
+        assert items == expect
         count += 1
-        print(items)
 
     count_expect = factorial(len(v)) // factorial(k) // factorial(len(v) - k) * (2 ** (n - len(v)))
     assert count == count_expect

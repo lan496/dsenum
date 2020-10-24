@@ -6,6 +6,7 @@
 #include <tdzdd/DdSpec.hpp>
 #include <tdzdd/DdStructure.hpp>
 
+#include "iterator.hpp"
 #include "spec/combination.hpp"
 #include "spec/choice.hpp"
 
@@ -26,11 +27,11 @@ PYBIND11_MODULE(_pyzdd, m) {
     // Set iterator
     using const_iterator = tdzdd::DdStructure<2>::const_iterator;
     py::class_<const_iterator> (m, "const_iterator")
-        .def("itemset", &const_iterator::operator*)
         .def("next", &const_iterator::operator++)
         .def(py::self != py::self);
     PyDdStructure2.def("begin", &tdzdd::DdStructure<2>::begin);
     PyDdStructure2.def("end", &tdzdd::DdStructure<2>::end);
+    m.def("variable_choice", &tdzdd::variable_choice);
 
     // Specifications
     // Combination spec
