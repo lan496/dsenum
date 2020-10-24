@@ -1,3 +1,5 @@
+from typing import List, Set
+
 import networkx as nx
 from networkx.generators.lattice import grid_graph
 from networkx import path_graph, complete_graph
@@ -29,6 +31,7 @@ def test_on_grid_graph():
 
     for bag, expect in zip(graphaux.bags, bags_expect):
         assert bag == expect
+    g = nx.relabel_nodes(grid_2d, mapping)
 
     width_expect = 3
     assert graphaux.width == width_expect

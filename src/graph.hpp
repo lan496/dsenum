@@ -65,7 +65,6 @@ public:
         edge_order.resize(E + 1);
         InternalEdgeId edge_count = 0;
         std::vector<bool> visited_vertex(V, false);
-        // path decomposition
         bags.reserve(E);
         std::set<Vertex> bag;
         for (Vertex u = 0; u < V; ++u) {
