@@ -51,7 +51,8 @@ PYBIND11_MODULE(_pyzdd, m) {
         .def("edge_order", &graph::GraphAuxiliary::get_edge_order)
         .def("frontier", &graph::GraphAuxiliary::get_frontier)
         .def("introduced", &graph::GraphAuxiliary::get_introduced)
-        .def("forgotten", &graph::GraphAuxiliary::get_forgotten);
+        .def("forgotten", &graph::GraphAuxiliary::get_forgotten)
+        .def("map_vertex_to_position", &graph::GraphAuxiliary::map_vertex_to_position);
 
     // Specifications
     // Combination spec

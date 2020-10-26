@@ -71,10 +71,13 @@ def test_on_grid_graph():
         [5, 8],
     ]
     frontier_size = 3
+    vertex_to_position = [0, 0, 0, 1, 1, 1, 2, 2, 0]
 
     for eid in range(g.size()):
         assert graphaux.frontier(eid) == frontiers[eid]
         assert graphaux.introduced(eid) == introduced[eid]
         assert graphaux.forgotten(eid) == forgotten[eid]
+    for u in range(g.order()):
+        assert graphaux.map_vertex_to_position(u) == vertex_to_position[u]
 
     assert graphaux.max_frontier_size == frontier_size
