@@ -21,6 +21,7 @@ def convert_to_raw_graph(graph: nx.Graph) -> Union[List[List[Edge]], Dict[Any, i
 
     graph_pb = []
     for src in relabeled.nodes:
+        # nx.Graph.neighbors is iterator on dict. the order of dict is fixed in python>=3.7.
         edges_pb = [Edge(src, dst, relabeled[src][dst].get("weight", 1)) for dst in relabeled.neighbors(src)]
         graph_pb.append(edges_pb)
 

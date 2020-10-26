@@ -8,30 +8,73 @@ from pyzdd.graph import GraphAuxiliary, convert_to_raw_graph
 
 
 def test_on_grid_graph():
+    """
+       e1    e5
+    v0----v1----v2
+    |     |     |
+    |e0   |e4   |e9
+    |     |     |
+    v3----v4----v5
+    |     |     |
+    |e2   |e7   |e11
+    |     |     |
+    v6----v7----v8
+       e6   e10
+    """
     N = 3
     grid_2d = grid_graph(dim=[N, N])
     graph, mapping = convert_to_raw_graph(grid_2d)
     graphaux = GraphAuxiliary(graph)
 
-    bags_expect = [
-        set([0]),
-        set([0, 3]),
-        set([1, 3]),
-        set([1, 3, 6]),
-        set([1, 4, 6]),
-        set([1, 4, 6]),
-        set([2, 4, 6]),
-        set([2, 4, 7]),
-        set([2, 4, 7]),
-        set([2, 5, 7]),
-        set([5, 7]),
-        set([5, 8]),
-        set([]),
-    ]
-
-    for bag, expect in zip(graphaux.bags, bags_expect):
-        assert bag == expect
     g = nx.relabel_nodes(grid_2d, mapping)
 
-    width_expect = 3
-    assert graphaux.width == width_expect
+    frontiers = [
+        [],
+        [0, 3],
+        [1, 3],
+        [1, 3, 6],
+        [1, 4, 6],
+        [1, 4, 6],
+        [2, 4, 6],
+        [2, 4, 7],
+        [2, 4, 7],
+        [2, 5, 7],
+        [5, 7],
+        [5, 8],
+    ]
+    introduced = [
+        [0, 3],
+        [1],
+        [6],
+        [4],
+        [],
+        [2],
+        [7],
+        [],
+        [5],
+        [],
+        [8],
+        [],
+    ]
+    forgotten = [
+        [],
+        [0],
+        [],
+        [3],
+        [],
+        [1],
+        [6],
+        [],
+        [4],
+        [2],
+        [7],
+        [5, 8],
+    ]
+    frontier_size = 3
+
+    for eid in range(g.size()):
+        assert graphaux.frontier(eid) == frontiers[eid]
+        assert graphaux.introduced(eid) == introduced[eid]
+        assert graphaux.forgotten(eid) == forgotten[eid]
+
+    assert graphaux.max_frontier_size == frontier_size

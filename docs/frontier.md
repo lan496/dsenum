@@ -39,17 +39,4 @@ for e in edges:
         path_decomposition.append(deepcopy(bag))
 ```
 
-top-down construction
-```python
-# state_i: frontiers[i] -> Any
-def get_child(i, state_i, value):
-    e: Edge = edges[i]
-    do_some_branching(state_i, e, value)
-
-    init(state_next)
-    for u in frontiers[i + 1]:
-        update(state_next[u])
-
-    # state_next: frontiers[i + 1] -> Any
-    return state_next
-```
+A frontier is regarded as bag of a path decomposition just after intoducing new vertexs and forgeting unneed vertexs.

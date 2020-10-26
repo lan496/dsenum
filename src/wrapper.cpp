@@ -47,9 +47,11 @@ PYBIND11_MODULE(_pyzdd, m) {
     py::class_<graph::Graph> (m, "Graph");
     py::class_<graph::GraphAuxiliary> (m, "GraphAuxiliary")
         .def(py::init<const graph::Graph&>())
-        .def_property_readonly("edge_order", &graph::GraphAuxiliary::get_edge_order)
-        .def_property_readonly("bags", &graph::GraphAuxiliary::get_bags)
-        .def_property_readonly("width", &graph::GraphAuxiliary::get_width);
+        .def_property_readonly("max_frontier_size", &graph::GraphAuxiliary::get_max_frontier_size)
+        .def("edge_order", &graph::GraphAuxiliary::get_edge_order)
+        .def("frontier", &graph::GraphAuxiliary::get_frontier)
+        .def("introduced", &graph::GraphAuxiliary::get_introduced)
+        .def("forgotten", &graph::GraphAuxiliary::get_forgotten);
 
     // Specifications
     // Combination spec

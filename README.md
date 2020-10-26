@@ -21,10 +21,9 @@ pip install -e .
 ```
 conda create --name pyzdd python=3.8 pip
 pyenv activate pyzdd
-./clean.sh
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
-pip install -e .
+./clean.sh && pip install -e .
 pre-commit install
 ```
 
@@ -39,3 +38,4 @@ pre-commit install
 
 ## References
 - https://github.com/kunisura/TdZdd
+- https://github.com/junkawahara/frontier_basic_tdzdd
