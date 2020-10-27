@@ -79,6 +79,7 @@ int main() {
         int s = 0;
         int t = n * n - 1;
         auto gaux = GraphAuxiliary(g);
+        std::cerr << "Frontier size: " << gaux.get_max_frontier_size() << std::endl;
 
         auto spec = SimpleSTPath(g, s, t);
 
