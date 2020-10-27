@@ -100,10 +100,10 @@ public:
             set_comp(state, u, u);
         }
 
-        std::cerr << std::endl;
-        std::cerr << "# call eid=" << eid << ", value=" << value << std::endl;
-        std::cerr << "before processing edge" << std::endl;
-        print_state(state, level);
+        // std::cerr << std::endl;
+        // std::cerr << "# call eid=" << eid << ", value=" << value << std::endl;
+        // std::cerr << "before processing edge" << std::endl;
+        // print_state(state, level);
 
         // update state
         const std::vector<Vertex>& frontier = graphaux_ptr->get_frontier(eid);
@@ -155,8 +155,8 @@ public:
             set_comp(state, u, V_);
         }
 
-        std::cerr << "after update" << std::endl;
-        print_state(state, level);
+        // std::cerr << "after update" << std::endl;
+        // print_state(state, level);
 
         if (level == 1) return tdzdd::Terminal::ACCEPT;
         return level - 1;
