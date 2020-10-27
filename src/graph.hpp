@@ -71,7 +71,7 @@ private:
     // std::vector<std::vector<Vertex>> mapping_pos_vertex_;
 
     // the maximum size of frontiers
-    size_t max_frontier_size_;
+    int max_frontier_size_;
 
     // ************************************************************************
     // internal member functions
@@ -176,7 +176,7 @@ private:
         // frontier size
         max_frontier_size_ = 0;
         for (const auto& f: frontiers_) {
-            max_frontier_size_ = std::max(f.size(), max_frontier_size_);
+            max_frontier_size_ = std::max(static_cast<int>(f.size()), max_frontier_size_);
         }
 
         // map vertex to position
@@ -344,6 +344,11 @@ public:
             }
             std::cerr << std::endl;
         }
+        std::cerr << "mapping" << std::endl;
+        for (Vertex u = 0; u < static_cast<Vertex>(V_); ++u) {
+            std::cerr << " " << map_vertex_to_position(u);
+        }
+        std::cerr << std::endl;
     }
 };
 

@@ -171,3 +171,5 @@ dmypy.json
 cython_debug/
 
 pip-wheel-metadata/
+
+*.DS_Store
