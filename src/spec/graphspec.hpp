@@ -1,6 +1,7 @@
 #ifndef PYZDD_GRAPHSPEC_H
 #define PYZDD_GRAPHSPEC_H
 
+#include <algorithm>
 #include <memory>
 #include <tdzdd/DdSpec.hpp>
 #include "../graph.hpp"
@@ -23,6 +24,8 @@ class SimpleSTPath: public tdzdd::PodArrayDdSpec<SimpleSTPath, FrontierData, 2> 
     Vertex t_;
     int E_;
     int max_frontier_size_;
+    tdzdd::Level s_introduced_level_;
+    tdzdd::Level t_introduced_level_;
     std::shared_ptr<GraphAuxiliary> graphaux_ptr;
 
     void initialize(FrontierData* state) const {
@@ -67,7 +70,9 @@ public:
         s_(s),
         t_(t),
         E_(graphaux.number_of_edges()),
-        max_frontier_size_(graphaux.get_max_frontier_size())
+        max_frontier_size_(graphaux.get_max_frontier_size()),
+        s_introduced_level_(graphaux.get_vertex_introduced_level(s)),
+        t_introduced_level_(graphaux.get_vertex_introduced_level(t))
     {
         graphaux_ptr = std::make_shared<GraphAuxiliary>(graphaux);
 
@@ -118,8 +123,9 @@ public:
                 Vertex cmin = std::min(cs, cd);
                 Vertex cmax = std::max(cs, cd);
                 for (auto u: frontier) {
-                    if (get_comp(state, u) == cmax) {
-                        set_comp(state, u, cmin);
+                    // choice cmax so that `comp` does not decrease.
+                    if (get_comp(state, u) == cmin) {
+                        set_comp(state, u, cmax);
                     }
                 }
             } else {
@@ -150,6 +156,49 @@ public:
                 return tdzdd::Terminal::REJECT;
             }
 
+            // find frontier vertex whose degree is more than 1 and belong
+            // the other connected component than u
+            bool comp_determined = true;
+            bool deg_found = false;
+            for (auto v_frontier: frontier) {
+                // skip oneself
+                if (v_frontier == u) {
+                    continue;
+                }
+                // skip forgotten vertices
+                if (std::any_of(forgotten.begin(), forgotten.end(),
+                                [&](Vertex v){return v == v_frontier;})) {
+                    continue;
+                }
+
+                if (get_comp(state, v_frontier) == get_comp(state, u)) {
+                    comp_determined = false;
+                }
+                if (get_deg(state, v_frontier) > 0) {
+                    deg_found = true;
+                }
+                if (!comp_determined && deg_found) {
+                    break;
+                }
+            }
+
+            // when a component number of u is determined
+            if (comp_determined) {
+                assert(get_deg(state, u) <= 2);
+                // there are multiple components. contradiction.
+                if (get_deg(state, u) > 0 && deg_found) {
+                    return tdzdd::Terminal::REJECT;
+                } else if (get_deg(state, u) > 0) {
+                    // s or t cannot belong to the same components of u. contradiction.
+                    if (level > s_introduced_level_ || level > t_introduced_level_) {
+                        return tdzdd::Terminal::REJECT;
+                    } else {
+                        // s-t path already completes
+                        return tdzdd::Terminal::ACCEPT;
+                    }
+                }
+            }
+
             // forget
             set_deg(state, u, V_);
             set_comp(state, u, V_);
@@ -160,10 +209,6 @@ public:
 
         if (level == 1) return tdzdd::Terminal::ACCEPT;
         return level - 1;
-    }
-
-    bool equalTo(const FrontierData* state1, const FrontierData* state2) const {
-        return ((state1->deg == state2->deg) && (state1->comp == state2->comp));
     }
 
     void print_state(FrontierData* state, tdzdd::Level level) const {

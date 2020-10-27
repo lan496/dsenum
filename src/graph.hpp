@@ -13,7 +13,7 @@ namespace graph {
 /*
 Edge and Graph
 */
-using Vertex = short;
+using Vertex = unsigned short;
 using Weight = int;
 struct Edge {
     Vertex src, dst;
@@ -40,7 +40,7 @@ void add_undirected_edge(Graph &graph, Vertex u, Vertex v, Weight w) {
 // Internal types for variables in DD
 using InternalEdgeId = int;
 // position in PodArray
-using FrontierPosition = short;
+using FrontierPosition = unsigned short;
 
 // Frontier manager for ZDD represeting edge-induced sugraphs
 class GraphAuxiliary {
