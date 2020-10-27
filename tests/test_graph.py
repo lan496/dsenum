@@ -29,17 +29,17 @@ def test_on_grid_graph():
     g = nx.relabel_nodes(grid_2d, mapping)
 
     frontiers = [
-        [],
         [0, 3],
-        [1, 3],
+        [0, 1, 3],
         [1, 3, 6],
+        [1, 3, 4, 6],
         [1, 4, 6],
-        [1, 4, 6],
-        [2, 4, 6],
+        [1, 2, 4, 6],
+        [2, 4, 6, 7],
         [2, 4, 7],
-        [2, 4, 7],
+        [2, 4, 5, 7],
         [2, 5, 7],
-        [5, 7],
+        [5, 7, 8],
         [5, 8],
     ]
     introduced = [
@@ -70,8 +70,8 @@ def test_on_grid_graph():
         [7],
         [5, 8],
     ]
-    frontier_size = 3
-    vertex_to_position = [0, 0, 0, 1, 1, 1, 2, 2, 0]
+    frontier_size = 4
+    vertex_to_position = [0, 2, 1, 1, 3, 0, 0, 2, 1]
 
     for eid in range(g.size()):
         assert graphaux.frontier(eid) == frontiers[eid]

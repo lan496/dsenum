@@ -9,4 +9,4 @@
     - `1-edge`
     - `frontier`
     - `1-path`
-    - implementation
+    - `irreducible ZDD`

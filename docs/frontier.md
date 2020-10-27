@@ -20,11 +20,11 @@ frontiers = []
 bag = set([])
 forget = set([])
 for e in edges:
-    # just before evaluating edge `e`
-    frontiers.append(deepcopy(bag))
     # introduce vertices associated with edge `e`
     bag.insert(e.src)
     bag.insert(e.dst)
+    # just after evaluating edge `e`
+    frontiers.append(deepcopy(bag))
     path_decomposition.append(deepcopy(bag))
     # forget
     v_forget = []
@@ -39,4 +39,12 @@ for e in edges:
         path_decomposition.append(deepcopy(bag))
 ```
 
-A frontier is regarded as bag of a path decomposition just after intoducing new vertexs and forgeting unneed vertexs.
+A frontier is regarded as bag of a path decomposition just after introducing new vertexs.
+
+```python
+def get_child(state, edge, value):
+    introduce(state, edge.src)
+    introduce(state, edge.dst)
+    process_edge(state, edge)
+    forget(state)
+```

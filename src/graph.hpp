@@ -105,7 +105,8 @@ private:
         assert(edge_count == static_cast<InternalEdgeId>(E));
     }
 
-    void construct_frontiers() {
+    // construct `introduced_` and `forgotten_`
+    void construct_introduced_forgotten() {
         Vertex V = number_of_vertices();
         InternalEdgeId E = number_of_edges();
         const auto& edge_order = get_edge_order();
@@ -145,18 +146,25 @@ private:
         for (Vertex u = 0; u < V; ++u) {
             assert(processed_vertex[u]);
         }
+    }
+
+    void construct_frontiers() {
+        Vertex V = number_of_vertices();
+        InternalEdgeId E = number_of_edges();
+
+        construct_introduced_forgotten();
 
         // calculate frontiers
         frontiers_.resize(E);
         std::set<Vertex> bag;
         for (InternalEdgeId eid = 0; eid < E; ++eid) {
-            // determine frontier
-            for (auto v: bag) {
-                frontiers_[eid].emplace_back(v);
-            }
             // introduced vertices
             for (auto v: introduced_[eid]) {
                 bag.insert(v);
+            }
+            // determine frontier
+            for (auto v: bag) {
+                frontiers_[eid].emplace_back(v);
             }
             // forgotten vertices
             for (auto v: forgotten_[eid]) {
@@ -176,12 +184,6 @@ private:
         mapping_vertex_pos_.assign(V, V);
         std::vector<bool> used(max_frontier_size_, false);
         for (InternalEdgeId eid = 0; eid < E; ++eid) {
-            // forget vertex
-            // forgetting vertex should be prior than intoducing to avoid out of index error.
-            for (auto u: forgotten_[eid]) {
-                FrontierPosition released = mapping_vertex_pos_[u];
-                used[released] = false;
-            }
             // introduce vertex
             for (auto u: introduced_[eid]) {
                 bool success = false;
@@ -194,6 +196,11 @@ private:
                     }
                 }
                 assert(success);
+            }
+            // forget vertex
+            for (auto u: forgotten_[eid]) {
+                FrontierPosition released = mapping_vertex_pos_[u];
+                used[released] = false;
             }
         }
         for (Vertex u = 0; u < V; ++u) {
