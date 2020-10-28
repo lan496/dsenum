@@ -1,0 +1,24 @@
+name: TdZdd test
+
+on:
+  push:
+    branches: [master, develop]
+    paths:
+    - '**.cpp'
+    - '**.hpp'
+
+jobs:
+  test-tdzdd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Install dependancies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y make gcc g++
+    - name: make
+      run: |
+        cd src/test
+        make test
