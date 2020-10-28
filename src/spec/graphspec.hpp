@@ -19,14 +19,14 @@ public:
 
 // ZDD to represent simple paths from s to t
 class SimpleSTPath: public tdzdd::PodArrayDdSpec<SimpleSTPath, FrontierData, 2> {
-    Vertex V_;
-    Vertex s_;
-    Vertex t_;
-    int E_;
-    int max_frontier_size_;
-    tdzdd::Level s_introduced_level_;
-    tdzdd::Level t_introduced_level_;
-    std::shared_ptr<GraphAuxiliary> graphaux_ptr;
+    const Vertex V_;
+    const Vertex s_;
+    const Vertex t_;
+    const int E_;
+    const int max_frontier_size_;
+    const tdzdd::Level s_introduced_level_;
+    const tdzdd::Level t_introduced_level_;
+    const GraphAuxiliary graphaux;
 
     void initialize(FrontierData* state) const {
         for (int i = 0; i < max_frontier_size_; ++i) {
@@ -36,19 +36,19 @@ class SimpleSTPath: public tdzdd::PodArrayDdSpec<SimpleSTPath, FrontierData, 2> 
     }
 
     Vertex get_deg(FrontierData* state, Vertex u) const {
-        return state[graphaux_ptr->map_vertex_to_position(u)].deg;
+        return state[graphaux.map_vertex_to_position(u)].deg;
     }
 
     void set_deg(FrontierData* state, Vertex u, Vertex deg) const {
-        state[graphaux_ptr->map_vertex_to_position(u)].deg = deg;
+        state[graphaux.map_vertex_to_position(u)].deg = deg;
     }
 
     Vertex get_comp(FrontierData* state, Vertex u) const {
-        return state[graphaux_ptr->map_vertex_to_position(u)].comp;
+        return state[graphaux.map_vertex_to_position(u)].comp;
     }
 
     void set_comp(FrontierData* state, Vertex u, Vertex comp) const {
-        state[graphaux_ptr->map_vertex_to_position(u)].comp = comp;
+        state[graphaux.map_vertex_to_position(u)].comp = comp;
     }
 
     bool is_invalid_degree(FrontierData* state, Vertex u) const {
@@ -72,11 +72,10 @@ public:
         E_(graphaux.number_of_edges()),
         max_frontier_size_(graphaux.get_max_frontier_size()),
         s_introduced_level_(graphaux.get_vertex_introduced_level(s)),
-        t_introduced_level_(graphaux.get_vertex_introduced_level(t))
+        t_introduced_level_(graphaux.get_vertex_introduced_level(t)),
+        graphaux(graphaux)
     {
-        graphaux_ptr = std::make_shared<GraphAuxiliary>(graphaux);
-
-        if (graphaux_ptr->number_of_vertices() > SHRT_MAX) {
+        if (graphaux.number_of_vertices() > SHRT_MAX) {
             std::cerr << "The number of vertices should be smaller than " << SHRT_MAX << std::endl;
             exit(1);
         }
@@ -85,7 +84,7 @@ public:
             exit(1);
         }
 
-        setArraySize(graphaux_ptr->get_max_frontier_size());
+        setArraySize(graphaux.get_max_frontier_size());
     }
 
     int getRoot(FrontierData* state) const {
@@ -95,10 +94,10 @@ public:
 
     int getChild(FrontierData* state, int level, int value) const {
         InternalEdgeId eid = E_ - level;
-        const Edge& e = graphaux_ptr->get_edge(eid);
+        const Edge& e = graphaux.get_edge(eid);
 
         // initialize FrontierData for introduced vertices
-        const std::vector<Vertex>& introduced = graphaux_ptr->get_introduced(eid);
+        const std::vector<Vertex>& introduced = graphaux.get_introduced(eid);
         for (const auto u: introduced) {
             set_deg(state, u, 0);
             // initially introduced vertex is an isolated component
@@ -111,7 +110,7 @@ public:
         // print_state(state, level);
 
         // update state
-        const std::vector<Vertex>& frontier = graphaux_ptr->get_frontier(eid);
+        const std::vector<Vertex>& frontier = graphaux.get_frontier(eid);
         if (value == 1) {  // take the edge
             set_deg(state, e.src, get_deg(state, e.src) + 1);
             set_deg(state, e.dst, get_deg(state, e.dst) + 1);
@@ -144,7 +143,7 @@ public:
 
         // print_state(state, level, value);
         // forget and branch on determined vertex
-        const std::vector<Vertex>& forgotten = graphaux_ptr->get_forgotten(eid);
+        const std::vector<Vertex>& forgotten = graphaux.get_forgotten(eid);
         for (auto u: forgotten) {
             if ((u == s_) || (u == t_)) {
                 // degrees of s and t should be one
@@ -215,7 +214,7 @@ public:
         InternalEdgeId eid = E_ - level;
 
         std::cerr << "[frontier, deg, comp]" << std::endl;
-        const auto& frontier = graphaux_ptr->get_frontier(eid);
+        const auto& frontier = graphaux.get_frontier(eid);
         for (auto u: frontier) {
             std::cerr << u << " " << get_deg(state, u) << " " << get_comp(state, u) << std::endl;
         }

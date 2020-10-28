@@ -40,7 +40,7 @@ void add_undirected_edge(Graph &graph, Vertex u, Vertex v, Weight w) {
 // Internal types for variables in DD
 using InternalEdgeId = int;
 // position in PodArray
-using FrontierPosition = unsigned short;
+using FrontierPosition = Vertex;
 
 // Frontier manager for ZDD represeting edge-induced sugraphs
 class GraphAuxiliary {
