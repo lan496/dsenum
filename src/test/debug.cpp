@@ -81,7 +81,7 @@ int main() {
         auto gaux = GraphAuxiliary(g);
         std::cerr << "Frontier size: " << gaux.get_max_frontier_size() << std::endl;
 
-        auto spec = SimpleSTPath(g, s, t);
+        auto spec = SimpleSTPath(gaux, s, t);
 
         // monitor time and memory
         tdzdd::MessageHandler::showMessages(true);

@@ -13,7 +13,7 @@ namespace graph {
 /*
 Edge and Graph
 */
-using Vertex = unsigned short;
+using Vertex = int;
 using Weight = int;
 struct Edge {
     Vertex src, dst;
@@ -49,8 +49,6 @@ private:
     size_t V_;
     // number of edges
     size_t E_;
-    // simple undirected graph
-    Graph graph_;
     // Edge edge_order[i] is processed at the i-th
     // edge_order: InternalEdgeId -> Edge
     std::vector<Edge> edge_order_;
@@ -76,7 +74,7 @@ private:
     // ************************************************************************
     // internal member functions
     // ************************************************************************
-    void order_edges() {
+    void order_edges(const Graph& graph) {
         Vertex V = number_of_vertices();
         size_t E = number_of_edges();
 
@@ -94,7 +92,7 @@ private:
                     continue;
                 }
                 visited_vertex[v] = true;
-                for (auto e: graph_[v]) {
+                for (auto e: graph[v]) {
                     if (!visited_vertex[e.dst]) {
                         edge_order_[edge_count++] = e;
                         que.push(e.dst);
@@ -224,8 +222,8 @@ private:
     }
 public:
     GraphAuxiliary() {}
-    GraphAuxiliary(const Graph& graph) : V_(graph.size()), graph_(graph) {
-        assert(is_simple_graph(graph_));
+    GraphAuxiliary(const Graph& graph) : V_(graph.size())  {
+        assert(is_simple_graph(graph));
         if (V_ > SHRT_MAX) {
             std::cerr << "The number of vertices should be smaller than " << SHRT_MAX << std::endl;
             exit(1);
@@ -234,14 +232,40 @@ public:
         // number of edges
         E_ = 0;
         for (Vertex u = 0; u < static_cast<Vertex>(V_); ++u) {
-            for (auto& e: graph_[u]) {
+            for (auto& e: graph[u]) {
                 if (e.dst > u) {
                     ++E_;
                 }
             }
         }
         // order edges by BFS
-        order_edges();
+        order_edges(graph);
+        // construct frontiers, intorduced, forgotten, max_frontier_size
+        construct_frontiers();
+    }
+
+    GraphAuxiliary(const Graph& graph, const std::vector<Edge>& edge_order) :
+        V_(graph.size()),
+        edge_order_(edge_order)
+    {
+        assert(is_simple_graph(graph));
+        if (V_ > SHRT_MAX) {
+            std::cerr << "The number of vertices should be smaller than " << SHRT_MAX << std::endl;
+            exit(1);
+        }
+
+        // number of edges
+        E_ = 0;
+        for (Vertex u = 0; u < static_cast<Vertex>(V_); ++u) {
+            for (auto& e: graph[u]) {
+                if (e.dst > u) {
+                    ++E_;
+                }
+            }
+        }
+
+        assert(edge_order.size() == E_);
+
         // construct frontiers, intorduced, forgotten, max_frontier_size
         construct_frontiers();
     }
