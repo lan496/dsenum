@@ -68,11 +68,18 @@ private:
 
     /// the maximum size of frontiers
     int max_frontier_size_;
-
 public:
     GraphAuxiliary() {}
     GraphAuxiliary(const Graph& graph) : V_(graph.size())  {
+        // sanity check on graph
         assert(is_simple_graph(graph));
+        for (Vertex u = 0; u < static_cast<Vertex>(V_); ++u) {
+            if (graph[u].empty()) {
+                std::cerr << "TODO: handle isolated vertices" << std::endl;
+                exit(1);
+            }
+        }
+
         if (V_ > SHRT_MAX) {
             std::cerr << "The number of vertices should be smaller than " << SHRT_MAX << std::endl;
             exit(1);
@@ -87,6 +94,7 @@ public:
                 }
             }
         }
+
         // order edges by BFS
         order_edges(graph);
         // construct frontiers, intorduced, forgotten, max_frontier_size
@@ -189,45 +197,50 @@ public:
         return 0;  // isolated vertex
     }
 
-    /// @todo replace with dump(ostream&)
-    void print() const {
+    void dump(std::ostream& os) const {
         int V = number_of_vertices();
         int E = number_of_edges();
-        std::cerr << "V=" << V << std::endl;
-        std::cerr << "E=" << E << std::endl;
+        os << "V=" << V << std::endl;
+        os << "E=" << E << std::endl;
 
-        std::cerr << "frontiers" << std::endl;
+        os << "frontiers" << std::endl;
         for (InternalEdgeId eid = 0; eid < E; ++eid) {
-            std::cerr << eid << ":";
+            os << "     " << eid << ":";
             for (const auto& u: get_frontier(eid)) {
-                std::cerr << " " << u;
+                os << " " << u;
             }
-            std::cerr << std::endl;
+            os << std::endl;
         }
-        std::cerr << "introduced" << std::endl;
+        os << "introduced" << std::endl;
         for (InternalEdgeId eid = 0; eid < E; ++eid) {
-            std::cerr << eid << ":";
+            os << "     " << eid << ":";
             for (const auto& u: get_introduced(eid)) {
-                std::cerr << " " << u;
+                os << " " << u;
             }
-            std::cerr << std::endl;
+            os << std::endl;
         }
-        std::cerr << "forgotten" << std::endl;
+        os << "forgotten" << std::endl;
         for (InternalEdgeId eid = 0; eid < E; ++eid) {
-            std::cerr << eid << ":";
+            os << "     " << eid << ":";
             for (const auto& u: get_forgotten(eid)) {
-                std::cerr << " " << u;
+                os << " " << u;
             }
-            std::cerr << std::endl;
+            os << std::endl;
         }
-        std::cerr << "mapping" << std::endl;
+        os << "mapping" << std::endl;
         for (Vertex u = 0; u < static_cast<Vertex>(V_); ++u) {
-            std::cerr << " " << map_vertex_to_position(u);
+            os << " " << map_vertex_to_position(u);
         }
-        std::cerr << std::endl;
+        os << std::endl;
+    }
+
+    /// @deprecated
+    void print() const {
+        dump(std::cerr);
     }
 private:
     /// @brief determine variable order by BFS
+    /// @return bool true iff the graph is connected.
     void order_edges(const Graph& graph) {
         Vertex V = number_of_vertices();
         size_t E = number_of_edges();
@@ -238,6 +251,7 @@ private:
         std::vector<bool> visited_vertex(V, false);
         for (Vertex u = 0; u < V; ++u) {
             if (visited_vertex[u]) continue;
+
             std::queue<Vertex> que;
             que.push(u);
             while (!que.empty()) {

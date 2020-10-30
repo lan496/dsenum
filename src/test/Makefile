@@ -14,6 +14,8 @@ test:
 	./simpath.out
 	$(CXX) $(CXXFLAGS) -O3 test_stpath.cpp -o stpath.out
 	./stpath.out
+	$(CXX) $(CXXFLAGS) -O3 test_spanning_forest.cpp -o forest.out
+	./forest.out
 
 clean:  ## clean
 	$(RM) *.out
