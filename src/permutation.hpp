@@ -59,9 +59,12 @@ public:
         return sigma_[i];
     }
 
-    template<typename COLOR>
-    std::vector<COLOR> act(const std::vector<COLOR> colors) const {
-        std::vector<COLOR> permutated(colors.size());
+    /// @brief act the permutation on a given sequence
+    /// @tparam T is template param
+    /// @param[in] colors colors[i] is permutated to colors[perm[i]]
+    template<typename T>
+    std::vector<T> act(const std::vector<T> colors) const {
+        std::vector<T> permutated(colors.size());
         for (Element i = 0, n = get_size(); i < n; ++i) {
             permutated[permute(i)] = colors[i];
         }
@@ -102,7 +105,7 @@ public:
 private:
     bool is_permutation(const std::vector<Element>& sigma) const {
         auto n = get_size();
-        std::vector<bool> visited(false, n);
+        std::vector<bool> visited(n, false);
         for (size_t i = 0; i < n; ++i) {
             if ((sigma[i] > n) || visited[sigma[i]]) {
                 return false;
@@ -175,6 +178,9 @@ std::vector<Permutation> generate_group(const std::vector<Permutation>& generato
 class PermutationFrontierManager {
     // permutation
     Permutation perm_;
+    // inverse of the permutation
+    Permutation inv_perm_;
+
     // just before coloring the i-th element, the states of elements in
     // frontiers_[i] are required.
     // guaranteed to be sored in ascending order.
@@ -194,7 +200,10 @@ class PermutationFrontierManager {
     int max_frontier_size_;
 public:
     PermutationFrontierManager() = delete;
-    PermutationFrontierManager(const Permutation& perm) : perm_(perm) {
+    PermutationFrontierManager(const Permutation& perm) :
+        perm_(perm),
+        inv_perm_(perm.inverse())
+    {
         // construct frontiers, forgotten, and max_frontier_size
         construct();
     }
@@ -273,39 +282,40 @@ private:
         auto n = get_size();
 
         // prepare introduced_
+        // In comparison phase, (e, sigma(e)) and (simga-1(e), e) could be compared.
+        // So, we need to introduce e, sigma(e), and sigma-1(e) (if not belong to the frontier).
         introduced_.resize(n);
         std::vector<Element> visited_element(n, false);
         for (Element e = 0; e < n; ++e) {
+            // check e
             if (!visited_element[e]) {
                 introduced_[e].emplace_back(e);
                 visited_element[e] = true;
             }
+            // check sigma(e)
             Element e_perm = perm_.permute(e);
             if (!visited_element[e_perm]) {
                 introduced_[e].emplace_back(e_perm);
                 visited_element[e_perm] = true;
+            }
+            // check sigma-1(e)
+            Element e_invperm = inv_perm_.permute(e);
+            if (!visited_element[e_invperm]) {
+                introduced_[e].emplace_back(e_invperm);
+                visited_element[e_invperm] = true;
             }
         }
         for (Element e = 0; e < n; ++e) {
             assert(visited_element[e]);
         }
 
-        // prepare forgotten_ by backward
+        // prepare forgotten_
+        // We can forget a Element e such that both (e, sigma(e)) and
+        // (sigma-1(e), e) are already compared.
         forgotten_.resize(n);
-        std::vector<bool> processed_element(n, false);
-        for (int e = n - 1; e >= 0; --e) {  // Be careful overflow!
-            if (!processed_element[static_cast<Element>(e)]) {
-                forgotten_[static_cast<Element>(e)].emplace_back(static_cast<Element>(e));
-                processed_element[static_cast<Element>(e)] = true;
-            }
-            Element e_perm = perm_.permute(static_cast<Element>(e));
-            if (!processed_element[e_perm]) {
-                forgotten_[static_cast<Element>(e)].emplace_back(e_perm);
-                processed_element[e_perm] = true;
-            }
-        }
         for (Element e = 0; e < n; ++e) {
-            assert(processed_element[e]);
+            auto lifetime = std::max(e, std::max(perm_.permute(e), inv_perm_.permute(e)));
+            forgotten_[lifetime].emplace_back(e);
         }
 
         // prepare frontiers
@@ -328,6 +338,7 @@ private:
         assert(bag.empty());
 
         // prepare compared_
+        // In comparison phase, (e, sigma(e)) and (simga-1(e), e) could be compared.
         compared_.resize(n);
         std::vector<bool> visit_compared(n, false);
         for (Element e = 0; e < n; ++e) {
@@ -338,21 +349,39 @@ private:
                 assert(!visit_compared[e]);
                 visit_compared[e] = true;
             } else {
+                // compare e and sigma(e)
                 if (e_perm < e) {
                     compared_[e].emplace_back(std::make_pair(e, e_perm));
                     assert(!visit_compared[e]);
                     visit_compared[e] = true;
                 }
-                for (auto efr: frontiers_[e]) {
-                    if ((efr < e) && (perm_.permute(efr) == e)) {
-                        compared_[e].emplace_back(std::make_pair(efr, e));
-                        assert(!visit_compared[efr]);
-                        visit_compared[efr] = true;
-                    }
+                // compare sigma-1(e) and e
+                auto e_invperm = inv_perm_.permute(e);
+                if (e_invperm < e) {
+                    compared_[e].emplace_back(std::make_pair(e_invperm, e));
+                    // e_invperm should be contained in the frontier
+                    assert(std::find(frontiers_[e].begin(), frontiers_[e].end(), e_invperm) != frontiers_[e].end());
+                    assert(!visit_compared[e_invperm]);
+                    visit_compared[e_invperm] = true;
                 }
-
             }
         }
+        // begin debug
+        for (Element e = 0; e < n; ++e) {
+            std::cerr << e << ":";
+            for (auto efr: frontiers_[e]) {
+                std::cerr << " " << static_cast<int>(efr);
+            }
+            std::cerr << std::endl;
+        }
+        for (Element e = 0; e < n; ++e) {
+            std::cerr << e << ":";
+            for (auto pair: compared_[e]) {
+                std::cerr << " (" << pair.first << ", " << pair.second << ")";
+            }
+            std::cerr << std::endl;
+        }
+        // end debug
         for (Element e = 0; e < n; ++e) {
             assert(visit_compared[e]);
         }

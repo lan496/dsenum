@@ -9,6 +9,7 @@
 #include "../permutation.hpp"
 
 namespace permutation {
+namespace isomorphism {
 
 enum struct CompResult : char {
     UNKNOWN = 0,
@@ -111,10 +112,12 @@ public:
             set_comp(state, ei, ElementComp::UNKNOWN);
         }
 
+        #ifdef _DEBUG
         std::cerr << std::endl;
         std::cerr << "# call element=" << e << ", value=" << value << std::endl;
         std::cerr << "before processing element" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
+        #endif
 
         // color e with value
         set_color(state, e, static_cast<BinaryColor>(value));
@@ -137,8 +140,10 @@ public:
             }
         }
 
+        #ifdef _DEBUG
         std::cerr << "after comparison" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
+        #endif
 
         // compress ElementComp in frontier
         CompResult result_tmp = compress_state(state, e);
@@ -153,8 +158,11 @@ public:
         } else if (result_tmp == CompResult::SMALLER) {
             return tdzdd::Terminal::REJECT;
         }
+
+        #ifdef _DEBUG
         std::cerr << "after compression" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
+        #endif
 
         // forget
         const std::vector<Element>& forgotten = pfm_.get_forgotten(e);
@@ -163,8 +171,10 @@ public:
             set_comp(state, ef, ElementComp::UNKNOWN);
         }
 
+        #ifdef _DEBUG
         std::cerr << "after processing element" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
+        #endif
 
         if (level == 1) {
             if (result == CompResult::GREATER_OR_EQUAL) {
@@ -251,6 +261,40 @@ private:
     }
 };
 
+// let n = perm.get_size(), this function takes O(2^n).
+std::vector<std::vector<BinaryColor>> brute_force_isomophism_elimination(const Permutation& perm) {
+    size_t n = perm.get_size();
+    if (n > 64) {
+        std::cerr << "The current implementation does not support n > 64." << std::endl;
+    }
+    std::vector<std::vector<BinaryColor>> winners;
+    for (uint64_t bits = 0; bits < (1 << n); ++bits) {
+        std::vector<BinaryColor> colors(n);
+        for (size_t i = 0; i < n; ++i) {
+            colors[i] = static_cast<BinaryColor>((bits >> i) & (static_cast<uint64_t>(1)));
+        }
+        if (is_lexicographically_greater_or_equal(colors, perm.act(colors))) {
+            winners.emplace_back(colors);
+        }
+    }
+    return winners;
+}
+
+bool is_lexicographically_greater_or_equal(const std::vector<BinaryColor>& lhs, const std::vector<BinaryColor>& rhs) {
+    size_t n = lhs.size();
+    assert(rhs.size() == n);
+    for (size_t i = 0; i < n; ++i) {
+        if (lhs[i] > rhs[i]) {
+            return true;
+        } else if (lhs[i] < rhs[i]) {
+            return false;
+        }
+    }
+    // here, lhs == rhs
+    return true;
+}
+
+} // namespace isomorphism
 } // namespace permutation
 
 #endif // PYZDD_ISOMORPHISM_H
