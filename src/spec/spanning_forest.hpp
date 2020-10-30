@@ -29,6 +29,7 @@ class SpanningForestSpec: public tdzdd::PodArrayDdSpec<SpanningForestSpec, Front
     const int max_frontier_size_;
     const GraphAuxiliary graphaux;
 public:
+    /// @param graphaux frontier manager of a graph
     SpanningForestSpec(const GraphAuxiliary& graphaux) :
         V_(graphaux.number_of_vertices()),
         E_(graphaux.number_of_edges()),

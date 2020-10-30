@@ -44,7 +44,11 @@ public:
         }
 
         if (!is_permutation(sigma)) {
-            std::cerr << "Given list is not a permutation!" << std::endl;
+            std::cerr << "Given list is not a permutation:";
+            for (auto e: sigma) {
+                std::cerr << " " << static_cast<int>(e);
+            }
+            std::cerr << std::endl;
             exit(1);
         }
     }
@@ -109,9 +113,10 @@ private:
         auto n = get_size();
         std::vector<bool> visited(n, false);
         for (size_t i = 0; i < n; ++i) {
-            if ((sigma[i] > n) || visited[sigma[i]]) {
+            if ((sigma[i] >= n) || visited[sigma[i]]) {
                 return false;
             }
+            visited[sigma[i]] = true;
         }
         return true;
     }
@@ -136,7 +141,9 @@ inline bool operator!=(const Permutation& lhs, const Permutation& rhs) {
 /// @brief return an identity permutation on `n` elements
 Permutation get_identity(Element n) {
     std::vector<Element> sigma(n);
-    std::iota(sigma.begin(), sigma.end(), 1);
+    for (Element i = 0; i < n; ++i) {
+        sigma[i] = i;
+    }
     return Permutation(sigma);
 }
 
