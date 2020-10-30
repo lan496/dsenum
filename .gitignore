@@ -175,3 +175,5 @@ pip-wheel-metadata/
 *.DS_Store
 
 Elimination.hpp
+*.dot
+*.png

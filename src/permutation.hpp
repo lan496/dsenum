@@ -61,12 +61,12 @@ public:
 
     /// @brief act the permutation on a given sequence
     /// @tparam T is template param
-    /// @param[in] colors colors[i] is permutated to colors[perm[i]]
+    /// @param[in] colors colors[i] is permutated to colors[perm-1[i]]
     template<typename T>
     std::vector<T> act(const std::vector<T> colors) const {
         std::vector<T> permutated(colors.size());
         for (Element i = 0, n = get_size(); i < n; ++i) {
-            permutated[permute(i)] = colors[i];
+            permutated[i] = colors[permute(i)];
         }
         return permutated;
     }
@@ -373,22 +373,6 @@ private:
                 }
             }
         }
-        // begin debug
-        for (Element e = 0; e < n; ++e) {
-            std::cerr << e << ":";
-            for (auto efr: frontiers_[e]) {
-                std::cerr << " " << static_cast<int>(efr);
-            }
-            std::cerr << std::endl;
-        }
-        for (Element e = 0; e < n; ++e) {
-            std::cerr << e << ":";
-            for (auto pair: compared_[e]) {
-                std::cerr << " (" << pair.first << ", " << pair.second << ")";
-            }
-            std::cerr << std::endl;
-        }
-        // end debug
         for (Element e = 0; e < n; ++e) {
             assert(visit_compared[e]);
         }

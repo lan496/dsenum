@@ -268,25 +268,6 @@ private:
     }
 };
 
-/// @brief let n = perm.get_size(), this function takes O(2^n).
-std::vector<std::vector<BinaryColor>> brute_force_isomophism_elimination(const Permutation& perm) {
-    size_t n = perm.get_size();
-    if (n > 64) {
-        std::cerr << "The current implementation does not support n > 64." << std::endl;
-    }
-    std::vector<std::vector<BinaryColor>> winners;
-    for (uint64_t bits = 0; bits < (1 << n); ++bits) {
-        std::vector<BinaryColor> colors(n);
-        for (size_t i = 0; i < n; ++i) {
-            colors[i] = static_cast<BinaryColor>((bits >> i) & (static_cast<uint64_t>(1)));
-        }
-        if (is_lexicographically_greater_or_equal(colors, perm.act(colors))) {
-            winners.emplace_back(colors);
-        }
-    }
-    return winners;
-}
-
 bool is_lexicographically_greater_or_equal(const std::vector<BinaryColor>& lhs, const std::vector<BinaryColor>& rhs) {
     size_t n = lhs.size();
     assert(rhs.size() == n);
@@ -299,6 +280,25 @@ bool is_lexicographically_greater_or_equal(const std::vector<BinaryColor>& lhs, 
     }
     // here, lhs == rhs
     return true;
+}
+
+/// @brief let n = perm.get_size(), this function takes O(2^n).
+std::vector<std::vector<BinaryColor>> brute_force_isomophism_elimination(const Permutation& perm) {
+    size_t n = perm.get_size();
+    if (n > 64) {
+        std::cerr << "The current implementation does not support n > 64." << std::endl;
+    }
+    std::vector<std::vector<BinaryColor>> winners;
+    for (uint64_t bits = 0; bits < (static_cast<uint64_t>(1) << n); ++bits) {
+        std::vector<BinaryColor> colors(n);
+        for (size_t i = 0; i < n; ++i) {
+            colors[i] = static_cast<BinaryColor>((bits >> i) & (static_cast<uint64_t>(1)));
+        }
+        if (is_lexicographically_greater_or_equal(colors, perm.act(colors))) {
+            winners.emplace_back(colors);
+        }
+    }
+    return winners;
 }
 
 } // namespace isomorphism
