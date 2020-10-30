@@ -121,7 +121,7 @@ public:
         #ifdef _DEBUG
         std::cerr << std::endl;
         std::cerr << "# call element=" << e << ", value=" << value << std::endl;
-        std::cerr << "before processing element" << std::endl;
+        std::cerr << "Before processing element" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
         #endif
 
@@ -147,7 +147,7 @@ public:
         }
 
         #ifdef _DEBUG
-        std::cerr << "after comparison" << std::endl;
+        std::cerr << "After comparison" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
         #endif
 
@@ -166,7 +166,7 @@ public:
         }
 
         #ifdef _DEBUG
-        std::cerr << "after compression" << std::endl;
+        std::cerr << "After compression" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
         #endif
 
@@ -178,7 +178,7 @@ public:
         }
 
         #ifdef _DEBUG
-        std::cerr << "after processing element" << std::endl;
+        std::cerr << "After processing element" << std::endl;
         dump_result_and_state(std::cerr, result, state, level);
         #endif
 
@@ -224,8 +224,9 @@ private:
                 break;
             }
         }
-        if (is_same) {
-            // all comp are equal
+        if (is_same && (e == static_cast<Element>(n_) - 1)) {
+            // if all comparison in frontier are EQUAL and e is the final element,
+            // e and sigma(e) are equal
             return CompResult::GREATER_OR_EQUAL;
         }
 

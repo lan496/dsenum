@@ -259,7 +259,7 @@ public:
 
         os << "frontiers" << std::endl;
         for (Element e = 0; e < n; ++e) {
-            os << e << ":";
+            os << "     " << e << ":";
             for (auto ef: get_frontier(e)) {
                 os << " " << ef;
             }
@@ -268,7 +268,7 @@ public:
 
         os << "compared" << std::endl;
         for (Element e = 0; e < n; ++e) {
-            os << e << ":";
+            os << "     " << e << ":";
             for (auto pair: get_compared(e)) {
                 os << " (" << pair.first << ", " << pair.second << ")";
             }
@@ -277,7 +277,7 @@ public:
 
         os << "forgotton" << std::endl;
         for (Element e = 0; e < n; ++e) {
-            os << e << ":";
+            os << "     " << e << ":";
             for (auto ef: get_forgotten(e)) {
                 os << " " << ef;
             }
@@ -288,7 +288,7 @@ public:
         for (Element e = 0; e < n; ++e) {
             os << " " << map_element_to_position(e);
         }
-        os << std::endl;
+        os << std::endl << std::endl;
     }
 private:
     /// @brief construct frontiers and related

@@ -27,11 +27,31 @@ struct VectorHash {
     }
 };
 
-void check_enumerated(const DdStructure<2>& dd, const Permutation& perm) {
+std::string check_enumerated(const Permutation& perm) {
+    PermutationFrontierManager pfm(perm);
+
+    #ifdef _DEBUG
+    pfm.dump(std::cerr);
+    #endif
+
+
+    isomorphism::IsomorphismElimination spec(pfm);
+    DdStructure<2> dd(spec);
+    dd.zddReduce();
+
+    auto actual = dd.zddCardinality();
+    std::cerr << "# of solutions: " << actual << std::endl;
+
+    #ifdef _DEBUG
+    std::ofstream output("debug.dot");
+    dd.dumpDot(output);
+    #endif
+
     using Coloring = std::vector<isomorphism::BinaryColor>;
     size_t n = perm.get_size();
 
     auto expect = isomorphism::brute_force_isomophism_elimination(perm);
+    assert(actual == std::to_string(expect.size()));
     std::unordered_set<Coloring, VectorHash> uset_expect;
     for (auto coloring: expect) {
         uset_expect.insert(coloring);
@@ -65,62 +85,51 @@ void check_enumerated(const DdStructure<2>& dd, const Permutation& perm) {
             std::cerr << std::endl;
         }
         assert(false);
-    } else {
-        std::cerr << "consistent with brute force." << std::endl;
-    }
-}
-
-void test1(bool dump_dot) {
-    std::vector<Element> sigma = {2, 1, 0};
-    auto perm = Permutation(sigma);
-    PermutationFrontierManager pfm(perm);
-    // pfm.dump(std::cerr);
-
-    isomorphism::IsomorphismElimination spec(pfm);
-
-    DdStructure<2> dd(spec);
-    dd.zddReduce();
-
-    auto actual = dd.zddCardinality();
-    std::cout << "# of solutions: " << actual << std::endl;
-
-    if (dump_dot) {
-        std::ofstream output("debug.dot");
-        dd.dumpDot(output);
     }
 
-    assert(actual == "6");
-    check_enumerated(dd, perm);
+    return actual;
 }
 
-void test2(bool dump_dot) {
-    auto fname_dot = "debug2.dot";
+void test1() {
+    auto perm = Permutation(std::vector<Element>{2, 1, 0});
+    std::string cardinarlity_expect = "6";
+    auto actual = check_enumerated(perm);
+    assert(actual == cardinarlity_expect);
+}
+
+void test2() {
     auto perm = Permutation(std::vector<Element>{1, 2, 0});
     std::string cardinarlity_expect = "5";
-
-    PermutationFrontierManager pfm(perm);
-    // pfm.dump(std::cerr);
-
-    isomorphism::IsomorphismElimination spec(pfm);
-
-    tdzdd::MessageHandler mh;
-    mh.begin("begin");
-
-    DdStructure<2> dd(spec);
-    // dd.zddReduce();
-
-    mh.end();
-
-    auto actual = dd.zddCardinality();
-    std::cout << "# of solutions: " << actual << std::endl;
-
-    if (dump_dot) {
-        std::ofstream output(fname_dot);
-        dd.dumpDot(output);
-    }
-
+    auto actual = check_enumerated(perm);
     assert(actual == cardinarlity_expect);
-    check_enumerated(dd, perm);
+}
+
+void test3() {
+    auto perm = Permutation(std::vector<Element>{0, 2, 1});
+    std::string cardinarlity_expect = "6";
+    auto actual = check_enumerated(perm);
+    assert(actual == cardinarlity_expect);
+}
+
+void test4() {
+    auto perm = Permutation(std::vector<Element>{2, 3, 1, 0});
+    std::string cardinarlity_expect = "9";
+    auto actual = check_enumerated(perm);
+    assert(actual == cardinarlity_expect);
+}
+
+void test_small() {
+    for (int n = 1; n <= 6; ++n) {
+        std::vector<Element> sigma(n);
+        for (int i = 0; i < n; ++i) {
+            sigma[i] = i;
+        }
+        do {
+            auto perm = Permutation(sigma);
+            perm.dump(std::cerr);
+            check_enumerated(perm);
+        } while (std::next_permutation(sigma.begin(), sigma.end()));
+    }
 }
 
 std::vector<Permutation> generate_edge_automorphism(const std::vector<Permutation>& vertex_automorphism, const std::vector<Edge>& edge_order) {
@@ -237,10 +246,13 @@ void test_cube() {
 
 int main() {
     tdzdd::MessageHandler::showMessages(true);
-    test1(false);
-    test2(false);
+    // test1();
+    // test2();
+    // test3();
+    test4();
+    // test_small();
 
-    test_tetrahedron();
+    // test_tetrahedron();
     // test_cube();
     return 0;
 }
