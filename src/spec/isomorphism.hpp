@@ -11,6 +11,7 @@
 namespace permutation {
 namespace isomorphism {
 
+/// @brief manage the whole result of the comparison of two colorings.
 enum struct CompResult : char {
     UNKNOWN = 0,
     GREATER_OR_EQUAL = 1,  // sigma(x) >= x
@@ -28,6 +29,7 @@ std::ostream& operator<<(std::ostream& os, const CompResult result) {
     return os;
 }
 
+/// @brief manage the comparison of two colorings at a position.
 enum struct ElementComp : char {
     UNKNOWN = 0,
     GREATER = 1,  // sigma(x[i]) > x[i]
@@ -60,11 +62,15 @@ std::ostream& operator<<(std::ostream& os, const BinaryColor color) {
     return os;
 }
 
+/// @brief POD type for IsomorphismElimination DD
 struct FrontierData {
     BinaryColor color;
     ElementComp comp;
 };
 
+/// @brief DD specification for representing coloring that is lexicographically
+///        greater than or equal to a permutated coloring.
+/// @details see T. Horiyama, M. Miyasaka, and R. Sasaki, in the Canadian Conference on Computational Geometry (2018).
 class IsomorphismElimination:
     public tdzdd::HybridDdSpec<IsomorphismElimination, CompResult, FrontierData, 2> {
     const PermutationFrontierManager pfm_;
@@ -202,6 +208,7 @@ private:
         state[pfm_.map_element_to_position(e)].comp = comp;
     }
 
+    /// @brief Algorithm 3 in the reference
     CompResult compress_state(FrontierData* state, Element e) const {
         const auto& frontier = pfm_.get_frontier(e);  // ascending order
         bool is_same = true;
@@ -261,7 +268,7 @@ private:
     }
 };
 
-// let n = perm.get_size(), this function takes O(2^n).
+/// @brief let n = perm.get_size(), this function takes O(2^n).
 std::vector<std::vector<BinaryColor>> brute_force_isomophism_elimination(const Permutation& perm) {
     size_t n = perm.get_size();
     if (n > 64) {

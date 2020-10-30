@@ -17,10 +17,10 @@ enum MateConstant {
     UNUSED = -2,
 };
 
-// ZDD to represent simple paths from s to t
-// if u belongs to a path, mate[u] = the other endpoint of the path,
-// else if u does not belong to a path, mate[u] = u,
-// else if u is in the midway of a path, mate[u] = MateConstant::MIDWAY
+/// ZDD to represent simple paths from s to t
+/// if u belongs to a path, mate[u] = the other endpoint of the path,
+/// else if u does not belong to a path, mate[u] = u,
+/// else if u is in the midway of a path, mate[u] = MateConstant::MIDWAY
 class SimPath: public tdzdd::PodArrayDdSpec<SimPath, Mate, 2> {
     const Vertex V_;
     const Vertex s_;

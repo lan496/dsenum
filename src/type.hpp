@@ -7,6 +7,7 @@ using Variable = int;
 // Let `n` be the number of variables, level of the root node is `n`
 using Level = int;
 
+/// @brief 1-terminal and 0-terminal nodes
 enum Terminal {
     ACCEPT = -1,
     REJECT = 0,

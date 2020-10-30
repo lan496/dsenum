@@ -22,14 +22,12 @@ using FrontierPosition = Element;
 // ============================================================================
 // Permutation class
 // ============================================================================
-/*
-# Arguments
-- sigma_:
-    represents a permutation in "one-line" notation.
-    That is, `sigma` moves `i` to `sigma[i]`.
-*/
+
+/// @brief Permutaion class
 class Permutation {
+    /// the number of elements
     const Element n_;
+    /// represents a permutation in "one-line" notation. That is, `sigma` moves `i` to `sigma[i]`.
     const std::vector<Element> sigma_;
 public:
     Permutation() = delete;
@@ -51,10 +49,12 @@ public:
         }
     }
 
+    /// @brief get the number of elements
     size_t get_size() const {
         return n_;
     }
 
+    /// @brief permute i to sigma[i]
     Element permute(const Element i) const {
         return sigma_[i];
     }
@@ -71,8 +71,8 @@ public:
         return permutated;
     }
 
+    /// @brief self.product(rhs).permute(i) == self.permute(rhs.permute(i))
     Permutation product(const Permutation& rhs) const {
-        // self.product(rhs).permute(i) == self.permute(rhs.permute(i))
         auto n = get_size();
         if (rhs.get_size() != n) {
             std::cerr << "Cannot product permutations with the different bases." << std::endl;
@@ -85,6 +85,7 @@ public:
         return Permutation(sigma);
     }
 
+    /// @brief return inverse of the permutation
     Permutation inverse() const {
         auto n = get_size();
         std::vector<Element> sigma(n);
@@ -103,6 +104,7 @@ public:
     }
 
 private:
+    /// @brief check if `sigma` is a bijection.
     bool is_permutation(const std::vector<Element>& sigma) const {
         auto n = get_size();
         std::vector<bool> visited(n, false);
@@ -131,12 +133,14 @@ inline bool operator!=(const Permutation& lhs, const Permutation& rhs) {
     return !(lhs == rhs);
 }
 
+/// @brief return an identity permutation on `n` elements
 Permutation get_identity(Element n) {
     std::vector<Element> sigma(n);
     std::iota(sigma.begin(), sigma.end(), 1);
     return Permutation(sigma);
 }
 
+/// @brief generate a permutation group from given generators
 std::vector<Permutation> generate_group(const std::vector<Permutation>& generators) {
     if (generators.empty()) {
         return std::vector<Permutation>();
@@ -175,28 +179,28 @@ std::vector<Permutation> generate_group(const std::vector<Permutation>& generato
 // ============================================================================
 // Prepare frontiers for Isomorphism Elimination
 // ============================================================================
+
+/// @brief construct and manage frontiers of a permutation
 class PermutationFrontierManager {
-    // permutation
+    /// permutation
     Permutation perm_;
-    // inverse of the permutation
+    /// inverse of the permutation
     Permutation inv_perm_;
 
-    // just before coloring the i-th element, the states of elements in
-    // frontiers_[i] are required.
-    // guaranteed to be sored in ascending order.
+    /// Just before coloring the i-th element, the states of elements in
+    /// frontiers_[i] are required. Guaranteed to be sored in ascending order.
     std::vector<std::vector<Element>> frontiers_;
-    // when processing the i-th element, elements in introduced_[i] enter.
+    /// When processing the i-th element, elements in introduced_[i] enter.
     std::vector<std::vector<Element>> introduced_;
-    // just after coloring the i-th element, original element compared_[i][].first
-    // and permuted element compared_[i][].second can be compared.
+    /// Just after coloring the i-th element, original element compared_[i][].first
+    /// and permuted element compared_[i][].second can be compared.
     std::vector<std::vector<std::pair<Element,Element>>> compared_;
-    // after processing the i-th element, elements in forgotten_[i] are no more
-    // required.
+    /// After processing the i-th element, elements in forgotten_[i] are no more required.
     std::vector<std::vector<Element>> forgotten_;
-    // mapping_element_to_pos_[e] is a potision of element e in frontiers.
-    // Be careful several elements may share the same position!
+    /// mapping_element_to_pos_[e] is a potision of element e in frontiers.
+    /// Be careful several elements may share the same position!
     std::vector<FrontierPosition> mapping_element_to_pos_;
-    // the maximum size of frontiers
+    /// the maximum size of frontiers
     int max_frontier_size_;
 public:
     PermutationFrontierManager() = delete;
@@ -208,6 +212,7 @@ public:
         construct();
     }
 
+    /// @brief get the number of elements of the permutation
     Element get_size() const {
         return perm_.get_size();
     }
@@ -236,6 +241,7 @@ public:
         return mapping_element_to_pos_[e];
     }
 
+    /// @brief dump all frontier-search related information
     void dump(std::ostream& os) const {
         // show permutation
         os << "permutation" << std::endl;
@@ -278,6 +284,7 @@ public:
         os << std::endl;
     }
 private:
+    /// @brief construct frontiers and related
     void construct() {
         auto n = get_size();
 

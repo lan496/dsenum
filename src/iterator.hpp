@@ -5,6 +5,9 @@
 #include <tdzdd/DdStructure.hpp>
 
 namespace tdzdd {
+    /// @brief convert selected levels in DD into selected variables.
+    /// @return std::vector<bool> if the i-th value of a returned vector is true (false),
+    ///         the i-th variable is selected (not selected) in the corresponding 1-path.
     std::vector<bool> variable_choice(tdzdd::DdStructure<2>::const_iterator const &, int);
 } // namespace tdzdd
 
