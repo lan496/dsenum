@@ -26,12 +26,10 @@ using FrontierPosition = Element;
 /// @brief Permutaion class
 class Permutation {
     /// the number of elements
-    const Element n_;
+    Element n_;
     /// represents a permutation in "one-line" notation. That is, `sigma` moves `i` to `sigma[i]`.
-    const std::vector<Element> sigma_;
+    std::vector<Element> sigma_;
 public:
-    Permutation() = delete;
-
     Permutation(const std::vector<Element>& sigma) :
         n_(static_cast<Element>(sigma.size())),
         sigma_(sigma)
@@ -52,6 +50,12 @@ public:
             exit(1);
         }
     }
+
+    Permutation() = default;
+    Permutation(const Permutation&) = default;
+    Permutation& operator=(const Permutation&) = default;
+    Permutation(Permutation&& other) = default;
+    Permutation& operator=(Permutation&&) = default;
 
     /// @brief get the number of elements
     size_t get_size() const {
@@ -195,20 +199,24 @@ class PermutationFrontierManager {
     Permutation inv_perm_;
 
     /// Just before coloring the i-th element, the states of elements in
-    /// frontiers_[i] are required. Guaranteed to be sored in ascending order.
+    /// frontiers_[i] are required. Guaranteed to be sorted in ascending order.
     std::vector<std::vector<Element>> frontiers_;
-    /// When processing the i-th element, elements in introduced_[i] enter.
-    std::vector<std::vector<Element>> introduced_;
     /// Just after coloring the i-th element, original element compared_[i][].first
     /// and permuted element compared_[i][].second can be compared.
     std::vector<std::vector<std::pair<Element,Element>>> compared_;
-    /// After processing the i-th element, elements in forgotten_[i] are no more required.
+    /// After processing the i-th element, color of elements in forgotten_[i] are no more required.
     std::vector<std::vector<Element>> forgotten_;
-    /// mapping_element_to_pos_[e] is a potision of element e in frontiers.
+    /// mapping_element_to_pos_[e] is a position of element e in frontiers.
     /// Be careful several elements may share the same position!
     std::vector<FrontierPosition> mapping_element_to_pos_;
     /// the maximum size of frontiers
     int max_frontier_size_;
+
+    /// After processing the i-th element, for j in comp_finished_[i], the
+    /// comparison with element j and sigma(j) is already finished.
+    /// comp_finished_[i] is sorted in the ascending order.
+    std::vector<std::vector<Element>> comp_finished_;
+
 public:
     PermutationFrontierManager() = delete;
     PermutationFrontierManager(const Permutation& perm) :
@@ -216,7 +224,8 @@ public:
         inv_perm_(perm.inverse())
     {
         // construct frontiers, forgotten, and max_frontier_size
-        construct();
+        construct_coloring_frontier();
+        construct_comparison_frontier();
     }
 
     /// @brief get the number of elements of the permutation
@@ -232,10 +241,6 @@ public:
         return frontiers_[e];
     }
 
-    const std::vector<Element>& get_introduced(Element e) const {
-        return introduced_[e];
-    }
-
     const std::vector<std::pair<Element, Element>>& get_compared(Element e) const {
         return compared_[e];
     }
@@ -246,6 +251,10 @@ public:
 
     const FrontierPosition map_element_to_position(Element e) const {
         return mapping_element_to_pos_[e];
+    }
+
+    const std::vector<Element>& get_comp_finished(Element e) const {
+        return comp_finished_[e];
     }
 
     /// @brief dump all frontier-search related information
@@ -288,40 +297,23 @@ public:
         for (Element e = 0; e < n; ++e) {
             os << " " << map_element_to_position(e);
         }
-        os << std::endl << std::endl;
+        os << std::endl;
+
+        os << "finished comparison" << std::endl;
+        for (Element e = 0; e < n; ++e) {
+            os << "     " << e << ":";
+            for (auto efc: get_comp_finished(e)) {
+                os << " " << efc;
+            }
+            os << std::endl;
+        }
+
+        os << std::endl;
     }
 private:
     /// @brief construct frontiers and related
-    void construct() {
+    void construct_coloring_frontier() {
         auto n = get_size();
-
-        // prepare introduced_
-        // In comparison phase, (e, sigma(e)) and (simga-1(e), e) could be compared.
-        // So, we need to introduce e, sigma(e), and sigma-1(e) (if not belong to the frontier).
-        introduced_.resize(n);
-        std::vector<Element> visited_element(n, false);
-        for (Element e = 0; e < n; ++e) {
-            // check e
-            if (!visited_element[e]) {
-                introduced_[e].emplace_back(e);
-                visited_element[e] = true;
-            }
-            // check sigma(e)
-            Element e_perm = perm_.permute(e);
-            if (!visited_element[e_perm]) {
-                introduced_[e].emplace_back(e_perm);
-                visited_element[e_perm] = true;
-            }
-            // check sigma-1(e)
-            Element e_invperm = inv_perm_.permute(e);
-            if (!visited_element[e_invperm]) {
-                introduced_[e].emplace_back(e_invperm);
-                visited_element[e_invperm] = true;
-            }
-        }
-        for (Element e = 0; e < n; ++e) {
-            assert(visited_element[e]);
-        }
 
         // prepare forgotten_
         // We can forget a Element e such that both (e, sigma(e)) and
@@ -337,9 +329,8 @@ private:
         std::set<Element> bag;
         for (Element e = 0; e < n; ++e) {
             // introduce elements
-            for (auto ei: introduced_[e]) {
-                bag.insert(ei);
-            }
+            bag.insert(e);
+
             // determine frontier
             for (auto eb: bag) {
                 frontiers_[e].emplace_back(eb);
@@ -395,18 +386,17 @@ private:
         std::vector<bool> used(max_frontier_size_, false);
         for (Element e = 0; e < n; ++e) {
             // introduce elements
-            for (auto ei: introduced_[e]) {
-                bool success = false;
-                for (FrontierPosition i = 0; i < static_cast<FrontierPosition>(max_frontier_size_); ++i) {
-                    if (!used[i]) {
-                        mapping_element_to_pos_[ei] = i;
-                        used[i] = true;
-                        success = true;
-                        break;
-                    }
+            bool success = false;
+            for (FrontierPosition i = 0; i < static_cast<FrontierPosition>(max_frontier_size_); ++i) {
+                if (!used[i]) {
+                    mapping_element_to_pos_[e] = i;
+                    used[i] = true;
+                    success = true;
+                    break;
                 }
-                assert(success);
             }
+            assert(success);
+
             // forget elements
             for (auto ef: forgotten_[e]) {
                 FrontierPosition released = mapping_element_to_pos_[ef];
@@ -415,6 +405,26 @@ private:
         }
         for (FrontierPosition i = 0; i < static_cast<FrontierPosition>(max_frontier_size_); ++i) {
             assert(!used[i]);
+        }
+    }
+
+    void construct_comparison_frontier() {
+        auto n = get_size();
+        comp_finished_.resize(n);
+        std::set<Element> finished;
+
+        for (Element e = 0; e < n; ++e) {
+            const auto& compared = get_compared(e);
+            for (auto pair: compared) {
+                // comparison (ef, sigma(ef)) is executed after determining the value of element e
+                Element ef = pair.first;
+                finished.insert(ef);
+            }
+            comp_finished_[e].reserve(finished.size());
+            // insert with sorting
+            for (auto itr = finished.begin(), end =finished.end(); itr != end; ++itr) {
+                comp_finished_[e].emplace_back(*itr);
+            }
         }
     }
 };
