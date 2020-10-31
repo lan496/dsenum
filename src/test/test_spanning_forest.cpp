@@ -66,10 +66,10 @@ int main() {
         auto expect = ans[n - 2];
         std::cerr << "n = " << n << ", # of solutions = " << dd.zddCardinality() << std::endl;
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::ofstream output("debug.dot");
         dd.dumpDot(output);
-        #endif
+#endif
 
         assert(actual == expect);
     }

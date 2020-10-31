@@ -30,9 +30,9 @@ struct VectorHash {
 std::string check_enumerated(const Permutation& perm) {
     PermutationFrontierManager pfm(perm);
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
     pfm.dump(std::cerr);
-    #endif
+#endif
 
     isomorphism::IsomorphismElimination spec(pfm);
     DdStructure<2> dd(spec);
@@ -198,10 +198,10 @@ void test_developments(const Graph& g, const std::vector<Permutation>& vertex_au
         dd.zddSubset(spec);
         dd.zddReduce();
     }
-    #ifdef _DEBUG
+#ifdef _DEBUG
     std::ofstream output("debug.dot");
     dd.dumpDot(output);
-    #endif
+#endif
 
     auto count_developments_actual = dd.zddCardinality();
     if (count_developments_actual != count_developments_expect) {

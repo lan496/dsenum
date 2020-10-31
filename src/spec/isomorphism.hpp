@@ -130,12 +130,12 @@ public:
         // initialize states for introduced elements
         reset_color(state, e);
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << std::endl;
         std::cerr << "# call element=" << e << ", value=" << value << std::endl;
         std::cerr << "Before determing color" << std::endl;
         dump_comppivot_and_state(std::cerr, cp, state, level);
-        #endif
+#endif
 
         // color e with value
         set_color(state, e, static_cast<BinaryColor>(value));
@@ -159,10 +159,10 @@ public:
             }
         }
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << "After determing color" << std::endl;
         dump_comppivot_and_state(std::cerr, cp, state, level);
-        #endif
+#endif
 
         // compress ElementComp in frontier
         compress_state(cp, state, e, new_comps);
@@ -170,10 +170,10 @@ public:
             return tdzdd::Terminal::REJECT;
         }
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << "After compression" << std::endl;
         dump_comppivot_and_state(std::cerr, cp, state, level);
-        #endif
+#endif
 
         // forget
         const std::vector<Element>& forgotten = pfm_.get_forgotten(e);
@@ -182,10 +182,10 @@ public:
             reset_color(state, ef);
         }
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << "After forgetting element" << std::endl;
         dump_comppivot_and_state(std::cerr, cp, state, level);
-        #endif
+#endif
 
         if (level == 1) {
             if (cp.result == CompResult::GREATER_OR_EQUAL) {
@@ -224,12 +224,6 @@ private:
     /// @brief Algorithm 3 in the reference
     void compress_state(CompPivot& cp, BinaryColor* state, Element e,
                               const std::vector<std::pair<Element, ElementComp>>& new_comps) const {
-        #ifdef _DEBUG
-        for (auto i_and_comp: new_comps) {
-            std::cerr << static_cast<int>(i_and_comp.first) << " " << i_and_comp.second << std::endl;
-        }
-        #endif
-
         // update pivot and comp
         for (auto i_and_comp: new_comps) {
             Element ec = i_and_comp.first;

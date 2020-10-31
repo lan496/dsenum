@@ -67,12 +67,12 @@ public:
             set_comp(state, u, static_cast<Vertex>(u));
         }
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << std::endl;
         std::cerr << "# call eid=" << eid << ", value=" << value << std::endl;
         std::cerr << "before processing edge" << std::endl;
         dump_state(std::cerr, state, level);
-        #endif
+#endif
 
         // update state
         const std::vector<Vertex>& frontier = graphaux.get_frontier(eid);
@@ -100,10 +100,10 @@ public:
             }
         }
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << "after update" << std::endl;
         dump_state(std::cerr, state, level);
-        #endif
+#endif
 
         // branch on determined vertex
         const std::vector<Vertex>& forgotten = graphaux.get_forgotten(eid);
@@ -141,10 +141,10 @@ public:
             set_comp(state, u, UNUSED);
         }
 
-        #ifdef _DEBUG
+#ifdef _DEBUG
         std::cerr << "after forgetting" << std::endl;
         dump_state(std::cerr, state, level);
-        #endif
+#endif
 
         if (level == 1) {
             return tdzdd::Terminal::ACCEPT;
