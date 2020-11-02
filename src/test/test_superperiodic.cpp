@@ -39,7 +39,9 @@ std::string check_enumerated(const Permutation& perm) {
 #endif
 
     auto actual = dd.zddCardinality();
+#ifdef _DEBUG
     std::cerr << "# of solutions: " << actual << std::endl;
+#endif
 
     #ifdef _DEBUG
     std::ofstream output("debug.dot");
@@ -101,6 +103,7 @@ void test1() {
 }
 
 void test_small(int n_max) {
+    tdzdd::MessageHandler::showMessages(false);
     for (int n = 1; n <= n_max; ++n) {
         std::vector<Element> sigma(n);
         for (int i = 0; i < n; ++i) {
@@ -108,10 +111,13 @@ void test_small(int n_max) {
         }
         do {
             auto perm = Permutation(sigma);
+#ifdef _DEBUG
             perm.dump(std::cerr);
+#endif
             check_enumerated(perm);
         } while (std::next_permutation(sigma.begin(), sigma.end()));
     }
+    tdzdd::MessageHandler::showMessages(true);
 }
 
 int main() {

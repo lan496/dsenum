@@ -45,7 +45,7 @@ int main() {
     };
 
     tdzdd::MessageHandler::showMessages(true);
-    for (int n = 2; n <= 8; ++n) {
+    for (int n = 2; n <= 6; ++n) {
         Graph g = make_grid(n);
         auto gaux = GraphAuxiliary(g);
         // gaux.dump(std::cerr);

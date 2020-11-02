@@ -42,7 +42,7 @@ int main() {
         "69450664761521361664274701548907358996488",
     };
 
-    for (int n = 2; n <= 12; ++n) {
+    for (int n = 2; n <= 10; ++n) {
         Graph g = make_grid(n);
         int s = 0;
         int t = n * n - 1;
