@@ -10,6 +10,8 @@ CXXFLAGS	= -fopenmp $(WARNINGFLAGS) -std=c++14 $(INCDIR)
 all: test clean
 
 test:
+	$(CXX) $(CXXFLAGS) -O3 test_choice.cpp -o choice.out
+	./choice.out
 	$(CXX) $(CXXFLAGS) -O3 test_simpath.cpp -o simpath.out
 	./simpath.out
 	$(CXX) $(CXXFLAGS) -O3 test_stpath.cpp -o stpath.out
