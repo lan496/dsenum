@@ -5,8 +5,10 @@
 #include "graph.hpp"
 #include "type.hpp"
 #include "spec/simpath.hpp"
-using namespace graph;
-using namespace tdzdd;
+
+using namespace pyzdd;
+using namespace pyzdd::graph;
+using namespace pyzdd::graph::simpath;
 
 Graph make_grid(int n) {
     int V = n * n;
@@ -57,7 +59,7 @@ int main() {
         tdzdd::MessageHandler mh;
         mh.begin("begin");
 
-        DdStructure<2> dd(spec);
+        tdzdd::DdStructure<2> dd(spec);
         dd.zddReduce();
 
         mh.end();

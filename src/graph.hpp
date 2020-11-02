@@ -9,6 +9,7 @@
 #include <cassert>
 #include "type.hpp"
 
+namespace pyzdd {
 namespace graph {
 // =============================================================================
 // Edge and Graph
@@ -44,7 +45,7 @@ using InternalEdgeId = int;
 // position in PodArray
 using FrontierPosition = Vertex;
 
-/// @brief Frontier manager for ZDD represeting edge-induced sugraphs
+/// @brief Frontier manager for ZDD represeting edge-induced subgraphs
 class GraphAuxiliary {
 private:
     /// number of vertices
@@ -187,7 +188,7 @@ public:
         return mapping_vertex_pos_[u];
     }
 
-    tdzdd::Level get_vertex_introduced_level(Vertex u) const {
+    pyzdd::Level get_vertex_introduced_level(Vertex u) const {
         InternalEdgeId E = number_of_edges();
         for (InternalEdgeId eid = 0; eid < E; ++eid) {
             for (const Vertex &ve: get_introduced(eid)) {
@@ -379,5 +380,6 @@ private:
 };
 
 } // namespace graph
+} // namespace pyzdd
 
 #endif // PYZDD_GRAPH_H

@@ -2,7 +2,7 @@
 #include <set>
 #include "type.hpp"
 
-namespace tdzdd {
+namespace pyzdd {
     std::vector<bool> variable_choice(tdzdd::DdStructure<2>::const_iterator const &itr, int n) {
         // set of levels (1..=n)
         std::set<Level> selected = *itr;
@@ -13,4 +13,4 @@ namespace tdzdd {
         return choice;
     }
 
-} // namespace tdzdd
+} // namespace pyzdd

@@ -10,8 +10,9 @@
 #include <graph.hpp>
 #include <spec/superperiodic.hpp>
 
-using namespace permutation;
-using namespace tdzdd;
+using namespace pyzdd;
+using namespace pyzdd::permutation;
+using namespace pyzdd::permutation::superperiodic;
 
 // https://stackoverflow.com/questions/29855908/c-unordered-set-of-vectors
 struct VectorHash {
@@ -33,7 +34,7 @@ std::string check_enumerated(const Permutation& perm) {
 #endif
 
     superperiodic::SuperperiodicElimination spec(pfm);
-    DdStructure<2> dd(spec);
+    tdzdd::DdStructure<2> dd(spec);
 #ifndef _DEBUG
     dd.zddReduce();
 #endif

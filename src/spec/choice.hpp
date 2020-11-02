@@ -6,7 +6,12 @@
 #include <tdzdd/DdStructure.hpp>
 #include "../type.hpp"
 
-namespace tdzdd {
+namespace pyzdd {
+namespace choice {
+// for each Level `l`, the (n - l)th Variable is determined
+using Variable = int;
+
+/// @brief DD specification for k-combinations out of n elements
 class Choice: public tdzdd::DdSpec<Choice, int, 2> {
 public:
     int n;  // number of variables
@@ -36,5 +41,6 @@ public:
         return level;
     }
 };
-} // namespace tdzdd
+} // namespace choice
+} // namespace pyzdd
 #endif // PYZDD_CHOISE_H

@@ -35,30 +35,30 @@ PYBIND11_MODULE(_pyzdd, m) {
         .def(py::self != py::self);
     PyDdStructure2.def("begin", &tdzdd::DdStructure<2>::begin);
     PyDdStructure2.def("end", &tdzdd::DdStructure<2>::end);
-    m.def("variable_choice", &tdzdd::variable_choice);
+    m.def("variable_choice", &pyzdd::variable_choice);
 
     // Graph
-    py::class_<graph::Edge> (m, "Edge")
+    py::class_<pyzdd::graph::Edge> (m, "Edge")
         .def(py::init<int,int>())
         .def(py::init<int,int,int>())
-        .def("__repr__", [](const graph::Edge &e) {
+        .def("__repr__", [](const pyzdd::graph::Edge &e) {
             return "<Edge(src=" + std::to_string(e.src) + ", dst=" + std::to_string(e.dst) + ", weight=" + std::to_string(e.weight) + ")>";
         });
-    py::class_<graph::Graph> (m, "Graph");
-    py::class_<graph::GraphAuxiliary> (m, "GraphAuxiliary")
-        .def(py::init<const graph::Graph&>())
-        .def_property_readonly("max_frontier_size", &graph::GraphAuxiliary::get_max_frontier_size)
-        .def("edge_order", &graph::GraphAuxiliary::get_edge_order)
-        .def("frontier", &graph::GraphAuxiliary::get_frontier)
-        .def("introduced", &graph::GraphAuxiliary::get_introduced)
-        .def("forgotten", &graph::GraphAuxiliary::get_forgotten)
-        .def("map_vertex_to_position", &graph::GraphAuxiliary::map_vertex_to_position);
+    py::class_<pyzdd::graph::Graph> (m, "Graph");
+    py::class_<pyzdd::graph::GraphAuxiliary> (m, "GraphAuxiliary")
+        .def(py::init<const pyzdd::graph::Graph&>())
+        .def_property_readonly("max_frontier_size", &pyzdd::graph::GraphAuxiliary::get_max_frontier_size)
+        .def("edge_order", &pyzdd::graph::GraphAuxiliary::get_edge_order)
+        .def("frontier", &pyzdd::graph::GraphAuxiliary::get_frontier)
+        .def("introduced", &pyzdd::graph::GraphAuxiliary::get_introduced)
+        .def("forgotten", &pyzdd::graph::GraphAuxiliary::get_forgotten)
+        .def("map_vertex_to_position", &pyzdd::graph::GraphAuxiliary::map_vertex_to_position);
 
     // Specifications
     // Combination spec
-    py::class_<tdzdd::DdSpecBase<tdzdd::Combination,2>> PyDdSpecBaseCombination(m, "DdSpecBaseCombination");
-    py::class_<tdzdd::DdSpec<tdzdd::Combination,int,2>> PyDdSpecCombination(m, "DdSpecCombination", PyDdSpecBaseCombination);
-    py::class_<tdzdd::Combination> PyCombination(m, "Combination", PyDdSpecCombination);
+    py::class_<tdzdd::DdSpecBase<pyzdd::combination::Combination,2>> PyDdSpecBaseCombination(m, "DdSpecBaseCombination");
+    py::class_<tdzdd::DdSpec<pyzdd::combination::Combination,int,2>> PyDdSpecCombination(m, "DdSpecCombination", PyDdSpecBaseCombination);
+    py::class_<pyzdd::combination::Combination> PyCombination(m, "Combination", PyDdSpecCombination);
     PyCombination.def(py::init<int, int>(),
                       R"doc(
                         specification for DD representing k-combinations out of n items
@@ -72,12 +72,12 @@ PYBIND11_MODULE(_pyzdd, m) {
                       )doc",
                       py::arg("n"),
                       py::arg("k"));
-    PyDdStructure2.def("zddSubset", &tdzdd::DdStructure<2>::zddSubset<tdzdd::Combination>);
+    PyDdStructure2.def("zddSubset", &tdzdd::DdStructure<2>::zddSubset<pyzdd::combination::Combination>);
 
     // Choice spec
-    py::class_<tdzdd::DdSpecBase<tdzdd::Choice,2>> PyDdSpecBaseChoice(m, "DdSpecBaseChoice");
-    py::class_<tdzdd::DdSpec<tdzdd::Choice,int,2>> PyDdSpecChoice(m, "DdSpecChoice", PyDdSpecBaseChoice);
-    py::class_<tdzdd::Choice> PyChoice(m, "Choice", PyDdSpecChoice);
+    py::class_<tdzdd::DdSpecBase<pyzdd::choice::Choice,2>> PyDdSpecBaseChoice(m, "DdSpecBaseChoice");
+    py::class_<tdzdd::DdSpec<pyzdd::choice::Choice,int,2>> PyDdSpecChoice(m, "DdSpecChoice", PyDdSpecBaseChoice);
+    py::class_<pyzdd::choice::Choice> PyChoice(m, "Choice", PyDdSpecChoice);
     PyChoice.def(py::init<int, int, std::vector<int>&>(),
                  R"doc(
                     specification for DD representing combinations out of `n` items such that the number of selected ones in `v` is `k`
@@ -95,5 +95,5 @@ PYBIND11_MODULE(_pyzdd, m) {
                  py::arg("n"),
                  py::arg("k"),
                  py::arg("v"));
-    PyDdStructure2.def("zddSubset", &tdzdd::DdStructure<2>::zddSubset<tdzdd::Choice>);
+    PyDdStructure2.def("zddSubset", &tdzdd::DdStructure<2>::zddSubset<pyzdd::choice::Choice>);
 }

@@ -8,7 +8,9 @@
 #include "../graph.hpp"
 #include "../type.hpp"
 
+namespace pyzdd {
 namespace graph {
+namespace stpath {
 
 class FrontierData {
 public:
@@ -25,8 +27,8 @@ class SimpleSTPath: public tdzdd::PodArrayDdSpec<SimpleSTPath, FrontierData, 2> 
     const Vertex t_;
     const int E_;
     const int max_frontier_size_;
-    const tdzdd::Level s_introduced_level_;
-    const tdzdd::Level t_introduced_level_;
+    const Level s_introduced_level_;
+    const Level t_introduced_level_;
     const GraphAuxiliary graphaux;
 
     void initialize(FrontierData* state) const {
@@ -133,16 +135,16 @@ public:
                 }
             } else {
                 // has cycle
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
         }
 
         // branch
         if (is_invalid_degree(state, e.src)) {
-            return tdzdd::Terminal::REJECT;
+            return Terminal::REJECT;
         }
         if (is_invalid_degree(state, e.dst)) {
-            return tdzdd::Terminal::REJECT;
+            return Terminal::REJECT;
         }
 
         // print_state(state, level, value);
@@ -153,11 +155,11 @@ public:
             if ((v == s_) || (v == t_)) {
                 // degrees of s and t should be one
                 if (get_deg(state, v) != 1) {
-                    return tdzdd::Terminal::REJECT;
+                    return Terminal::REJECT;
                 }
             } else if ((get_deg(state, v) != 0) && (get_deg(state, v) != 2)) {
                 // degrees of vertices other than s and t should be 0 or 2
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
 
             // find frontier vertex whose degree is more than 1 and belong
@@ -197,14 +199,14 @@ public:
                 assert(get_deg(state, v) <= 2);
                 // there are multiple components. contradiction.
                 if (get_deg(state, v) > 0 && deg_found) {
-                    return tdzdd::Terminal::REJECT;
+                    return Terminal::REJECT;
                 } else if (get_deg(state, v) > 0) {
                     // s or t cannot belong to the same components of u. contradiction.
                     if (level > s_introduced_level_ || level > t_introduced_level_) {
-                        return tdzdd::Terminal::REJECT;
+                        return Terminal::REJECT;
                     } else {
                         // s-t path already completes
-                        return tdzdd::Terminal::ACCEPT;
+                        return Terminal::ACCEPT;
                     }
                 }
             }
@@ -217,11 +219,11 @@ public:
         // std::cerr << "after update" << std::endl;
         // print_state(state, level);
 
-        if (level == 1) return tdzdd::Terminal::REJECT;
+        if (level == 1) return Terminal::REJECT;
         return level - 1;
     }
 
-    void print_state(FrontierData* state, tdzdd::Level level) const {
+    void print_state(FrontierData* state, Level level) const {
         InternalEdgeId eid = E_ - level;
 
         std::cerr << "[frontier, deg, comp]" << std::endl;
@@ -243,6 +245,8 @@ public:
     }
 };
 
-}
+} // namespace stpath
+} // namesapce graph
+} // namespace pyzdd
 
 #endif  // PYZDD_GRAPHSPEC_H

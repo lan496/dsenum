@@ -8,6 +8,7 @@
 #include "../graph.hpp"
 #include "../type.hpp"
 
+namespace pyzdd {
 namespace graph {
 namespace spanning_forest {
 
@@ -82,7 +83,7 @@ public:
 
             // cycle occurs
             if (comp_src == comp_dst) {
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
 
             // process edge
@@ -110,7 +111,7 @@ public:
         for (auto v: forgotten) {
             if (get_deg(state, v) == 0) {
                 // degree should be at least 1
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
 
             bool comp_found = false;
@@ -131,7 +132,7 @@ public:
             // if there is no vertex that has the same component with v,
             // the component number of v is determined.
             if (!comp_found) {
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
         }
 
@@ -147,7 +148,7 @@ public:
 #endif
 
         if (level == 1) {
-            return tdzdd::Terminal::ACCEPT;
+            return Terminal::ACCEPT;
         }
         return level - 1;
     }
@@ -194,5 +195,6 @@ private:
 
 } // namespace spanning_tree
 } // namespace graph
+} // namesapce pyzdd
 
 #endif // PYZDD_SPANNING_TREE_H

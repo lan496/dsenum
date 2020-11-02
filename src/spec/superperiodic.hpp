@@ -8,6 +8,7 @@
 #include "../type.hpp"
 #include "../permutation.hpp"
 
+namespace pyzdd {
 namespace permutation {
 namespace superperiodic {
 
@@ -115,9 +116,9 @@ public:
 
         // if the whole comparison is already determined, do not care value
         if (cp.result == CompResult::UNEQUAL) {
-            // if level == 1, level - 1 == tdzdd::Terminal::REJECT
+            // if level == 1, level - 1 == Terminal::REJECT
             if (level == 1) {
-                return tdzdd::Terminal::ACCEPT;
+                return Terminal::ACCEPT;
             } else {
                 return level - 1;
             }
@@ -163,7 +164,7 @@ public:
         compress_state(cp, state, e, new_comps);
         if (cp.result == CompResult::EQUAL) {
             assert(level == 1);
-            return tdzdd::Terminal::REJECT;
+            return Terminal::REJECT;
         }
 
 #ifdef _DEBUG
@@ -185,9 +186,9 @@ public:
 
         if (level == 1) {
             if (cp.result == CompResult::UNEQUAL) {
-                return tdzdd::Terminal::ACCEPT;
+                return Terminal::ACCEPT;
             } else if (cp.result == CompResult::EQUAL){
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             } else {
                 assert(false); // unreachable
             }
@@ -321,5 +322,6 @@ std::vector<std::vector<BinaryColor>> brute_force_superperiodic_elimination(cons
 
 } // namespace superperiodic
 } // namespace permutation
+} // namespace pyzdd
 
 #endif // PYZDD_SUPERPERIODIC_H

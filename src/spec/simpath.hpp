@@ -8,7 +8,9 @@
 #include "../graph.hpp"
 #include "../type.hpp"
 
+namespace pyzdd {
 namespace graph {
+namespace simpath {
 
 using Mate = int;
 
@@ -117,18 +119,18 @@ public:
 
             // branch occurs
             if ((deg_src == 2) || (deg_dst == 2)) {
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
             // degrees of s and t should be one
             if (is_endpoint(e.src) && (deg_src == 1)) {
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
             if (is_endpoint(e.dst) && (deg_dst == 1)) {
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
             // cycle occurs
             if ((mate_src == e.dst) && (mate_dst == e.src)) {
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
             if (((mate_src == s_) && (mate_dst == t_)) || ((mate_src == t_) && (mate_dst == s_))) {
                 // s ~~~ e.src -e- e.dst ~~~ t or t ~~~ e.src -e- e.dst ~~~ s
@@ -136,12 +138,12 @@ public:
                     if (!is_endpoint(u) && (u != e.src) && (u != e.dst)) {
                         // vertex u is dangling
                         if (get_deg(state, u) == 1) {
-                            return tdzdd::Terminal::REJECT;
+                            return Terminal::REJECT;
                         }
                     }
                 }
                 // here s-t path is completed
-                return tdzdd::Terminal::ACCEPT;
+                return Terminal::ACCEPT;
             }
 
             // process edge
@@ -183,11 +185,11 @@ public:
             if (is_endpoint(u)) {
                 // degrees of s and t should be one
                 if (deg_u != 1) {
-                    return tdzdd::Terminal::REJECT;
+                    return Terminal::REJECT;
                 }
             } else if (deg_u == 1) {
                 // degrees of vertices other than s and t should be 0 or 2
-                return tdzdd::Terminal::REJECT;
+                return Terminal::REJECT;
             }
 
             // forget
@@ -199,7 +201,7 @@ public:
         print_state(state, level);
         */
 
-        // if (level == 1) return tdzdd::Terminal::REJECT;
+        // if (level == 1) return Terminal::REJECT;
         return level - 1;
     }
 
@@ -221,6 +223,8 @@ public:
     }
 };
 
-}
+} // namespace simpath
+} // namespace graph
+} // namespace pyzdd
 
 #endif  // PYZDD_GRAPHSPEC_H

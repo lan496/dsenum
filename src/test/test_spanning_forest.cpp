@@ -8,8 +8,9 @@
 #include "type.hpp"
 #include "spec/spanning_forest.hpp"
 
-using namespace graph;
-using namespace tdzdd;
+using namespace pyzdd;
+using namespace pyzdd::graph;
+using namespace pyzdd::graph::spanning_forest;
 
 Graph make_grid(int n) {
     int V = n * n;
@@ -57,7 +58,7 @@ int main() {
         tdzdd::MessageHandler mh;
         mh.begin("begin");
 
-        DdStructure<2> dd(spec);
+        tdzdd::DdStructure<2> dd(spec);
         dd.zddReduce();
 
         mh.end();

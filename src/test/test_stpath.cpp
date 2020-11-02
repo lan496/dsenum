@@ -4,9 +4,11 @@
 #include <tdzdd/DdStructure.hpp>
 #include "graph.hpp"
 #include "type.hpp"
-#include "spec/simpath.hpp"
-using namespace graph;
-using namespace tdzdd;
+#include "spec/stpath.hpp"
+
+using namespace pyzdd;
+using namespace pyzdd::graph;
+using namespace pyzdd::graph::stpath;
 
 Graph make_grid(int n) {
     int V = n * n;
@@ -50,14 +52,14 @@ int main() {
         // gaux.print();
         std::cerr << "Frontier size: " << gaux.get_max_frontier_size() << std::endl;
 
-        auto spec = SimPath(gaux, s, t);
+        auto spec = SimpleSTPath(gaux, s, t);
 
         // monitor time and memory
         tdzdd::MessageHandler::showMessages(true);
         tdzdd::MessageHandler mh;
         mh.begin("begin");
 
-        DdStructure<2> dd(spec);
+        tdzdd::DdStructure<2> dd(spec);
         dd.zddReduce();
 
         mh.end();

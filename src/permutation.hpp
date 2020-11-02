@@ -13,6 +13,7 @@
 #include <type_traits>
 #include "type.hpp"
 
+namespace pyzdd {
 namespace permutation {
 // unsigned
 using Element = unsigned int;
@@ -430,5 +431,6 @@ private:
 };
 
 } // namespace permutation
+} // namespace pyzdd
 
 #endif // PYZDD_PERMUTATION_H

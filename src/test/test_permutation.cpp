@@ -11,9 +11,9 @@
 #include <spec/isomorphism.hpp>
 #include <spec/spanning_forest.hpp>
 
-using namespace permutation;
-using namespace graph;
-using namespace tdzdd;
+using namespace pyzdd;
+using namespace pyzdd::graph;
+using namespace pyzdd::permutation;
 
 // https://stackoverflow.com/questions/29855908/c-unordered-set-of-vectors
 struct VectorHash {
@@ -35,7 +35,7 @@ std::string check_enumerated(const Permutation& perm) {
 #endif
 
     isomorphism::IsomorphismElimination spec(pfm);
-    DdStructure<2> dd(spec);
+    tdzdd::DdStructure<2> dd(spec);
     // dd.zddReduce();
 
     auto actual = dd.zddCardinality();
@@ -177,7 +177,7 @@ void test_developments(const Graph& g, const std::vector<Permutation>& vertex_au
 
     // enumerate labeled developments
     spanning_forest::SpanningForestSpec tree_spec(gaux);
-    DdStructure<2> dd(tree_spec);
+    tdzdd::DdStructure<2> dd(tree_spec);
     dd.zddReduce();
 
     auto count_labeled_actual = dd.zddCardinality();
