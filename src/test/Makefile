@@ -16,6 +16,10 @@ test:
 	./stpath.out
 	$(CXX) $(CXXFLAGS) -O3 test_spanning_forest.cpp -o forest.out
 	./forest.out
+	$(CXX) $(CXXFLAGS) -O3 test_permutation.cpp -o permutation.out
+	./permutation.out
+	$(CXX) $(CXXFLAGS) -O3 test_superperiodic.cpp -o superperiodic.out
+	./superperiodic.out
 
 clean:  ## clean
 	$(RM) *.out
