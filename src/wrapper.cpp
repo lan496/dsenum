@@ -78,7 +78,7 @@ PYBIND11_MODULE(_pyzdd, m) {
     py::class_<tdzdd::DdSpecBase<pyzdd::choice::Choice,2>> PyDdSpecBaseChoice(m, "DdSpecBaseChoice");
     py::class_<tdzdd::DdSpec<pyzdd::choice::Choice,int,2>> PyDdSpecChoice(m, "DdSpecChoice", PyDdSpecBaseChoice);
     py::class_<pyzdd::choice::Choice> PyChoice(m, "Choice", PyDdSpecChoice);
-    PyChoice.def(py::init<int, int, std::vector<int>&>(),
+    PyChoice.def(py::init<int, int, std::vector<int>&, bool>(),
                  R"doc(
                     specification for DD representing combinations out of `n` items such that the number of selected ones in `v` is `k`
 
@@ -91,9 +91,12 @@ PYBIND11_MODULE(_pyzdd, m) {
                     v: List[int]
                         List of 0-indexed variables
                         For example, Choice(4, 2, [0, 2, 3]) represents {{0, 2}, {0, 3}, {2, 3}, {0, 1, 2}, {0, 1, 3}, {1, 2, 3}}.
+                    allow_more_than: bool
+                        iff true, allow to select more than k
                  )doc",
                  py::arg("n"),
                  py::arg("k"),
-                 py::arg("v"));
+                 py::arg("v"),
+                 py::arg("allow_more_than") = false);
     PyDdStructure2.def("zddSubset", &tdzdd::DdStructure<2>::zddSubset<pyzdd::choice::Choice>);
 }

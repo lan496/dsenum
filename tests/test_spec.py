@@ -37,7 +37,7 @@ def test_choice():
     k = 2
     v = [0, 2, 3]
 
-    spec = Choice(n, k, v)
+    spec = Choice(n, k, v, False)
     universe = Universe(n)
     universe.zddSubset(spec)
     universe.zddReduce()

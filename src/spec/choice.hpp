@@ -26,7 +26,7 @@ class Choice: public tdzdd::DdSpec<Choice, int, 2> {
     bool allow_more_than;
 
 public:
-    Choice() = default;
+    Choice() = delete;
     Choice(const Choice&) = default;
 
     Choice(int n, int k, const std::vector<int>& v, bool allow_more_than) :
