@@ -28,7 +28,7 @@ struct VectorHash {
     }
 };
 
-int main() {
+void test_binary() {
     // reproduce Fig.2
     int num_sites = 4;
     int num_types = 2;
@@ -42,8 +42,76 @@ int main() {
 
     std::string cardinality_expect = "6";
     auto cardinality_actual = dd.zddCardinality();
-    assert(cardinality_actual == cardinality_expect);
+    std::cerr << "# of nonequivalent structures: " << cardinality_actual << std::endl;
+    if (cardinality_actual != cardinality_expect) {
+        std::cerr << "The cardinality is wrong: (actual, expect) = ("
+                  << cardinality_actual << ", " << cardinality_expect
+                  << ")" << std::endl;
+        exit(1);
+    }
 
+    std::vector<std::vector<Element>> expect = {
+        {0, 0, 0, 0},
+        {0, 0, 0, 1},
+        {0, 1, 0, 1},
+        {0, 0, 1, 1},
+        {0, 1, 1, 1},
+        {1, 1, 1, 1},
+    };
+    std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_expect;
+    for (auto labeling: expect) {
+        uset_expect.insert(labeling);
+    }
+    std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_actual;
+    for (auto itr = dd.begin(), end = dd.end(); itr != end; ++itr) {
+        auto labeling = convert_to_labeling(itr, num_sites, num_types);
+        uset_actual.insert(labeling);
+    }
+    assert(uset_actual == uset_expect);
+}
+
+void test_multi0() {
+    int num_sites = 4;
+    int num_types = 3;
+    std::vector<Permutation> automorphism;
+    tdzdd::DdStructure<2> dd;
+
+    enumerate_derivative_structures(num_sites, num_types, automorphism, dd);
+
+    std::string cardinality_expect = "81";
+    auto cardinality_actual = dd.zddCardinality();
+    std::cerr << "# of nonequivalent structures: " << cardinality_actual << std::endl;
+    if (cardinality_actual != cardinality_expect) {
+        std::cerr << "The cardinality is wrong: (actual, expect) = ("
+                  << cardinality_actual << ", " << cardinality_expect
+                  << ")" << std::endl;
+        exit(1);
+    }
+}
+
+void test_multi1() {
+    // reproduce Fig.5(b)
+    int num_sites = 4;
+    int num_types = 3;
+    auto c4 = Permutation(std::vector<Element>{1, 2, 3, 0});
+    auto m = Permutation(std::vector<Element>{3, 2, 1, 0});
+    auto automorphism = generate_group(std::vector<Permutation>{c4, m});
+    assert(automorphism.size() == 8);
+    tdzdd::DdStructure<2> dd;
+
+    enumerate_derivative_structures(num_sites, num_types, automorphism, dd);
+
+    std::string cardinality_expect = "21";
+    auto cardinality_actual = dd.zddCardinality();
+    std::cerr << "# of nonequivalent structures: " << cardinality_actual << std::endl;
+    if (cardinality_actual != cardinality_expect) {
+        std::cerr << "The cardinality is wrong: (actual, expect) = ("
+                  << cardinality_actual << ", " << cardinality_expect
+                  << ")" << std::endl;
+        exit(1);
+    }
+
+    /*
     std::vector<std::vector<Element>> expect = {
         {0, 0, 0, 0},
         {1, 0, 0, 0},
@@ -71,6 +139,14 @@ int main() {
         std::cerr << std::endl;
     }
 #endif
+    */
+}
+
+int main() {
+    tdzdd::MessageHandler::showMessages(true);
+    test_binary();
+    test_multi0();
+    test_multi1();
 
     return 0;
 }

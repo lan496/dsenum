@@ -26,8 +26,8 @@ enum struct ElementComp : char {
 
 enum struct CompResult : char {
     UNKNOWN = 0,
-    GREATER_OR_EQUAL = 1, // sigma(x) >= x
-    SMALLER = 2,
+    GREATER = 1, // sigma(x) > x
+    SMALLER_OR_EQUAL = 2, // sigma(x) <= x
 };
 
 // this class is POD type
@@ -58,11 +58,11 @@ std::ostream& operator<<(std::ostream& os, const ElementComp comp) {
 
 std::ostream& operator<<(std::ostream& os, const CompResult result) {
     if (result == CompResult::UNKNOWN) {
-        os << "U";
-    } else if (result == CompResult::GREATER_OR_EQUAL) {
-        os << ">=";
-    } else if (result == CompResult::SMALLER){
-        os << "<";
+        os << " U";
+    } else if (result == CompResult::GREATER) {
+        os << " >";
+    } else if (result == CompResult::SMALLER_OR_EQUAL){
+        os << "<=";
     }
     return os;
 }
@@ -86,7 +86,8 @@ std::ostream& operator<<(std::ostream& os, const BinaryColor color) {
 // ============================================================================
 
 /// @brief DD specification for representing coloring that is lexicographically
-///        greater than or equal to a permutated coloring.
+///        smaller than or equal to a permutated coloring. Note that the
+///        reference enumerate lexicographically greater than or equal.
 /// @details see T. Horiyama, M. Miyasaka, and R. Sasaki, in the Canadian Conference on Computational Geometry (2018).
 class IsomorphismElimination:
     public tdzdd::HybridDdSpec<IsomorphismElimination, CompPivot, BinaryColor, 2> {
@@ -118,7 +119,7 @@ public:
         const Element e = n_ - level;
 
         // if the whole comparison is already determined, do not care value
-        if (cp.result == CompResult::GREATER_OR_EQUAL) {
+        if (cp.result == CompResult::SMALLER_OR_EQUAL) {
             // if level == 1, level - 1 == Terminal::REJECT
             if (level == 1) {
                 return Terminal::ACCEPT;
@@ -167,7 +168,7 @@ public:
 
         // compress ElementComp in frontier
         compress_state(cp, state, e, new_comps);
-        if (cp.result == CompResult::SMALLER) {
+        if (cp.result == CompResult::GREATER) {
             return Terminal::REJECT;
         }
 
@@ -189,7 +190,7 @@ public:
 #endif
 
         if (level == 1) {
-            if (cp.result == CompResult::GREATER_OR_EQUAL) {
+            if (cp.result == CompResult::SMALLER_OR_EQUAL) {
                 return Terminal::ACCEPT;
             } else {
                 return Terminal::REJECT;
@@ -254,22 +255,22 @@ private:
         if ((comp_finished.size() > e) && (comp_finished[e] == e)) {
             if (comp_finished.size() == static_cast<size_t>(n_)) {
                 // Here, all comparisons are finished.
-                if ((cp.comp == ElementComp::GREATER) || (cp.comp == ElementComp::EQUAL)) {
-                    cp.result = CompResult::GREATER_OR_EQUAL;
-                } else if (cp.comp == ElementComp::SMALLER) {
-                    cp.result = CompResult::SMALLER;
+                if ((cp.comp == ElementComp::SMALLER) || (cp.comp == ElementComp::EQUAL)) {
+                    cp.result = CompResult::SMALLER_OR_EQUAL;
+                } else if (cp.comp == ElementComp::GREATER) {
+                    cp.result = CompResult::GREATER;
                 } else {
                     assert(false); // unreachable
                 }
             } else {
-                if (cp.comp == ElementComp::GREATER) {
-                    // determined to be lexicographically greater than the permutated.
+                if (cp.comp == ElementComp::SMALLER) {
+                    // determined to be lexicographically smaller than the permutated.
                     reset_comppivot(cp);
-                    cp.result = CompResult::GREATER_OR_EQUAL;
+                    cp.result = CompResult::SMALLER_OR_EQUAL;
                     // forget state for compression
                     init_state(state);
-                } else if (cp.comp == ElementComp::SMALLER) {
-                    cp.result = CompResult::SMALLER;
+                } else if (cp.comp == ElementComp::GREATER) {
+                    cp.result = CompResult::GREATER;
                 }
             }
         }
@@ -294,13 +295,13 @@ private:
     }
 };
 
-bool is_lexicographically_greater_or_equal(const std::vector<BinaryColor>& lhs, const std::vector<BinaryColor>& rhs) {
+bool is_lexicographically_smaller_or_equal(const std::vector<BinaryColor>& lhs, const std::vector<BinaryColor>& rhs) {
     size_t n = lhs.size();
     assert(rhs.size() == n);
     for (size_t i = 0; i < n; ++i) {
-        if (lhs[i] > rhs[i]) {
+        if (lhs[i] < rhs[i]) {
             return true;
-        } else if (lhs[i] < rhs[i]) {
+        } else if (lhs[i] > rhs[i]) {
             return false;
         }
     }
@@ -320,7 +321,7 @@ std::vector<std::vector<BinaryColor>> brute_force_isomophism_elimination(const P
         for (size_t i = 0; i < n; ++i) {
             colors[i] = static_cast<BinaryColor>((bits >> i) & (static_cast<uint64_t>(1)));
         }
-        if (is_lexicographically_greater_or_equal(colors, perm.act(colors))) {
+        if (is_lexicographically_smaller_or_equal(colors, perm.act(colors))) {
             winners.emplace_back(colors);
         }
     }

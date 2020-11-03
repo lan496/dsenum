@@ -88,6 +88,67 @@ namespace derivative_structure {
         }
     }
 
+    /// @brief enumerate binary (num_types == 2) derivative structures
+    void enumerate_multi_derivative_structures(
+        int num_sites,
+        int num_types,
+        const std::vector<permutation::Permutation>& automorphism,
+        tdzdd::DdStructure<2>& dd
+    ) {
+        // one-hot encoding for num_types >= 3
+        int num_variables = num_sites * num_types;
+        auto converter = SiteSpecieConverter(num_sites, num_types);
+
+        std::vector<permutation::Permutation> automorphism_enc;
+        automorphism_enc.reserve(automorphism.size());
+        for (const auto& perm: automorphism) {
+            automorphism_enc.emplace_back(converter.augment_permutation(perm));
+        }
+
+        // std::vector<permutation::Permutation> translations_enc;
+        // std::vector<std::pair<std::vector<int>, int>> composition_constraints_enc;
+
+        // ==== prepare specs ====
+        // spec for isomorphism elimination
+        // sort permutations by max frontier sizes
+        std::sort(automorphism_enc.begin(), automorphism_enc.end(),
+                  [](const permutation::Permutation& lhs, const permutation::Permutation& rhs) {
+                      auto size_lhs = permutation::PermutationFrontierManager(lhs).get_max_frontier_size();
+                      auto size_rhs = permutation::PermutationFrontierManager(rhs).get_max_frontier_size();
+                      return size_lhs < size_rhs;
+                  });
+        std::vector<permutation::isomorphism::IsomorphismElimination> aut_specs;
+        aut_specs.reserve(automorphism_enc.size());
+        for (const auto& perm: automorphism_enc) {
+            permutation::PermutationFrontierManager pfm(perm);
+            permutation::isomorphism::IsomorphismElimination spec(pfm);
+            aut_specs.emplace_back(spec);
+        }
+
+        // spec for one-of-k
+        std::vector<choice::Choice> onehot_specs;
+        onehot_specs.reserve(num_sites);
+        for (permutation::Element site = 0; site < static_cast<permutation::Element>(num_sites); ++site) {
+            std::vector<int> same_sites(num_types);
+            for (int specie = 0; specie < num_types; ++specie) {
+                same_sites[specie] = converter.encode(site, specie);
+            }
+            choice::Choice spec(num_variables, 1, same_sites, false);
+            onehot_specs.emplace_back(spec);
+        }
+
+        // ==== construct DD ====
+        dd = universe::Universe(num_variables);
+        for (const auto& spec: onehot_specs) {
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+        for (const auto& spec: aut_specs) {
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+    }
+
     /// @brief enumerate DD for nonequivalent derivative structures
     /// @details see K. Shinohara, et al., J. Chem. Phys. 153, 104109 (2020).
     /// @param[in] num_sites the number of sites in supercell
@@ -122,8 +183,7 @@ namespace derivative_structure {
         if (num_types == 2) {
             enumerate_binary_derivative_structures(num_sites, num_types, automorphism, dd);
         } else {
-            // TODO
-            assert(false);
+            enumerate_multi_derivative_structures(num_sites, num_types, automorphism, dd);
         }
     }
 
@@ -131,11 +191,10 @@ namespace derivative_structure {
     void enumerate_derivative_structures(
         const std::vector<permutation::Permutation>& translations,
         const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
-        // const std::vector<std::vector<permutation::Element>>& site_constraints,
+        const std::vector<std::vector<permutation::Element>>& site_constraints,
         bool remove_superperiodic,
         bool remove_incomplete,
     ) {
-
         for (const auto& perm: translations) {
             if (perm.get_size() != num_sites) {
                 std::cerr << "The number of elements of permutation should be num_sites." << std::endl;
@@ -173,17 +232,9 @@ namespace derivative_structure {
             exit(1);
         }
 
-        // one-hot encoding for num_types >= 3
-        int num_variables = (num_types == 2) ? num_sites : (num_sites * num_types);
-        std::vector<permutation::Permutation> automorphism_enc;
-        std::vector<permutation::Permutation> translations_enc;
-        std::vector<std::pair<std::vector<int>, int>> composition_constraints_enc;
+
         // std::vector<std::vector<permutation::Element>> prohibited_species_enc;
         if (num_types == 2) {
-            automorphism_enc = automorphism;
-            translations_enc = translations;
-            composition_constraints_enc = composition_constraints;
-
             if (!site_constraints.empty()) {
                 prohibited_species_enc.reserve(site_constraints.size());
                 for (permutation::Element site = 0; site < num_sites; ++site) {
@@ -202,12 +253,6 @@ namespace derivative_structure {
                 }
             }
         } else {
-            auto converter = SiteSpecieConverter(num_sites, num_types);
-
-            automorphism_enc.reserve(automorphism.size());
-            for (const auto& perm: automorphism) {
-                automorphism_enc.emplace_back(converter.augment_permutation(perm));
-            }
 
             translations_enc.reserve(translations.size());
             for (const auto& perm: translations) {
@@ -295,8 +340,6 @@ namespace derivative_structure {
         }
 
         // spec for one-hot encoding
-        std::vector<choice::
-
     }
     */
 
