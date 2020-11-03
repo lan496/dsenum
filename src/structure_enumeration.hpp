@@ -349,7 +349,7 @@ namespace derivative_structure {
         int num_types)
     {
         int num_variables = (num_types == 2) ? num_sites : (num_sites * num_types);
-        std::vector<permutation::Element> labeling(num_variables, 0);
+        std::vector<permutation::Element> labeling(num_sites, 0);
 
         if (num_types == 2) {
             for (auto level: *itr) {

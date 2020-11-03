@@ -111,14 +111,32 @@ void test_multi1() {
         exit(1);
     }
 
-    /*
     std::vector<std::vector<Element>> expect = {
         {0, 0, 0, 0},
-        {1, 0, 0, 0},
-        {1, 0, 1, 0},
-        {1, 1, 0, 0},
-        {1, 1, 1, 0},
         {1, 1, 1, 1},
+        {2, 2, 2, 2},
+        //
+        {1, 1, 1, 0},
+        {1, 1, 0, 0},
+        {1, 0, 1, 0},
+        {1, 0, 0, 0},
+        //
+        {2, 2, 2, 0},
+        {2, 2, 0, 0},
+        {2, 0, 2, 0},
+        {2, 0, 0, 0},
+        //
+        {2, 2, 2, 1},
+        {2, 2, 1, 1},
+        {2, 1, 2, 1},
+        {2, 1, 1, 1},
+        //
+        {2, 2, 1, 0}, // (2, 2, 0, 1)
+        {2, 1, 2, 0}, // (2, 0, 2, 1)
+        {2, 1, 1, 0}, // (2, 0, 1, 1)
+        {2, 1, 0, 1},
+        {2, 0, 1, 0},
+        {2, 1, 0, 0}, // (2, 0, 0, 1)
     };
     std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_expect;
     for (auto labeling: expect) {
@@ -129,17 +147,16 @@ void test_multi1() {
         auto labeling = convert_to_labeling(itr, num_sites, num_types);
         uset_actual.insert(labeling);
     }
-    assert(uset_actual == uset_expect);
 
-#ifdef _DEBUG
+    /*
     for (auto labeling: uset_actual) {
         for (auto c: labeling) {
             std::cerr << " " << c;
         }
         std::cerr << std::endl;
     }
-#endif
     */
+    assert(uset_actual == uset_expect);
 }
 
 int main() {
