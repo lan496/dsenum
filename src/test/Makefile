@@ -22,6 +22,8 @@ test:
 	./permutation.out
 	$(CXX) $(CXXFLAGS) -O3 test_superperiodic.cpp -o superperiodic.out
 	./superperiodic.out
+	$(CXX) $(CXXFLAGS) -O3 test_structure_enumeration.cpp -o structure.out
+	./structure.out
 
 clean:  ## clean
 	$(RM) *.out
