@@ -58,7 +58,9 @@ namespace derivative_structure {
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
+        const std::vector<permutation::Permutation>& translations,
         bool remove_incomplete,
+        bool remove_superperiodic,
         tdzdd::DdStructure<2>& dd
     ) {
         int num_variables = num_sites;
@@ -81,6 +83,21 @@ namespace derivative_structure {
             aut_specs.emplace_back(spec);
         }
 
+        // spec for superperiodic elimination
+        std::vector<permutation::superperiodic::SuperperiodicElimination> sp_specs;
+        if (remove_superperiodic) {
+            sp_specs.reserve(translations.size());
+            auto identity = permutation::get_identity(num_variables);
+            for (const auto& perm: translations) {
+                if (perm == identity) {
+                    continue;
+                }
+                permutation::PermutationFrontierManager pfm(perm);
+                permutation::superperiodic::SuperperiodicElimination spec(pfm);
+                sp_specs.emplace_back(spec);
+            }
+        }
+
         // spec for removing incompletes
         choice::TakeBoth incomplete_spec(num_variables);
 
@@ -90,6 +107,13 @@ namespace derivative_structure {
         if (remove_incomplete) {
             dd.zddSubset(incomplete_spec);
             dd.zddReduce();
+        }
+
+        if (remove_superperiodic) {
+            for (const auto& spec: sp_specs) {
+                dd.zddSubset(spec);
+                dd.zddReduce();
+            }
         }
 
         for (const auto& spec: aut_specs) {
@@ -103,7 +127,9 @@ namespace derivative_structure {
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
+        const std::vector<permutation::Permutation>& translations,
         bool remove_incomplete,
+        bool remove_superperiodic,
         tdzdd::DdStructure<2>& dd
     ) {
         // one-hot encoding for num_types >= 3
@@ -115,8 +141,12 @@ namespace derivative_structure {
         for (const auto& perm: automorphism) {
             automorphism_enc.emplace_back(converter.augment_permutation(perm));
         }
+        std::vector<permutation::Permutation> translations_enc;
+        translations_enc.reserve(translations_enc.size());
+        for (const auto& perm: translations) {
+            translations_enc.emplace_back(converter.augment_permutation(perm));
+        }
 
-        // std::vector<permutation::Permutation> translations_enc;
         // std::vector<std::pair<std::vector<int>, int>> composition_constraints_enc;
 
         // ==== prepare specs ====
@@ -134,6 +164,21 @@ namespace derivative_structure {
             permutation::PermutationFrontierManager pfm(perm);
             permutation::isomorphism::IsomorphismElimination spec(pfm);
             aut_specs.emplace_back(spec);
+        }
+
+        // spec for superperiodic elimination
+        std::vector<permutation::superperiodic::SuperperiodicElimination> sp_specs;
+        if (remove_superperiodic) {
+            sp_specs.reserve(translations.size());
+            auto identity = permutation::get_identity(num_variables);
+            for (const auto& perm: translations_enc) {
+                if (perm == identity) {
+                    continue;
+                }
+                permutation::PermutationFrontierManager pfm(perm);
+                permutation::superperiodic::SuperperiodicElimination spec(pfm);
+                sp_specs.emplace_back(spec);
+            }
         }
 
         // spec for removing incompletes
@@ -178,6 +223,13 @@ namespace derivative_structure {
             }
         }
 
+        if (remove_superperiodic) {
+            for (const auto& spec: sp_specs) {
+                dd.zddSubset(spec);
+                dd.zddReduce();
+            }
+        }
+
         for (const auto& spec: aut_specs) {
             dd.zddSubset(spec);
             dd.zddReduce();
@@ -203,7 +255,9 @@ namespace derivative_structure {
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
+        const std::vector<permutation::Permutation>& translations,
         bool remove_incomplete,
+        bool remove_superperiodic,
         tdzdd::DdStructure<2>& dd
     ) {
         // sanity check
@@ -215,27 +269,45 @@ namespace derivative_structure {
                 exit(1);
             }
         }
+        for (const auto& perm: translations) {
+            if (perm.get_size() != static_cast<size_t>(num_sites)) {
+                std::cerr << "The number of elements of permutation should be num_sites." << std::endl;
+                exit(1);
+            }
+        }
+        if (remove_superperiodic && translations.empty()) {
+            std::cerr << "Translational group is required for removing superperiodic structures.";
+            exit(1);
+        }
 
         if (num_types == 2) {
-            enumerate_binary_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+            enumerate_binary_derivative_structures(
+                num_sites,
+                num_types,
+                automorphism,
+                translations,
+                remove_incomplete,
+                remove_superperiodic,
+                dd
+            );
         } else {
-            enumerate_multi_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+            enumerate_multi_derivative_structures(
+                num_sites,
+                num_types,
+                automorphism,
+                translations,
+                remove_incomplete,
+                remove_superperiodic,
+                dd
+            );
         }
     }
 
     /*
     void enumerate_derivative_structures(
-        const std::vector<permutation::Permutation>& translations,
         const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
         const std::vector<std::vector<permutation::Element>>& site_constraints,
-        bool remove_superperiodic,
     ) {
-        for (const auto& perm: translations) {
-            if (perm.get_size() != num_sites) {
-                std::cerr << "The number of elements of permutation should be num_sites." << std::endl;
-                exit(1);
-            }
-        }
         if (!composition_constraints.empty()) {
             if (composition_constraints.size() != static_cast<size_t>(num_types)) {
                 std::cerr << "The size of composition_constraints should be num_types." << std::endl;
@@ -262,11 +334,6 @@ namespace derivative_structure {
                 }
             }
         }
-        if (remove_superperiodic && translations.empty()) {
-            std::cerr << "Translational group is required for removing superperiodic structures.";
-            exit(1);
-        }
-
 
         // std::vector<std::vector<permutation::Element>> prohibited_species_enc;
         if (num_types == 2) {
@@ -288,11 +355,6 @@ namespace derivative_structure {
                 }
             }
         } else {
-
-            translations_enc.reserve(translations.size());
-            for (const auto& perm: translations) {
-                translations_enc.emplace_back(converter.augment_permutation(perm));
-            }
 
             if (!composition_constraints.empty()) {
                 composition_constraints_enc.reserve(composition_constraints.size());
@@ -331,16 +393,6 @@ namespace derivative_structure {
                     site_constraints_enc.emplace_back(augmented);
                 }
             }
-        }
-
-
-        // spec for superperiodic elimination
-        std::vector<permutation::superperiodic::SuperperiodicElimination> sp_specs;
-        sp_specs.reserve(translations_enc.size());
-        for (const auto& perm: translations_enc) {
-            permutation::PermutationFrontierManager pfm(perm);
-            permutation::superperiodic::SuperperiodicElimination spec(pfm);
-            sp_specs.emplace_back(spec);
         }
 
         // spec for composition constraints

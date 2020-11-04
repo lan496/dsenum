@@ -64,13 +64,24 @@ void test_binary() {
     auto m = Permutation(std::vector<Element>{3, 2, 1, 0});
     auto automorphism = generate_group(std::vector<Permutation>{c4, m});
     assert(automorphism.size() == 8);
+    auto translations = generate_group(std::vector<Permutation>{c4});
+    assert(translations.size() == 4);
 
     // no option
     {
         tdzdd::DdStructure<2> dd;
 
         bool remove_incomplete = false;
-        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+        bool remove_superperiodic = false;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
 
         std::string cardinality_expect = "6";
         std::vector<std::vector<Element>> enumerated_expect = {
@@ -89,8 +100,16 @@ void test_binary() {
         tdzdd::DdStructure<2> dd;
 
         bool remove_incomplete = true;
-        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
-
+        bool remove_superperiodic = false;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
         std::string cardinality_expect = "4";
         std::vector<std::vector<Element>> enumerated_expect = {
             {0, 0, 0, 1},
@@ -100,29 +119,34 @@ void test_binary() {
         };
         check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }
-}
 
-void test_multi0() {
-    int num_sites = 4;
-    int num_types = 3;
-    std::vector<Permutation> automorphism;
-    tdzdd::DdStructure<2> dd;
-    bool remove_incomplete = false;
+    // remove superperiodic
+    {
+        tdzdd::DdStructure<2> dd;
 
-    enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+        bool remove_incomplete = false;
+        bool remove_superperiodic = true;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
 
-    std::string cardinality_expect = "81";
-    auto cardinality_actual = dd.zddCardinality();
-    std::cerr << "# of nonequivalent structures: " << cardinality_actual << std::endl;
-    if (cardinality_actual != cardinality_expect) {
-        std::cerr << "The cardinality is wrong: (actual, expect) = ("
-                  << cardinality_actual << ", " << cardinality_expect
-                  << ")" << std::endl;
-        exit(1);
+        std::string cardinality_expect = "3";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {0, 0, 0, 1},
+            {0, 0, 1, 1},
+            {0, 1, 1, 1},
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }
 }
 
-void test_multi1() {
+void test_multi() {
     // reproduce Fig.5(b)
     int num_sites = 4;
     int num_types = 3;
@@ -130,12 +154,23 @@ void test_multi1() {
     auto m = Permutation(std::vector<Element>{3, 2, 1, 0});
     auto automorphism = generate_group(std::vector<Permutation>{c4, m});
     assert(automorphism.size() == 8);
+    auto translations = generate_group(std::vector<Permutation>{c4});
+    assert(translations.size() == 4);
 
     // no option
     {
         tdzdd::DdStructure<2> dd;
         bool remove_incomplete = false;
-        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+        bool remove_superperiodic = false;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
 
         std::string cardinality_expect = "21";
         std::vector<std::vector<Element>> enumerated_expect = {
@@ -172,7 +207,16 @@ void test_multi1() {
     {
         tdzdd::DdStructure<2> dd;
         bool remove_incomplete = true;
-        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+        bool remove_superperiodic = false;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
 
         std::string cardinality_expect = "6";
         std::vector<std::vector<Element>> enumerated_expect = {
@@ -186,13 +230,49 @@ void test_multi1() {
         check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }
 
+    // remove superperiodic
+    {
+        tdzdd::DdStructure<2> dd;
+        bool remove_incomplete = false;
+        bool remove_superperiodic = true;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
 
+        std::string cardinality_expect = "15";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {1, 1, 1, 0},
+            {1, 1, 0, 0},
+            {1, 0, 0, 0},
+            //
+            {2, 2, 2, 0},
+            {2, 2, 0, 0},
+            {2, 0, 0, 0},
+            //
+            {2, 2, 2, 1},
+            {2, 2, 1, 1},
+            {2, 1, 1, 1},
+            //
+            {2, 2, 1, 0}, // (2, 2, 0, 1)
+            {2, 1, 2, 0}, // (2, 0, 2, 1)
+            {2, 1, 1, 0}, // (2, 0, 1, 1)
+            {2, 1, 0, 1},
+            {2, 0, 1, 0},
+            {2, 1, 0, 0}, // (2, 0, 0, 1)
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
+    }
 }
 
 int main() {
     tdzdd::MessageHandler::showMessages(true);
     test_binary();
-    test_multi0();
-    test_multi1();
+    test_multi();
     return 0;
 }
