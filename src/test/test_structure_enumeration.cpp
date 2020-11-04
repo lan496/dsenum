@@ -71,6 +71,7 @@ void test_binary() {
     {
         tdzdd::DdStructure<2> dd;
 
+        std::vector<int> composition_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
         enumerate_derivative_structures(
@@ -78,6 +79,7 @@ void test_binary() {
             num_types,
             automorphism,
             translations,
+            composition_constraints,
             remove_incomplete,
             remove_superperiodic,
             dd
@@ -99,6 +101,7 @@ void test_binary() {
     {
         tdzdd::DdStructure<2> dd;
 
+        std::vector<int> composition_constraints;
         bool remove_incomplete = true;
         bool remove_superperiodic = false;
         enumerate_derivative_structures(
@@ -106,6 +109,7 @@ void test_binary() {
             num_types,
             automorphism,
             translations,
+            composition_constraints,
             remove_incomplete,
             remove_superperiodic,
             dd
@@ -124,6 +128,7 @@ void test_binary() {
     {
         tdzdd::DdStructure<2> dd;
 
+        std::vector<int> composition_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = true;
         enumerate_derivative_structures(
@@ -131,6 +136,7 @@ void test_binary() {
             num_types,
             automorphism,
             translations,
+            composition_constraints,
             remove_incomplete,
             remove_superperiodic,
             dd
@@ -141,6 +147,31 @@ void test_binary() {
             {0, 0, 0, 1},
             {0, 0, 1, 1},
             {0, 1, 1, 1},
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
+    }
+
+    // composition constraints
+    {
+        tdzdd::DdStructure<2> dd;
+
+        std::vector<int> composition_constraints = {3, 1};
+        bool remove_incomplete = false;
+        bool remove_superperiodic = false;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            composition_constraints,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
+
+        std::string cardinality_expect = "1";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {0, 0, 0, 1},
         };
         check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }
@@ -160,6 +191,8 @@ void test_multi() {
     // no option
     {
         tdzdd::DdStructure<2> dd;
+
+        std::vector<int> composition_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
         enumerate_derivative_structures(
@@ -167,6 +200,7 @@ void test_multi() {
             num_types,
             automorphism,
             translations,
+            composition_constraints,
             remove_incomplete,
             remove_superperiodic,
             dd
@@ -206,6 +240,8 @@ void test_multi() {
     // remove incomplete
     {
         tdzdd::DdStructure<2> dd;
+
+        std::vector<int> composition_constraints;
         bool remove_incomplete = true;
         bool remove_superperiodic = false;
         enumerate_derivative_structures(
@@ -213,6 +249,7 @@ void test_multi() {
             num_types,
             automorphism,
             translations,
+            composition_constraints,
             remove_incomplete,
             remove_superperiodic,
             dd
@@ -233,6 +270,8 @@ void test_multi() {
     // remove superperiodic
     {
         tdzdd::DdStructure<2> dd;
+
+        std::vector<int> composition_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = true;
         enumerate_derivative_structures(
@@ -240,6 +279,7 @@ void test_multi() {
             num_types,
             automorphism,
             translations,
+            composition_constraints,
             remove_incomplete,
             remove_superperiodic,
             dd
@@ -265,6 +305,32 @@ void test_multi() {
             {2, 1, 0, 1},
             {2, 0, 1, 0},
             {2, 1, 0, 0}, // (2, 0, 0, 1)
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
+    }
+
+    // composition constraints
+    {
+        tdzdd::DdStructure<2> dd;
+
+        std::vector<int> composition_constraints = {1, 1, 2};
+        bool remove_incomplete = false;
+        bool remove_superperiodic = false;
+        enumerate_derivative_structures(
+            num_sites,
+            num_types,
+            automorphism,
+            translations,
+            composition_constraints,
+            remove_incomplete,
+            remove_superperiodic,
+            dd
+        );
+
+        std::string cardinality_expect = "2";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {2, 2, 1, 0}, // (2, 2, 0, 1)
+            {2, 1, 2, 0}, // (2, 0, 2, 1)
         };
         check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }

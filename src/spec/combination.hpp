@@ -33,6 +33,30 @@ public:
     }
 };
 
+std::vector<std::vector<int>> brute_force_combination(int n, int k) {
+    if (n > 64) {
+        std::cerr << "The current implementation does not support n > 64." << std::endl;
+    }
+
+    std::vector<std::vector<int>> combs;
+    for (uint64_t bits = 0; bits < (static_cast<uint64_t>(1) << n); ++bits) {
+        std::vector<int> comb;
+        int count = 0;
+        for (size_t i = 0; i < static_cast<size_t>(n); ++i) {
+            bool take = static_cast<bool>((bits >> i) & (static_cast<uint64_t>(1)));
+            if (take) {
+                comb.emplace_back(i);
+                ++count;
+            }
+        }
+        std::reverse(comb.begin(), comb.end());
+        if (count == k) {
+            combs.emplace_back(comb);
+        }
+    }
+    return combs;
+}
+
 } // namespace combination
 } // namespace pyzdd
 #endif // PYZDD_COMBINATION_H

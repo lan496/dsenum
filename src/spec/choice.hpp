@@ -138,7 +138,6 @@ private:
     }
 };
 
-
 std::vector<std::vector<Variable>> brute_force_choice(int n,
                                                       int k,
                                                       const std::vector<Variable>& group,
