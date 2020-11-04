@@ -12,6 +12,8 @@ all: test clean
 test:
 	$(CXX) $(CXXFLAGS) -O3 test_choice.cpp -o choice.out
 	./choice.out
+	$(CXX) $(CXXFLAGS) -O3 test_combination.cpp -o combination.out
+	./combination.out
 	$(CXX) $(CXXFLAGS) -O3 test_simpath.cpp -o simpath.out
 	./simpath.out
 	$(CXX) $(CXXFLAGS) -O3 test_stpath.cpp -o stpath.out
@@ -24,10 +26,10 @@ test:
 	./superperiodic.out
 	$(CXX) $(CXXFLAGS) -O3 test_structure_enumeration.cpp -o structure.out
 	./structure.out
+	echo "[success]"
 
 clean:  ## clean
 	$(RM) *.out
-
 
 help: ## Self-documented Makefile
 		@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \

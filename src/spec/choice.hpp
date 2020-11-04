@@ -124,7 +124,7 @@ public:
     }
 
     bool equalTo(const TakeBothState& lhs, const TakeBothState& rhs) const {
-        return ((lhs.take_zero == rhs.take_one) && (lhs.take_zero == rhs.take_one));
+        return ((lhs.take_zero == rhs.take_zero) and (lhs.take_one == rhs.take_one));
     }
 
 private:

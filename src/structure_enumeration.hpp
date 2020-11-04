@@ -61,6 +61,7 @@ namespace derivative_structure {
         const std::vector<permutation::Permutation>& automorphism,
         const std::vector<permutation::Permutation>& translations,
         const std::vector<int>& composition_constraints,
+        const std::vector<std::vector<permutation::Element>>& site_constraints,
         bool remove_incomplete,
         bool remove_superperiodic,
         tdzdd::DdStructure<2>& dd
@@ -108,6 +109,26 @@ namespace derivative_structure {
             composition_specs.emplace_back(spec);
         }
 
+        // spec for site constraints
+        std::vector<choice::Choice> site_constraint_specs;
+        if (!site_constraints.empty()) {
+            site_constraint_specs.reserve(num_sites);
+            for (int site = 0; site < num_sites; ++site) {
+                std::vector<int> group = {site};
+                for (auto specie: site_constraints[site]) {
+                    if (specie == 1) {
+                        // cannot take 1-branch for the site
+                        choice::Choice spec(num_variables, 0, group, false);
+                        site_constraint_specs.emplace_back(spec);
+                    } else {
+                        // cannot take 0-branch for the site
+                        choice::Choice spec(num_variables, 1, group, false);
+                        site_constraint_specs.emplace_back(spec);
+                    }
+                }
+            }
+        }
+
         // spec for removing incompletes
         choice::TakeBoth incomplete_spec(num_variables);
 
@@ -121,6 +142,13 @@ namespace derivative_structure {
 
         if (!composition_constraints.empty()) {
             for (const auto& spec: composition_specs) {
+                dd.zddSubset(spec);
+                dd.zddReduce();
+            }
+        }
+
+        if (!site_constraints.empty()) {
+            for (const auto& spec: site_constraint_specs) {
                 dd.zddSubset(spec);
                 dd.zddReduce();
             }
@@ -146,6 +174,7 @@ namespace derivative_structure {
         const std::vector<permutation::Permutation>& automorphism,
         const std::vector<permutation::Permutation>& translations,
         const std::vector<int>& composition_constraints,
+        const std::vector<std::vector<permutation::Element>>& site_constraints,
         bool remove_incomplete,
         bool remove_superperiodic,
         tdzdd::DdStructure<2>& dd
@@ -164,6 +193,16 @@ namespace derivative_structure {
         translations_enc.reserve(translations_enc.size());
         for (const auto& perm: translations) {
             translations_enc.emplace_back(converter.augment_permutation(perm));
+        }
+
+        std::vector<int> site_constraints_enc;
+        if (!site_constraints.empty()) {
+            for (int site = 0; site < num_sites; ++site) {
+                for (int specie: site_constraints[site]) {
+                    auto prohibited = converter.encode(site, specie);
+                    site_constraints_enc.emplace_back(prohibited);
+                }
+            }
         }
 
         // ==== prepare specs ====
@@ -211,6 +250,17 @@ namespace derivative_structure {
 
                 choice::Choice spec(num_variables, k, sites_with_same_specie, false);
                 composition_specs.emplace_back(spec);
+            }
+        }
+
+        // spec for site constraints
+        std::vector<choice::Choice> site_constraint_specs;
+        if (!site_constraints.empty()) {
+            for (int prohibited: site_constraints_enc) {
+                std::vector<int> group = {prohibited};
+                // cannot choose `prohibited`
+                choice::Choice spec(num_variables, 0, group, false);
+                site_constraint_specs.emplace_back(spec);
             }
         }
 
@@ -263,6 +313,13 @@ namespace derivative_structure {
             }
         }
 
+        if (!site_constraints.empty()) {
+            for (const auto& spec: site_constraint_specs) {
+                dd.zddSubset(spec);
+                dd.zddReduce();
+            }
+        }
+
         if (remove_superperiodic) {
             for (const auto& spec: sp_specs) {
                 dd.zddSubset(spec);
@@ -286,7 +343,7 @@ namespace derivative_structure {
     /// @param[in] composition_constraints (Optional) composition_constraints[k]
     ///            is a desired number of type-k.
     /// @param[in] site_constraints (Optional) site_constraints[i] is a list of
-    ///            species allowed to locate at site-i.
+    ///            species prohibited to locate at site-i.
     /// @param[in] remove_superperiodic iff true, remove superperiodic structures
     /// @param[in] remove_incomplete iff true, remove incomplete structures,
     ///            whose kinds of species is less than num_types.
@@ -297,6 +354,7 @@ namespace derivative_structure {
         const std::vector<permutation::Permutation>& automorphism,
         const std::vector<permutation::Permutation>& translations,
         const std::vector<int>& composition_constraints,
+        const std::vector<std::vector<permutation::Element>>& site_constraints,
         bool remove_incomplete,
         bool remove_superperiodic,
         tdzdd::DdStructure<2>& dd
@@ -326,6 +384,24 @@ namespace derivative_structure {
                 exit(1);
             }
         }
+        if (!site_constraints.empty()) {
+            if (site_constraints.size() != static_cast<size_t>(num_sites)) {
+                std::cerr << "The size of site_constraints should be num_sites." << std::endl;
+                exit(1);
+            }
+            for (const auto& types: site_constraints) {
+                for (auto k: types) {
+                    if ((k < 0) || (k >= static_cast<permutation::Element>(num_types))) {
+                        std::cerr << "Invalid specie: " << k << std::endl;
+                        exit(1);
+                    }
+                }
+                if (types.size() >= static_cast<size_t>(num_types)) {
+                    std::cerr << "Impossible to satisfy site constraints!" << std::endl;
+                    exit(1);
+                }
+            }
+        }
         if (remove_superperiodic && translations.empty()) {
             std::cerr << "Translational group is required for removing superperiodic structures.";
             exit(1);
@@ -338,6 +414,7 @@ namespace derivative_structure {
                 automorphism,
                 translations,
                 composition_constraints,
+                site_constraints,
                 remove_incomplete,
                 remove_superperiodic,
                 dd
@@ -349,6 +426,7 @@ namespace derivative_structure {
                 automorphism,
                 translations,
                 composition_constraints,
+                site_constraints,
                 remove_incomplete,
                 remove_superperiodic,
                 dd
@@ -358,58 +436,13 @@ namespace derivative_structure {
 
     /*
     void enumerate_derivative_structures(
-        const std::vector<std::vector<permutation::Element>>& site_constraints,
     ) {
-        if (!site_constraints.empty()) {
-            if (site_constraints.size() != static_cast<size_t>(num_sites)) {
-                std::cerr << "The size of site_constraints should be num_sites." << std::endl;
-                exit(1);
-            }
-            for (const auto& types: site_constraints) {
-                for (auto k: types) {
-                    if ((k < 0) || (k >= num_types)) {
-                        std::cerr << "Invalid specie: " << k << std::endl;
-                        exit(1);
-                    }
-                }
-            }
-        }
-
         // std::vector<std::vector<permutation::Element>> prohibited_species_enc;
         if (num_types == 2) {
-            if (!site_constraints.empty()) {
-                prohibited_species_enc.reserve(site_constraints.size());
-                for (permutation::Element site = 0; site < num_sites; ++site) {
-                    std::set<int> allow;
-                    for (auto specie: site_constraints[site]) {
-                        allow.insert(specie);
-                    }
-
-                    std::vector<int> prohibited;
-                    for (int specie = 0; specie < num_types; ++specie) {
-                        if (allow.find(specie) == allow.end()) {
-                            prohibited.emplace_back(specie);
-                        }
-                    }
-                    prohibited_species_enc.emplace_back(prohibited);
-                }
-            }
         } else {
             if (!site_constraints.empty()) {
                 prohibited_species_enc.reserve(site_constraints.size());
                 for (permutation::Element site = 0; site < num_sites; ++site) {
-                    std::set<int> allow;
-                    for (auto specie: site_constraints[site]) {
-                        allow.insert(specie);
-                    }
-
-                    std::vector<int> prohibited;
-                    for (int specie = 0; specie < num_types; ++specie) {
-                        if (allow.find(specie) == allow.end()) {
-                            prohibited.emplace_back(specie);
-                        }
-                    }
-
                     std::vector<permutation::Element> augmented;
                     augmented.reserve(site_constraints[site].size());
                     for (auto specie: site_constraints[site]) {
