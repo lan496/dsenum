@@ -9,6 +9,7 @@
 
 #include "iterator.hpp"
 #include "graph.hpp"
+#include "structure_enumeration.hpp"
 #include "spec/combination.hpp"
 #include "spec/choice.hpp"
 
@@ -19,6 +20,7 @@ PYBIND11_MODULE(_pyzdd, m) {
 
     // DD structure
     py::class_<tdzdd::DdStructure<2>> PyDdStructure2(m, "Universe");
+    PyDdStructure2.def(py::init<>());
     PyDdStructure2.def(py::init<int, bool>(),
                        "Universe DD construction",
                        py::arg("n"), py::arg("useMP") = false);
@@ -36,6 +38,34 @@ PYBIND11_MODULE(_pyzdd, m) {
     PyDdStructure2.def("begin", &tdzdd::DdStructure<2>::begin);
     PyDdStructure2.def("end", &tdzdd::DdStructure<2>::end);
     m.def("variable_choice", &pyzdd::variable_choice);
+
+    // Permutation
+    py::class_<pyzdd::permutation::Permutation> (m, "Permutation")
+        .def(py::init<std::vector<pyzdd::permutation::Element>>());
+    m.def(
+        "generate_permutation_group",
+        &pyzdd::permutation::generate_group,
+        py::arg("generators")
+    );
+
+    // structure enumeration
+    m.def(
+        "construct_derivative_structures",
+        &pyzdd::derivative_structure::construct_derivative_structures,
+        py::arg("dd"),
+        py::arg("num_sites"),
+        py::arg("num_types"),
+        py::arg("automorphism"),
+        py::arg("translations") = std::vector<pyzdd::permutation::Permutation>(),
+        py::arg("composition_constraints") = std::vector<int>(),
+        py::arg("site_constraints") = std::vector<std::vector<pyzdd::permutation::Element>>(),
+        py::arg("remove_incomplete") = false,
+        py::arg("remove_superperiodic") = false
+    );
+    m.def(
+        "convert_to_labeling",
+        &pyzdd::derivative_structure::convert_to_labeling
+    );
 
     // Graph
     py::class_<pyzdd::graph::Edge> (m, "Edge")

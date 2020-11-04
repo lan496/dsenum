@@ -348,7 +348,8 @@ namespace derivative_structure {
     /// @param[in] remove_incomplete iff true, remove incomplete structures,
     ///            whose kinds of species is less than num_types.
     /// @param[out] dd DD for output
-    void enumerate_derivative_structures(
+    void construct_derivative_structures(
+        tdzdd::DdStructure<2>& dd,
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
@@ -356,8 +357,7 @@ namespace derivative_structure {
         const std::vector<int>& composition_constraints,
         const std::vector<std::vector<permutation::Element>>& site_constraints,
         bool remove_incomplete,
-        bool remove_superperiodic,
-        tdzdd::DdStructure<2>& dd
+        bool remove_superperiodic
     ) {
         // sanity check
         assert(num_sites >= 1);
@@ -433,47 +433,6 @@ namespace derivative_structure {
             );
         }
     }
-
-    /*
-    void enumerate_derivative_structures(
-    ) {
-        // std::vector<std::vector<permutation::Element>> prohibited_species_enc;
-        if (num_types == 2) {
-        } else {
-            if (!site_constraints.empty()) {
-                prohibited_species_enc.reserve(site_constraints.size());
-                for (permutation::Element site = 0; site < num_sites; ++site) {
-                    std::vector<permutation::Element> augmented;
-                    augmented.reserve(site_constraints[site].size());
-                    for (auto specie: site_constraints[site]) {
-                        augmented.emplace_back(converter.encode(site, specie));
-                    }
-                    site_constraints_enc.emplace_back(augmented);
-                }
-            }
-        }
-
-        // spec for site constraints
-        std::vector<pyzdd::choice::Choice> sites_specs;
-        if (!site_constraints_enc.empty()) {
-            sites_specs.reserve(num_variables);
-            for (permutation::Element site = 0; site < num_sites; ++site) {
-                std::set<int> allow;
-                for (auto e: site_constraints_enc[site]) {
-
-                }
-            }
-
-            for (const auto& group: site_constraints_enc) {
-                // take exactly k elements from group (do not care element not in group)
-                pyzdd::choice::Choice spec(num_variables, k, group, false);
-                choice_specs.emplace_back(spec);
-            }
-        }
-
-        // spec for one-hot encoding
-    }
-    */
 
     std::vector<permutation::Element> convert_to_labeling(
         tdzdd::DdStructure<2>::const_iterator const &itr,

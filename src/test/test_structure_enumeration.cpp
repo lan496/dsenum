@@ -75,7 +75,8 @@ void test_binary() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -83,8 +84,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "6";
@@ -107,7 +107,8 @@ void test_binary() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = true;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -115,8 +116,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
         std::string cardinality_expect = "4";
         std::vector<std::vector<Element>> enumerated_expect = {
@@ -136,7 +136,8 @@ void test_binary() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = true;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -144,8 +145,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "3";
@@ -165,7 +165,8 @@ void test_binary() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = true;
         bool remove_superperiodic = true;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -173,8 +174,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "3";
@@ -194,7 +194,8 @@ void test_binary() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -202,8 +203,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "1";
@@ -223,7 +223,8 @@ void test_binary() {
         };
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -231,8 +232,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "1";
@@ -252,7 +252,8 @@ void test_binary() {
         };
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -260,8 +261,7 @@ void test_binary() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "1";
@@ -291,7 +291,8 @@ void test_multi() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -299,8 +300,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "21";
@@ -342,7 +342,8 @@ void test_multi() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = true;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -350,8 +351,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "6";
@@ -374,7 +374,8 @@ void test_multi() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = true;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -382,8 +383,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "15";
@@ -418,7 +418,8 @@ void test_multi() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = true;
         bool remove_superperiodic = true;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -426,8 +427,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "6";
@@ -450,7 +450,8 @@ void test_multi() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = true;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -458,8 +459,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "15";
@@ -493,7 +493,8 @@ void test_multi() {
         std::vector<std::vector<permutation::Element>> site_constraints;
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -501,8 +502,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "2";
@@ -523,7 +523,8 @@ void test_multi() {
         };
         bool remove_incomplete = false;
         bool remove_superperiodic = false;
-        enumerate_derivative_structures(
+        construct_derivative_structures(
+            dd,
             num_sites,
             num_types,
             automorphism,
@@ -531,8 +532,7 @@ void test_multi() {
             composition_constraints,
             site_constraints,
             remove_incomplete,
-            remove_superperiodic,
-            dd
+            remove_superperiodic
         );
 
         std::string cardinality_expect = "6";
