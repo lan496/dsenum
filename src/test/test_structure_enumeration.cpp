@@ -28,19 +28,13 @@ struct VectorHash {
     }
 };
 
-void test_binary() {
-    // reproduce Fig.2
-    int num_sites = 4;
-    int num_types = 2;
-    auto c4 = Permutation(std::vector<Element>{1, 2, 3, 0});
-    auto m = Permutation(std::vector<Element>{3, 2, 1, 0});
-    auto automorphism = generate_group(std::vector<Permutation>{c4, m});
-    assert(automorphism.size() == 8);
-    tdzdd::DdStructure<2> dd;
-
-    enumerate_derivative_structures(num_sites, num_types, automorphism, dd);
-
-    std::string cardinality_expect = "6";
+void check(
+    int num_sites,
+    int num_types,
+    const tdzdd::DdStructure<2>& dd,
+    const std::string cardinality_expect,
+    const std::vector<std::vector<Element>>& enumerated_expect)
+{
     auto cardinality_actual = dd.zddCardinality();
     std::cerr << "# of nonequivalent structures: " << cardinality_actual << std::endl;
     if (cardinality_actual != cardinality_expect) {
@@ -50,16 +44,8 @@ void test_binary() {
         exit(1);
     }
 
-    std::vector<std::vector<Element>> expect = {
-        {0, 0, 0, 0},
-        {0, 0, 0, 1},
-        {0, 1, 0, 1},
-        {0, 0, 1, 1},
-        {0, 1, 1, 1},
-        {1, 1, 1, 1},
-    };
     std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_expect;
-    for (auto labeling: expect) {
+    for (auto labeling: enumerated_expect) {
         uset_expect.insert(labeling);
     }
     std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_actual;
@@ -70,13 +56,60 @@ void test_binary() {
     assert(uset_actual == uset_expect);
 }
 
+void test_binary() {
+    // reproduce Fig.2
+    int num_sites = 4;
+    int num_types = 2;
+    auto c4 = Permutation(std::vector<Element>{1, 2, 3, 0});
+    auto m = Permutation(std::vector<Element>{3, 2, 1, 0});
+    auto automorphism = generate_group(std::vector<Permutation>{c4, m});
+    assert(automorphism.size() == 8);
+
+    // no option
+    {
+        tdzdd::DdStructure<2> dd;
+
+        bool remove_incomplete = false;
+        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+
+        std::string cardinality_expect = "6";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 1},
+            {0, 1, 0, 1},
+            {0, 0, 1, 1},
+            {0, 1, 1, 1},
+            {1, 1, 1, 1},
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
+    }
+
+    // remove_incomplete
+    {
+        tdzdd::DdStructure<2> dd;
+
+        bool remove_incomplete = true;
+        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+
+        std::string cardinality_expect = "4";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {0, 0, 0, 1},
+            {0, 1, 0, 1},
+            {0, 0, 1, 1},
+            {0, 1, 1, 1},
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
+    }
+}
+
 void test_multi0() {
     int num_sites = 4;
     int num_types = 3;
     std::vector<Permutation> automorphism;
     tdzdd::DdStructure<2> dd;
+    bool remove_incomplete = false;
 
-    enumerate_derivative_structures(num_sites, num_types, automorphism, dd);
+    enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
 
     std::string cardinality_expect = "81";
     auto cardinality_actual = dd.zddCardinality();
@@ -97,66 +130,63 @@ void test_multi1() {
     auto m = Permutation(std::vector<Element>{3, 2, 1, 0});
     auto automorphism = generate_group(std::vector<Permutation>{c4, m});
     assert(automorphism.size() == 8);
-    tdzdd::DdStructure<2> dd;
 
-    enumerate_derivative_structures(num_sites, num_types, automorphism, dd);
+    // no option
+    {
+        tdzdd::DdStructure<2> dd;
+        bool remove_incomplete = false;
+        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
 
-    std::string cardinality_expect = "21";
-    auto cardinality_actual = dd.zddCardinality();
-    std::cerr << "# of nonequivalent structures: " << cardinality_actual << std::endl;
-    if (cardinality_actual != cardinality_expect) {
-        std::cerr << "The cardinality is wrong: (actual, expect) = ("
-                  << cardinality_actual << ", " << cardinality_expect
-                  << ")" << std::endl;
-        exit(1);
+        std::string cardinality_expect = "21";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {0, 0, 0, 0},
+            {1, 1, 1, 1},
+            {2, 2, 2, 2},
+            //
+            {1, 1, 1, 0},
+            {1, 1, 0, 0},
+            {1, 0, 1, 0},
+            {1, 0, 0, 0},
+            //
+            {2, 2, 2, 0},
+            {2, 2, 0, 0},
+            {2, 0, 2, 0},
+            {2, 0, 0, 0},
+            //
+            {2, 2, 2, 1},
+            {2, 2, 1, 1},
+            {2, 1, 2, 1},
+            {2, 1, 1, 1},
+            //
+            {2, 2, 1, 0}, // (2, 2, 0, 1)
+            {2, 1, 2, 0}, // (2, 0, 2, 1)
+            {2, 1, 1, 0}, // (2, 0, 1, 1)
+            {2, 1, 0, 1},
+            {2, 0, 1, 0},
+            {2, 1, 0, 0}, // (2, 0, 0, 1)
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }
 
-    std::vector<std::vector<Element>> expect = {
-        {0, 0, 0, 0},
-        {1, 1, 1, 1},
-        {2, 2, 2, 2},
-        //
-        {1, 1, 1, 0},
-        {1, 1, 0, 0},
-        {1, 0, 1, 0},
-        {1, 0, 0, 0},
-        //
-        {2, 2, 2, 0},
-        {2, 2, 0, 0},
-        {2, 0, 2, 0},
-        {2, 0, 0, 0},
-        //
-        {2, 2, 2, 1},
-        {2, 2, 1, 1},
-        {2, 1, 2, 1},
-        {2, 1, 1, 1},
-        //
-        {2, 2, 1, 0}, // (2, 2, 0, 1)
-        {2, 1, 2, 0}, // (2, 0, 2, 1)
-        {2, 1, 1, 0}, // (2, 0, 1, 1)
-        {2, 1, 0, 1},
-        {2, 0, 1, 0},
-        {2, 1, 0, 0}, // (2, 0, 0, 1)
-    };
-    std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_expect;
-    for (auto labeling: expect) {
-        uset_expect.insert(labeling);
-    }
-    std::unordered_set<std::vector<Element>, VectorHash<Element>> uset_actual;
-    for (auto itr = dd.begin(), end = dd.end(); itr != end; ++itr) {
-        auto labeling = convert_to_labeling(itr, num_sites, num_types);
-        uset_actual.insert(labeling);
+    // remove incomplete
+    {
+        tdzdd::DdStructure<2> dd;
+        bool remove_incomplete = true;
+        enumerate_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
+
+        std::string cardinality_expect = "6";
+        std::vector<std::vector<Element>> enumerated_expect = {
+            {2, 2, 1, 0}, // (2, 2, 0, 1)
+            {2, 1, 2, 0}, // (2, 0, 2, 1)
+            {2, 1, 1, 0}, // (2, 0, 1, 1)
+            {2, 1, 0, 1},
+            {2, 0, 1, 0},
+            {2, 1, 0, 0}, // (2, 0, 0, 1)
+        };
+        check(num_sites, num_types, dd, cardinality_expect, enumerated_expect);
     }
 
-    /*
-    for (auto labeling: uset_actual) {
-        for (auto c: labeling) {
-            std::cerr << " " << c;
-        }
-        std::cerr << std::endl;
-    }
-    */
-    assert(uset_actual == uset_expect);
+
 }
 
 int main() {
@@ -164,6 +194,5 @@ int main() {
     test_binary();
     test_multi0();
     test_multi1();
-
     return 0;
 }

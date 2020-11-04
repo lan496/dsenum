@@ -80,6 +80,65 @@ private:
     }
 };
 
+struct TakeBothState {
+    bool take_zero;
+    bool take_one;
+};
+
+/// @brief DD specification for combinations except all zeros and all ones.
+/// @note width of DD is at most 3
+class TakeBoth: public tdzdd::DdSpec<TakeBoth, TakeBothState, 2> {
+    /// number of variables
+    const int n_;
+public:
+    TakeBoth() = delete;
+    TakeBoth(const TakeBoth&) = default;
+
+    TakeBoth(const int n) : n_(n) {}
+
+    int getRoot(TakeBothState& state) const {
+        reset_state(state);
+        return n_;
+    }
+
+    int getChild(TakeBothState& state, Level level, int value) const {
+        if (satisfy(state)) {
+            if (level == 1) {
+                return Terminal::ACCEPT;
+            } else {
+                return level - 1;
+            }
+        }
+
+        if (!state.take_zero && (value == 0)) {
+            state.take_zero = true;
+        } else if (!state.take_one && (value == 1)) {
+            state.take_one = true;
+        }
+
+        if (level == 1) {
+            return satisfy(state) ? Terminal::ACCEPT : Terminal::REJECT;
+        } else {
+            return level - 1;
+        }
+    }
+
+    bool equalTo(const TakeBothState& lhs, const TakeBothState& rhs) const {
+        return ((lhs.take_zero == rhs.take_one) && (lhs.take_zero == rhs.take_one));
+    }
+
+private:
+    void reset_state(TakeBothState& state) const {
+        state.take_zero = false;
+        state.take_one = false;
+    }
+
+    bool satisfy(const TakeBothState& state) const {
+        return (state.take_zero && state.take_one);
+    }
+};
+
+
 std::vector<std::vector<Variable>> brute_force_choice(int n,
                                                       int k,
                                                       const std::vector<Variable>& group,

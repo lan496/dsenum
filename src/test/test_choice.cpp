@@ -119,8 +119,23 @@ void test_small(int n_max) {
     }
 }
 
+void test_takeboth() {
+    int n = 4;
+
+    choice::TakeBoth spec(n);
+    tdzdd::DdStructure<2> dd(n);
+    dd.zddSubset(spec);
+
+    std::string expect = std::to_string((1 << n) - 2);
+    std::string actual = dd.zddCardinality();
+    std::ofstream ofs("takeboth.dot");
+    dd.dumpDot(ofs);
+    assert(actual == expect);
+}
+
 int main() {
     tdzdd::MessageHandler::showMessages(true);
+    test_takeboth();
     test1();
     tdzdd::MessageHandler::showMessages(false);
     test_small(8);

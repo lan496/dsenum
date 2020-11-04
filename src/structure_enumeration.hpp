@@ -58,6 +58,7 @@ namespace derivative_structure {
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
+        bool remove_incomplete,
         tdzdd::DdStructure<2>& dd
     ) {
         int num_variables = num_sites;
@@ -80,8 +81,17 @@ namespace derivative_structure {
             aut_specs.emplace_back(spec);
         }
 
+        // spec for removing incompletes
+        choice::TakeBoth incomplete_spec(num_variables);
+
         // ==== construct DD ====
         dd = universe::Universe(num_variables);
+
+        if (remove_incomplete) {
+            dd.zddSubset(incomplete_spec);
+            dd.zddReduce();
+        }
+
         for (const auto& spec: aut_specs) {
             dd.zddSubset(spec);
             dd.zddReduce();
@@ -93,6 +103,7 @@ namespace derivative_structure {
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
+        bool remove_incomplete,
         tdzdd::DdStructure<2>& dd
     ) {
         // one-hot encoding for num_types >= 3
@@ -125,6 +136,22 @@ namespace derivative_structure {
             aut_specs.emplace_back(spec);
         }
 
+        // spec for removing incompletes
+        std::vector<choice::Choice> incomplete_specs;
+        incomplete_specs.reserve(num_types);
+        for (int specie = 0; specie < num_types; ++specie) {
+            // elements with the same specie
+            std::vector<int> group;
+            group.reserve(num_sites);
+            for (int site = 0; site < num_sites; ++site) {
+                group.emplace_back(converter.encode(site, specie));
+            }
+
+            // take elements in `group` at least 1
+            choice::Choice spec(num_variables, 1, group, true);
+            incomplete_specs.emplace_back(spec);
+        }
+
         // spec for one-of-k
         std::vector<choice::Choice> onehot_specs;
         onehot_specs.reserve(num_sites);
@@ -143,6 +170,14 @@ namespace derivative_structure {
             dd.zddSubset(spec);
             dd.zddReduce();
         }
+
+        if (remove_incomplete) {
+            for (const auto& spec: incomplete_specs) {
+                dd.zddSubset(spec);
+                dd.zddReduce();
+            }
+        }
+
         for (const auto& spec: aut_specs) {
             dd.zddSubset(spec);
             dd.zddReduce();
@@ -168,6 +203,7 @@ namespace derivative_structure {
         int num_sites,
         int num_types,
         const std::vector<permutation::Permutation>& automorphism,
+        bool remove_incomplete,
         tdzdd::DdStructure<2>& dd
     ) {
         // sanity check
@@ -181,9 +217,9 @@ namespace derivative_structure {
         }
 
         if (num_types == 2) {
-            enumerate_binary_derivative_structures(num_sites, num_types, automorphism, dd);
+            enumerate_binary_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
         } else {
-            enumerate_multi_derivative_structures(num_sites, num_types, automorphism, dd);
+            enumerate_multi_derivative_structures(num_sites, num_types, automorphism, remove_incomplete, dd);
         }
     }
 
@@ -193,7 +229,6 @@ namespace derivative_structure {
         const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
         const std::vector<std::vector<permutation::Element>>& site_constraints,
         bool remove_superperiodic,
-        bool remove_incomplete,
     ) {
         for (const auto& perm: translations) {
             if (perm.get_size() != num_sites) {
