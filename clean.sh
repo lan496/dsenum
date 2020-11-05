@@ -1,5 +1,7 @@
 #!/bin/sh -eu
-find -name "*.pyc" -delete
-find -name "*.pyo" -delete
-find -name "__pycache__" -delete
-rm -rf build dist
+BASEDIR=$(dirname "$0")
+
+find ${BASEDIR} -name "*.pyc" -delete
+find ${BASEDIR} -name "*.pyo" -delete
+find ${BASEDIR} -name "__pycache__" -delete
+rm -rf "${BASEDIR}/build" "${BASEDIR}/dist"
