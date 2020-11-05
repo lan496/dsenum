@@ -28,6 +28,7 @@ jobs:
         pip --version
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
+        pip install -e ./extern/pyzdd
         pip install -e .
   conda-install:
     runs-on: ubuntu-latest
@@ -54,6 +55,7 @@ jobs:
       run: |
         conda env create -f environment.yml -n test-env
         source activate test-env
+        pip install -e ./extern/pyzdd
         pip install -e .
   tests:
     needs: [pip-install]
@@ -72,6 +74,7 @@ jobs:
         pip --version
         pip install -r requirements.txt
         pip install -r requirements-dev.txt
+        pip install -e ./extern/pyzdd
         pip install -e .
     - name: Test with pytest
       run: |
