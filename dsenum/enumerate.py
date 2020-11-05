@@ -1,6 +1,7 @@
 from time import time
 from warnings import warn
 from typing import List, Union, Tuple, cast
+from abc import ABCMeta, abstractclassmethod
 
 from tqdm import tqdm
 from pymatgen.core import Structure
@@ -19,6 +20,9 @@ from dsenum.coloring import SiteColoringEnumerator
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.converter import convert_site_constraints
 from dsenum.derivative_structure import ColoringToStructure
+
+
+# class AbstractStructureEnumerator(metaclass=ABCMeta):
 
 
 class StructureEnumerator:
@@ -45,9 +49,9 @@ class StructureEnumerator:
         e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
     color_exchange: (Optional) bool
         identify color-exchanging
-    leave_superperiodic: (Optional) bool
-        do not discard superperiodic coloring
-    use_all_colors: (Optional) bool
+    remove_superperiodic: (Optional) bool
+        iff true, discard superperiodic coloring
+    remove_incomplete: (Optional) bool
     method: (Optional) str
         "direct" or "lexicographic", so far
     n_jobs: (Optional) int
@@ -63,8 +67,8 @@ class StructureEnumerator:
         composition_constraints=None,
         base_site_constraints=None,
         color_exchange=True,
-        leave_superperiodic=False,
-        use_all_colors=True,
+        remove_superperiodic=True,
+        remove_incomplete=True,
         method="direct",
         n_jobs=1,
     ):
@@ -74,8 +78,8 @@ class StructureEnumerator:
 
         # settings
         self.color_exchange = color_exchange
-        self.leave_superperiodic = leave_superperiodic
-        self.use_all_colors = use_all_colors
+        self.remove_superperiodic = remove_superperiodic
+        self.remove_incomplete = remove_incomplete
         self.method = method
         self.n_jobs = n_jobs
 
@@ -171,8 +175,8 @@ class StructureEnumerator:
             ds_permutation,
             self.cl_generator,
             self.color_exchange,
-            self.leave_superperiodic,
-            self.use_all_colors,
+            self.remove_superperiodic,
+            self.remove_incomplete,
             method=self.method,
             n_jobs=self.n_jobs,
         )

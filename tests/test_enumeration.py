@@ -80,7 +80,7 @@ def reproduce_results(max_index=None):
                     index,
                     num_type,
                     color_exchange=True,
-                    leave_superperiodic=False,
+                    remove_superperiodic=True,
                     method=method,
                 )
                 actual = se.generate()
@@ -122,8 +122,8 @@ def test_colorings_with_polya():
                     ds_permutation,
                     cl_generator,
                     color_exchange=False,
-                    leave_superperiodic=True,
-                    use_all_colors=False,
+                    remove_superperiodic=False,
+                    remove_incomplete=False,
                 )
                 colorings = sc_enum.unique_colorings()
                 cnt_polya = polya_counting(sc_enum.permutation_group, num_type)
@@ -160,8 +160,8 @@ def test_fixed_colorings_with_polya():
                     ds_permutaion,
                     cl_generator,
                     color_exchange=False,
-                    leave_superperiodic=True,
-                    use_all_colors=False,
+                    remove_superperiodic=False,
+                    remove_incomplete=False,
                 )
                 colorings = sc_enum.unique_colorings()
                 cnt_polya = polya_fixed_degrees_counting(
