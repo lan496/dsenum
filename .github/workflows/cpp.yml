@@ -9,15 +9,16 @@ on:
 
 jobs:
   test-tdzdd:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
       with:
-        submodules: recursive
+        submodules: true
     - name: Install dependancies
       run: |
+        sudo apt-key list
         sudo apt-get update
-        sudo apt-get install -y make gcc g++
+        sudo apt-get install -y make
     - name: make
       run: |
         cd src/test
