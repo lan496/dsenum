@@ -1,0 +1,3 @@
+[submodule "extern/pyzdd"]
+	path = extern/pyzdd
+	url = git@github.com:lan496/pyzdd.git
