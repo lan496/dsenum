@@ -41,7 +41,18 @@ PYBIND11_MODULE(_pyzdd, m) {
 
     // Permutation
     py::class_<pyzdd::permutation::Permutation> (m, "Permutation")
-        .def(py::init<std::vector<pyzdd::permutation::Element>>());
+        .def(py::init<std::vector<pyzdd::permutation::Element>>())
+        .def("__repr__", [](const pyzdd::permutation::Permutation &perm) {
+            std::string repr = "(";
+            for (pyzdd::permutation::Element i = 0, n = perm.get_size(); i < n; ++i) {
+                if (i != 0) {
+                    repr += " ";
+                }
+                repr += std::to_string(perm.permute(i));
+            }
+            repr += ")";
+            return repr;
+        });
     m.def(
         "generate_permutation_group",
         &pyzdd::permutation::generate_group,
