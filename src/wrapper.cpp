@@ -27,12 +27,8 @@ PYBIND11_MODULE(_pyzdd, m) {
     PyDdStructure2.def("zddReduce", &tdzdd::DdStructure<2>::zddReduce);
     PyDdStructure2.def("size", &tdzdd::DdStructure<2>::size,
                        "get the number of non-terminal nodes");
-    PyDdStructure2.def(
-        "cardinality",
-        &tdzdd::DdStructure<2>::zddCardinality,
-        "count the number of sets in the family represented by this ZDD.
-        Returned type is str because cardinality may be too enormous than int64."
-    );
+    PyDdStructure2.def("cardinality", &tdzdd::DdStructure<2>::zddCardinality,
+                       "count the number of sets in the family represented by this ZDD. Returned type is str because cardinality may be too enormous than int64.");
 
     // Set iterator
     using const_iterator = tdzdd::DdStructure<2>::const_iterator;
@@ -45,11 +41,7 @@ PYBIND11_MODULE(_pyzdd, m) {
 
     // Permutation
     py::class_<pyzdd::permutation::Permutation> (m, "Permutation")
-        .def(
-            py::init<std::vector<pyzdd::permutation::Element>>(),
-            "represents a permutation in "one-line" notation. That is, `sigma`
-            moves `i` to `sigma[i]`."
-        );
+        .def(py::init<std::vector<pyzdd::permutation::Element>>());
     m.def(
         "generate_permutation_group",
         &pyzdd::permutation::generate_group,
@@ -60,25 +52,6 @@ PYBIND11_MODULE(_pyzdd, m) {
     m.def(
         "construct_derivative_structures",
         &pyzdd::derivative_structure::construct_derivative_structures,
-        R"doc(
-            enumerate DD for nonequivalent derivative structures
-
-            Parameters
-            ----------
-            dd: DD for output
-            num_sites: the number of sites in supercell
-            num_types: the kinds of species
-            automorphism: symmetry group of supercell
-            translations: (Optional) permutation group derived from translations
-                of cell. Required if `remove_superperiodic` is true.
-            composition_constraints: (Optional) composition_constraints[k] is a
-                desired number of type-k.
-            site_constraints: (Optional) site_constraints[i] is a list of
-                species prohibited to locate at site-i.
-            remove_superperiodic: iff true, remove superperiodic structures
-            remove_incomplete: iff true, remove incomplete structures, whose
-                kinds of species is less than num_types.
-        )doc",
         py::arg("dd"),
         py::arg("num_sites"),
         py::arg("num_types"),
