@@ -3,7 +3,10 @@ import subprocess
 
 from ._version import get_versions  # type: ignore
 
-from dsenum.enumerate import StructureEnumerator
+from dsenum.enumerate import (
+    StructureEnumerator,
+    ZddStructureEnumerator,
+)
 
 
 __version__ = get_versions()["version"]
