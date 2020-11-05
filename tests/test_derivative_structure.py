@@ -43,7 +43,7 @@ def check(base_structure, num_type, indices, species, name):
             num_type,
             species,
             color_exchange=True,
-            leave_superperiodic=False,
+            remove_superperiodic=True,
         )
         list_ds = se.generate()
 
@@ -74,8 +74,8 @@ def test_coloring_with_fixed_species():
         num_types,
         mapping_color_species=mapping_color_species,
         color_exchange=False,
-        leave_superperiodic=False,
-        use_all_colors=False,
+        remove_superperiodic=True,
+        remove_incomplete=False,
     )
     list_dstructs = se.generate(
         additional_species=additional_species, additional_frac_coords=additional_frac_coords
@@ -98,8 +98,8 @@ def test_coloring_with_fixed_species():
         mapping_color_species=mapping_color_species2,
         base_site_constraints=base_site_constraints,
         color_exchange=False,
-        leave_superperiodic=False,
-        use_all_colors=False,
+        remove_superperiodic=True,
+        remove_incomplete=False,
     )
     list_dstructs2 = se2.generate()
 

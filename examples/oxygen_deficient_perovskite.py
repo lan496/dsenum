@@ -31,8 +31,8 @@ if __name__ == "__main__":
         num_types,
         mapping_color_species=mapping_color_species,
         color_exchange=False,
-        leave_superperiodic=False,
-        use_all_colors=False,
+        remove_superperiodic=True,
+        remove_incomplete=False,
     )
     list_dstructs = se.generate(
         additional_species=additional_species, additional_frac_coords=additional_frac_coords

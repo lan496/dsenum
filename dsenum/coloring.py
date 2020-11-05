@@ -153,7 +153,7 @@ class SiteColoringEnumerator(object):
     ds_permutation: DerivativeStructurePermutation object
     num_color: int
     color_exchange: bool
-    leave_superperiodic: bool
+    remove_superperiodic: bool
     method: "direct" or "lexicographic", so far
     n_jobs: int, use only when method is "lexicographic"
     """
@@ -164,8 +164,8 @@ class SiteColoringEnumerator(object):
         ds_permutation: DerivativeStructurePermutation,
         cl_generator: BaseColoringGenerator,
         color_exchange: bool = True,
-        leave_superperiodic: bool = False,
-        use_all_colors: bool = True,
+        remove_superperiodic: bool = True,
+        remove_incomplete: bool = True,
         method: str = "direct",
         n_jobs: int = 1,
     ):
@@ -173,8 +173,8 @@ class SiteColoringEnumerator(object):
         self.ds_permutation = ds_permutation
         self.cl_generator = cl_generator
         self.color_exchange = color_exchange
-        self.leave_superperiodic = leave_superperiodic
-        self.use_all_colors = use_all_colors
+        self.remove_superperiodic = remove_superperiodic
+        self.remove_incomplete = remove_incomplete
         self.method = method
         self.n_jobs = n_jobs
 
@@ -217,9 +217,9 @@ class SiteColoringEnumerator(object):
         colorings = []
 
         for cl in symmetry_uniqued_coloring:
-            if self.use_all_colors and (not self._has_all_colors(cl)):
+            if self.remove_incomplete and (not self._has_all_colors(cl)):
                 continue
-            if (not self.leave_superperiodic) and self._is_superperiodic(cl):
+            if self.remove_superperiodic and self._is_superperiodic(cl):
                 continue
             colorings.append(cl)
 

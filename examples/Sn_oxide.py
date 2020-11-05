@@ -62,8 +62,8 @@ if __name__ == "__main__":
             composition_constraints=composition_constraints,
             base_site_constraints=base_site_constraints,
             color_exchange=False,
-            leave_superperiodic=False,
-            use_all_colors=False,
+            remove_superperiodic=True,
+            remove_incomplete=False,
         )
         list_dstructs = se.generate()
 
