@@ -13,7 +13,7 @@ Derivative structure enumerator for multilattice
 
 ### pip
 ```
-git clone git@github.com:lan496/dsenum.git
+git clone --recursive git@github.com:lan496/dsenum.git
 cd dsenum
 pip install -r requirements.txt
 pip install -e ./extern/pyzdd
@@ -23,7 +23,7 @@ pre-commit install
 
 ### conda
 ```script
-git clone git@github.com:lan496/dsenum.git
+git clone --recursive git@github.com:lan496/dsenum.git
 cd dsenum
 conda env create -f environment.yml
 conda activate dsenum

@@ -6,13 +6,15 @@ on:
 
 jobs:
   pip-install:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        submodules: true
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Lint with flake8
@@ -31,9 +33,11 @@ jobs:
         pip install -e ./extern/pyzdd
         pip install -e .
   conda-install:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Set up conda
       uses: s-weigand/setup-conda@v1
       with:
@@ -59,13 +63,15 @@ jobs:
         pip install -e .
   tests:
     needs: [pip-install]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        submodules: true
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Install cedd
