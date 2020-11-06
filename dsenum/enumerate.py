@@ -61,6 +61,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
     site_constraints
     mapping_color_species
     """
+
     def __init__(
         self,
         base_structure: Structure,
@@ -137,9 +138,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
                 hnf, displacement_set, self.rotations, self.translations
             )
             # enumerate colorings
-            list_colorings_hnf = self._generate_coloring_with_hnf(
-                hnf, ds_permutation
-            )
+            list_colorings_hnf = self._generate_coloring_with_hnf(hnf, ds_permutation)
 
             # convert to Structure object
             cts = ColoringToStructure(
@@ -313,6 +312,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
     site_constraints
     mapping_color_species
     """
+
     def __init__(
         self,
         base_structure: Structure,
@@ -343,7 +343,9 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         dd = Universe()
 
         num_sites = ds_permutation.num_sites
-        automorphism = [Permutation(sigma) for sigma in ds_permutation.get_symmetry_operation_permutations()]
+        automorphism = [
+            Permutation(sigma) for sigma in ds_permutation.get_symmetry_operation_permutations()
+        ]
         translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
 
         # TODO
@@ -351,8 +353,8 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             raise NotImplementedError
         if self.site_constraints is not None:
             raise NotImplementedError
-        composition_constraints_dd = []
-        prohibited_site_constraints = []
+        composition_constraints_dd: List[int] = []
+        prohibited_site_constraints: List[List[int]] = []
 
         construct_derivative_structures(
             dd,
@@ -363,11 +365,70 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             composition_constraints=composition_constraints_dd,
             site_constraints=prohibited_site_constraints,
             remove_incomplete=self.remove_incomplete,
-            remove_superperiodic=self.remove_superperiodic
+            remove_superperiodic=self.remove_superperiodic,
         )
 
         colorings = list(enumerate_labelings(dd, num_sites, self.num_types))
         return colorings
+
+    def count(self) -> int:
+        """
+        Returns
+        -------
+        count: int
+        """
+        start = time()
+
+        displacement_set = self.base_structure.frac_coords
+        count = 0
+        for hnf in tqdm(self.list_reduced_HNF):
+            ds_permutation = DerivativeStructurePermutation(
+                hnf, displacement_set, self.rotations, self.translations
+            )
+            # enumerate colorings
+            count_hnf = self._count_with_hnf(hnf, ds_permutation)
+
+            count += count_hnf
+
+        end = time()
+        print("total: {} (Time: {:.4}sec)".format(count, end - start))
+
+        return count
+
+    def _count_with_hnf(
+        self,
+        hnf: np.ndarray,
+        ds_permutation: DerivativeStructurePermutation,
+    ) -> int:
+        dd = Universe()
+
+        num_sites = ds_permutation.num_sites
+        automorphism = [
+            Permutation(sigma) for sigma in ds_permutation.get_symmetry_operation_permutations()
+        ]
+        translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
+
+        # TODO
+        if self.composition_constraints is not None:
+            raise NotImplementedError
+        if self.site_constraints is not None:
+            raise NotImplementedError
+        composition_constraints_dd: List[int] = []
+        prohibited_site_constraints: List[List[int]] = []
+
+        construct_derivative_structures(
+            dd,
+            num_sites=num_sites,
+            num_types=self.num_types,
+            automorphism=automorphism,
+            translations=translations,
+            composition_constraints=composition_constraints_dd,
+            site_constraints=prohibited_site_constraints,
+            remove_incomplete=self.remove_incomplete,
+            remove_superperiodic=self.remove_superperiodic,
+        )
+
+        return int(dd.cardinality())
 
 
 def enumerate_derivative_structures(

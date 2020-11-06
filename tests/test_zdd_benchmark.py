@@ -44,6 +44,8 @@ def get_common_settings():
         "base_structure": get_fcc_structure(),
         "index": 16,
         "num_types": 2,
+        "remove_incomplete": True,
+        "remove_superperiodic": True,
     }
     return data
 
@@ -63,3 +65,11 @@ def test_zdd(benchmark):
     se = ZddStructureEnumerator(**setting)
 
     benchmark.pedantic(se.generate, iterations=1)
+
+
+@pytest.mark.benchmark(group="basic")
+def test_zdd_counting(benchmark):
+    setting = get_common_settings()
+    se = ZddStructureEnumerator(**setting)
+
+    benchmark.pedantic(se.count, iterations=1)
