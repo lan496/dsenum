@@ -112,8 +112,12 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         return self.num_sites_base * self.index
 
     def generate(
-        self, return_transformations=False, additional_species=None, additional_frac_coords=None
-    ) -> Union[List[Structure], Tuple[List[Structure], List[np.ndarray]]]:
+        self,
+        return_transformations=False,
+        additional_species=None,
+        additional_frac_coords=None,
+        output="pymatgen",
+    ) -> Union[List[Union[Structure, str]], Tuple[List[Union[Structure, str]], List[np.ndarray]]]:
         """
         Parameters
         ----------
@@ -129,6 +133,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         list_ds: list of derivative structure
         list_transformations: list of transformation matrices, optional
         """
+        assert (output == "pymatgen") or (output == "poscar")
         start = time()
 
         displacement_set = self.base_structure.frac_coords
@@ -148,7 +153,10 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
                 additional_species=additional_species,
                 additional_frac_coords=additional_frac_coords,
             )
-            list_ds_hnf = [cts.convert_to_structure(cl) for cl in list_colorings_hnf]
+            if output == "pymatgen":
+                list_ds_hnf = [cts.convert_to_structure(cl) for cl in list_colorings_hnf]
+            elif output == "poscar":
+                list_ds_hnf = [cts.convert_to_poscar_string(cl) for cl in list_colorings_hnf]
 
             list_ds.extend(list_ds_hnf)
 

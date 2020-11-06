@@ -56,20 +56,20 @@ def test_direct(benchmark):
     setting["method"] = "direct"
     se = StructureEnumerator(**setting)
 
-    benchmark.pedantic(se.generate, iterations=1)
+    benchmark.pedantic(se.generate, kwargs={"output": "poscar"}, iterations=1)
 
 
 @pytest.mark.benchmark(group="basic")
 def test_zdd(benchmark):
     setting = get_common_settings()
-    se = ZddStructureEnumerator(**setting)
+    zse = ZddStructureEnumerator(**setting)
 
-    benchmark.pedantic(se.generate, iterations=1)
+    benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
 
 
 @pytest.mark.benchmark(group="basic")
 def test_zdd_counting(benchmark):
     setting = get_common_settings()
-    se = ZddStructureEnumerator(**setting)
+    zse = ZddStructureEnumerator(**setting)
 
-    benchmark.pedantic(se.count, iterations=1)
+    benchmark.pedantic(zse.count, iterations=1)

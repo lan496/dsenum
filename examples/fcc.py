@@ -1,4 +1,5 @@
 import os
+import argparse
 
 import numpy as np
 from pymatgen.core import Lattice, Structure
@@ -20,10 +21,20 @@ def get_fcc_structure():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--nodump", action="store_true")
+    args = parser.parse_args()
+
+    # output format
+    if args.nodump:
+        output = "poscar"
+    else:
+        output = "pymatgen"
+
     # enumerate fcc derivative structures
     aristo = get_fcc_structure()
 
-    max_index = 4
+    max_index = 16
 
     mapping_color_species = [Specie("Cu"), Specie("Au")]
     num_types = len(mapping_color_species)
@@ -31,7 +42,8 @@ if __name__ == "__main__":
     base_site_constraints = None
 
     dirname = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fcc")
-    os.makedirs(dirname, exist_ok=True)
+    if not args.nodump:
+        os.makedirs(dirname, exist_ok=True)
 
     for index in range(2, max_index + 1):
         print(f"index={index}")
@@ -45,8 +57,9 @@ if __name__ == "__main__":
             remove_superperiodic=True,
             remove_incomplete=True,
         )
-        list_dstructs = zse.generate()
+        list_dstructs = zse.generate(output=output)
 
-        for i, dstruct in enumerate(tqdm(list_dstructs)):
-            filename = os.path.join(dirname, f"fcc_{index}_{i}.cif")
-            write_cif(filename, dstruct, refine_cell=True)
+        if not args.nodump:
+            for i, dstruct in enumerate(tqdm(list_dstructs)):
+                filename = os.path.join(dirname, f"fcc_{index}_{i}.cif")
+                write_cif(filename, dstruct, refine_cell=True)
