@@ -2,6 +2,7 @@ import numpy as np
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import Specie, DummySpecie, Element
+from pymatgen.io.vasp.inputs import Poscar
 import pytest
 
 from dsenum import StructureEnumerator
@@ -108,3 +109,26 @@ def test_coloring_with_fixed_species():
     grouped = stm.group_structures(list_dstructs + list_dstructs2)
     assert len(grouped) == len(list_dstructs)
     assert all([(len(matched) == 2) for matched in grouped])
+
+
+def test_poscar_string():
+    base_structure = get_lattice("sc")
+    num_type = 2
+    index = 4
+    species = [Element("Cu"), Element("Au")]
+
+    se = StructureEnumerator(
+        base_structure,
+        index,
+        num_type,
+        species,
+        color_exchange=True,
+        remove_superperiodic=True,
+    )
+    list_ds_mg = se.generate(output="pymatgen")
+    list_ds_pc = se.generate(output="poscar")
+
+    assert len(list_ds_mg) == len(list_ds_pc)
+    for expect, poscar_str in zip(list_ds_mg, list_ds_pc):
+        actual = Poscar.from_string(poscar_str).structure
+        assert expect == actual
