@@ -64,7 +64,7 @@ def test_zdd(benchmark):
     setting = get_common_settings()
     zse = ZddStructureEnumerator(**setting)
 
-    benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
+    benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1, rounds=3)
 
 
 @pytest.mark.benchmark(group="basic")
@@ -72,4 +72,4 @@ def test_zdd_counting(benchmark):
     setting = get_common_settings()
     zse = ZddStructureEnumerator(**setting)
 
-    benchmark.pedantic(zse.count, iterations=1)
+    benchmark.pedantic(zse.count, iterations=1, rounds=3)

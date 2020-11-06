@@ -116,9 +116,16 @@ class ColoringToStructure:
         lines.append("1.0")
 
         # lattice vectors
-        for i in range(3):
-            v = self.lattice_matrix
-            lines.append(f"{v[i][0]} {v[i][1]} {v[i][2]}")
+        lines.extend(
+            [
+                str(self.lattice_matrix[i, 0])
+                + " "
+                + str(self.lattice_matrix[i, 1])
+                + " "
+                + str(self.lattice_matrix[i, 2])
+                for i in range(3)
+            ]
+        )
 
         # species
         list_species = [
@@ -144,9 +151,16 @@ class ColoringToStructure:
 
         # fractional coords
         lines.append("Direct")
-        for psite in list_psites:
-            fc = psite.frac_coords
-            lines.append(f"{fc[0]} {fc[1]} {fc[2]}")
+        lines.extend(
+            [
+                str(psite.frac_coords[0])
+                + " "
+                + str(psite.frac_coords[1])
+                + " "
+                + str(psite.frac_coords[2])
+                for psite in list_psites
+            ]
+        )
 
         poscar_str = "\n".join(lines)
         return poscar_str
