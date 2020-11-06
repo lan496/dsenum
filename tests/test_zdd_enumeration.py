@@ -42,10 +42,13 @@ obj = {
         "num_types": 3,
         "composition_constraints": [1, 2, 1],
     },
-    "fcc_quaternary_fixed-composition": {
-        "structure": get_lattice("fcc"),
-        "num_types": 4,
-        "composition_constraints": [1, 1, 1, 1],
+    "hcp_site-constraint": {
+        "structure": get_lattice("hcp"),
+        "num_types": 2,
+        "site_constraints": [
+            [0],
+            [1],
+        ],
     },
 }
 
@@ -57,12 +60,14 @@ def test_with_naive_method():
         structure = dct["structure"]
         num_types = dct["num_types"]
         composition_constraints = dct.get("composition_constraints", None)
+        base_site_constraints = dct.get("site_constraints", None)
         for index in range(1, max_index + 1):
             se = StructureEnumerator(
                 structure,
                 index,
                 num_types,
                 composition_constraints=composition_constraints,
+                base_site_constraints=base_site_constraints,
                 color_exchange=False,
                 remove_incomplete=False,
                 remove_superperiodic=False,
@@ -72,6 +77,7 @@ def test_with_naive_method():
                 index,
                 num_types,
                 composition_constraints=composition_constraints,
+                base_site_constraints=base_site_constraints,
                 remove_superperiodic=False,
                 remove_incomplete=False,
             )
@@ -89,6 +95,7 @@ def test_enumerated_structures():
         structure = dct["structure"]
         num_types = dct["num_types"]
         composition_constraints = dct.get("composition_constraints", None)
+        base_site_constraints = dct.get("site_constraints", None)
         for index in range(1, max_index + 1):
             # TODO: when remove_superperiodic = remove_incomplete = False, this test is failed.
             zse = ZddStructureEnumerator(
@@ -96,6 +103,7 @@ def test_enumerated_structures():
                 index,
                 num_types,
                 composition_constraints=composition_constraints,
+                base_site_constraints=base_site_constraints,
                 remove_superperiodic=True,
                 remove_incomplete=True,
             )

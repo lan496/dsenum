@@ -1,6 +1,6 @@
 from time import time
 from warnings import warn
-from typing import List, Union, Tuple, cast
+from typing import List, Union, Tuple, cast, Set
 from abc import ABCMeta, abstractmethod
 
 from tqdm import tqdm
@@ -58,7 +58,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
     list_reduced_HNF
     rotations
     translations
-    site_constraints
+    site_constraints: site_constraints[i] is a list of allowed species at the i-th site in supercell
     mapping_color_species
     """
 
@@ -349,6 +349,15 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             remove_incomplete,
         )
 
+        self.prohibited_site_constraints = []
+        if self.site_constraints is not None:
+            all_species: Set[int] = set()
+            all_species.update(range(self.num_types))
+            for allowed_species in self.site_constraints:
+                prohibited = list(all_species.difference(set(allowed_species)))
+                self.prohibited_site_constraints.append(prohibited)
+            assert len(self.prohibited_site_constraints) == self.num_sites
+
     def _generate_coloring_with_hnf(
         self,
         hnf: np.ndarray,
@@ -373,11 +382,6 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
                     ratio * (num_sites // ratio_sum) for ratio in self.composition_constraints
                 ]
 
-        # TODO
-        if self.site_constraints is not None:
-            raise NotImplementedError
-        prohibited_site_constraints: List[List[int]] = []
-
         construct_derivative_structures(
             dd,
             num_sites=num_sites,
@@ -385,7 +389,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             automorphism=automorphism,
             translations=translations,
             composition_constraints=composition_constraints_dd,
-            site_constraints=prohibited_site_constraints,
+            site_constraints=self.prohibited_site_constraints,
             remove_incomplete=self.remove_incomplete,
             remove_superperiodic=self.remove_superperiodic,
         )
@@ -430,13 +434,16 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         ]
         translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
 
-        # TODO
-        if self.composition_constraints is not None:
-            raise NotImplementedError
-        if self.site_constraints is not None:
-            raise NotImplementedError
         composition_constraints_dd: List[int] = []
-        prohibited_site_constraints: List[List[int]] = []
+        if self.composition_constraints is not None:
+            ratio_sum = np.sum(self.composition_constraints)
+            if num_sites % ratio_sum != 0:
+                # impossible to satisfy composition constraints
+                return 0
+            else:
+                composition_constraints_dd = [
+                    ratio * (num_sites // ratio_sum) for ratio in self.composition_constraints
+                ]
 
         construct_derivative_structures(
             dd,
@@ -445,7 +452,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             automorphism=automorphism,
             translations=translations,
             composition_constraints=composition_constraints_dd,
-            site_constraints=prohibited_site_constraints,
+            site_constraints=self.prohibited_site_constraints,
             remove_incomplete=self.remove_incomplete,
             remove_superperiodic=self.remove_superperiodic,
         )
