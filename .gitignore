@@ -124,3 +124,7 @@ dmypy.json
 # documents
 docs/source/dsenum.rst
 docs/source/modules.rst
+
+*.txt
+*.pdf
+*.lprof
