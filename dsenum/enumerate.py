@@ -273,6 +273,12 @@ class StructureEnumerator(AbstractStructureEnumerator):
         hnf: np.ndarray,
         ds_permutation: DerivativeStructurePermutation,
     ) -> List[List[int]]:
+        if self.composition_constraints is not None:
+            ratio_sum = int(np.around(sum(self.composition_constraints)))
+            if self.num_sites % ratio_sum != 0:
+                # impossible to satisfy composition constraints
+                return []
+
         sc_enum = SiteColoringEnumerator(
             self.num_types,
             ds_permutation,
@@ -356,12 +362,20 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         ]
         translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
 
-        # TODO
+        composition_constraints_dd: List[int] = []
         if self.composition_constraints is not None:
-            raise NotImplementedError
+            ratio_sum = np.sum(self.composition_constraints)
+            if num_sites % ratio_sum != 0:
+                # impossible to satisfy composition constraints
+                return []
+            else:
+                composition_constraints_dd = [
+                    ratio * (num_sites // ratio_sum) for ratio in self.composition_constraints
+                ]
+
+        # TODO
         if self.site_constraints is not None:
             raise NotImplementedError
-        composition_constraints_dd: List[int] = []
         prohibited_site_constraints: List[List[int]] = []
 
         construct_derivative_structures(

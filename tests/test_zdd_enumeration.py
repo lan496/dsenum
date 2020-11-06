@@ -32,29 +32,48 @@ obj = {
         "structure": get_lattice("hcp"),
         "num_types": 2,
     },
+    "fcc_fixed-composition": {
+        "structure": get_lattice("fcc"),
+        "num_types": 2,
+        "composition_constraints": [2, 1],
+    },
+    "fcc_ternary_fixed-composition": {
+        "structure": get_lattice("fcc"),
+        "num_types": 3,
+        "composition_constraints": [1, 2, 1],
+    },
+    "fcc_quaternary_fixed-composition": {
+        "structure": get_lattice("fcc"),
+        "num_types": 4,
+        "composition_constraints": [1, 1, 1, 1],
+    },
 }
 
 
 def test_with_naive_method():
     max_index = 6
     for name, dct in obj.items():
+        print(name)
         structure = dct["structure"]
         num_types = dct["num_types"]
+        composition_constraints = dct.get("composition_constraints", None)
         for index in range(1, max_index + 1):
             se = StructureEnumerator(
                 structure,
                 index,
                 num_types,
+                composition_constraints=composition_constraints,
                 color_exchange=False,
-                remove_incomplete=True,
-                remove_superperiodic=True,
+                remove_incomplete=False,
+                remove_superperiodic=False,
             )
             zse = ZddStructureEnumerator(
                 structure,
                 index,
                 num_types,
-                remove_superperiodic=True,
-                remove_incomplete=True,
+                composition_constraints=composition_constraints,
+                remove_superperiodic=False,
+                remove_incomplete=False,
             )
 
             count_naive = len(se.generate())
@@ -66,13 +85,17 @@ def test_enumerated_structures():
     max_index = 4
 
     for name, dct in obj.items():
+        print("strcuture check", name)
         structure = dct["structure"]
         num_types = dct["num_types"]
+        composition_constraints = dct.get("composition_constraints", None)
         for index in range(1, max_index + 1):
+            # TODO: when remove_superperiodic = remove_incomplete = False, this test is failed.
             zse = ZddStructureEnumerator(
                 structure,
                 index,
                 num_types,
+                composition_constraints=composition_constraints,
                 remove_superperiodic=True,
                 remove_incomplete=True,
             )
@@ -81,79 +104,3 @@ def test_enumerated_structures():
             stm = StructureMatcher(ltol=1e-4, stol=1e-4)
             grouped = stm.group_structures(list_dstructs)
             assert len(grouped) == len(list_dstructs)
-
-
-@pytest.mark.skip
-def test_colorings_with_polya():
-    for name, dct in obj.items():
-        structure = dct["structure"]
-        displacement_set = structure.frac_coords
-        num_type = dct["num_type"]
-        num_sites_base = structure.num_sites
-
-        for index, expected in zip(dct["indices"], dct["num_expected"]):
-            if index >= 5:
-                continue
-
-            list_reduced_HNF, rotations, translations = generate_symmetry_distinct_superlattices(
-                index, structure, return_symops=True
-            )
-            num_sites = num_sites_base * index
-            cl_generator = ColoringGenerator(num_sites, num_type)
-
-            for hnf in tqdm(list_reduced_HNF):
-                ds_permutation = DerivativeStructurePermutation(
-                    hnf, displacement_set, rotations, translations
-                )
-                sc_enum = SiteColoringEnumerator(
-                    num_type,
-                    ds_permutation,
-                    cl_generator,
-                    color_exchange=False,
-                    remove_superperiodic=False,
-                    remove_incomplete=False,
-                )
-                colorings = sc_enum.unique_colorings()
-                cnt_polya = polya_counting(sc_enum.permutation_group, num_type)
-                assert len(colorings) == cnt_polya
-
-
-@pytest.mark.skip
-def test_fixed_colorings_with_polya():
-    for name, dct in obj.items():
-        structure = dct["structure"]
-        displacement_set = structure.frac_coords
-        num_type = dct["num_type"]
-        num_sites_base = structure.num_sites
-
-        for index, expected in zip(dct["indices"], dct["num_expected"]):
-            if index >= 5:
-                continue
-
-            list_reduced_HNF, rotations, translations = generate_symmetry_distinct_superlattices(
-                index, structure, return_symops=True
-            )
-            num_sites = num_sites_base * index
-            # TODO: test at more color_ratio cases
-            color_ratio = [1] * (num_type - 1) + [
-                num_sites - num_type + 1,
-            ]
-            cl_generator = FixedConcentrationColoringGenerator(num_sites, num_type, color_ratio)
-
-            for hnf in tqdm(list_reduced_HNF):
-                ds_permutaion = DerivativeStructurePermutation(
-                    hnf, displacement_set, rotations, translations
-                )
-                sc_enum = SiteColoringEnumerator(
-                    num_type,
-                    ds_permutaion,
-                    cl_generator,
-                    color_exchange=False,
-                    remove_superperiodic=False,
-                    remove_incomplete=False,
-                )
-                colorings = sc_enum.unique_colorings()
-                cnt_polya = polya_fixed_degrees_counting(
-                    sc_enum.permutation_group, num_type, color_ratio
-                )
-                assert len(colorings) == cnt_polya

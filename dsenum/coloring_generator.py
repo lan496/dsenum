@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from itertools import product
 from typing import List
+from warnings import warn
 
 import numpy as np
 from sympy.utilities.iterables import multiset_permutations
@@ -112,7 +113,7 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         self.color_ratio = color_ratio
         ratio_sum = int(np.around(sum(self.color_ratio)))
         if num_elements % ratio_sum != 0:
-            raise ValueError("incorrect composition ratio")
+            warn("incorrect composition ratio")
 
         factor = num_elements // ratio_sum
         self.num_elements_each_color = [int(np.around(factor * cr)) for cr in self.color_ratio]
