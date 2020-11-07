@@ -26,6 +26,9 @@ test:
 	./superperiodic.out
 	$(CXX) $(CXXFLAGS) -O3 test_structure_enumeration.cpp -o structure.out
 	./structure.out
+	$(CXX) $(CXXFLAGS) -O3 test_induced_graph.cpp -o inducedgraph.out
+	./inducedgraph
+
 	echo "[success]"
 
 clean:  ## clean
