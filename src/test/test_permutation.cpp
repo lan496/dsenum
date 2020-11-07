@@ -43,10 +43,10 @@ std::string check_enumerated(const Permutation& perm) {
     std::cerr << "# of solutions: " << actual << std::endl;
 #endif
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
     std::ofstream output("debug.dot");
     dd.dumpDot(output);
-    #endif
+#endif
 
     using Coloring = std::vector<isomorphism::BinaryColor>;
     size_t n = perm.get_size();

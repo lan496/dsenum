@@ -582,6 +582,18 @@ public:
         os << "max frontier size: " << get_max_frontier_size() << std::endl;
     }
 
+    /// @brief convert items from DD iterator into choices of vertices
+    std::vector<bool> retrieve_vertices(const std::set<Level>& items) const {
+        std::vector<bool> used(V_, false);
+
+        for (auto level: items) {
+            Vertex v = get_vertex(V_ - level);
+            used[v] = true;
+        }
+
+        return used;
+    }
+
 private:
     /// @brief determine variable order by BFS
     void order_vertices() {
