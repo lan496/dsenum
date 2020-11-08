@@ -13,47 +13,24 @@ using namespace pyzdd;
 using namespace pyzdd::graph;
 using namespace pyzdd::graph::induced_subgrah;
 
-void test1() {
-    /*
-          1   -1
-        o---o---o
-        v0  v2  v1
-    */
-    int V = 3;
-    Graph g(V);
-    add_undirected_edge(g, 0, 2, 1);
-    add_undirected_edge(g, 2, 1, -1);
-
+void check(const Graph& g, Weight target, std::string cardinality, const std::vector<std::vector<bool>>& enumerated_expect, bool debug) {
     VertexGraphFrontierManager vgfm(g);
-#ifdef _DEBUG
-    vgfm.dump(std::cerr);
-#endif
+    if (debug) {
+        vgfm.dump(std::cerr);
+    }
 
-    Weight target = 0;
     VertexInducedSubgraphSpec spec(vgfm, target);
 
     tdzdd::DdStructure<2> dd(spec);
 
-    auto expect = "6";
     auto actual = dd.zddCardinality();
-#ifdef _DEBUG
-    std::cerr << "# of solutions: " << actual << std::endl;
-#endif
-    assert(actual == expect);
+    if (debug) {
+        std::cerr << "# of solutions: " << actual << std::endl;
+        std::ofstream ofs("debug.dot");
+        dd.dumpDot(ofs);
+    }
+    assert(actual == cardinality);
 
-#ifdef _DEBUG
-    std::ofstream ofs("debug.dot");
-    dd.dumpDot(ofs);
-#endif
-
-    std::vector<std::vector<bool>> enumerated_expect = {
-        {0, 0, 0},
-        {0, 1, 0},
-        {0, 0, 1},
-        {1, 0, 0},
-        {1, 1, 0},
-        {1, 1, 1}
-    };
     std::unordered_set<std::vector<bool>> uset_expect;
     for (auto choice: enumerated_expect) {
         uset_expect.insert(choice);
@@ -65,6 +42,31 @@ void test1() {
     }
 
     assert(uset_actual == uset_expect);
+}
+
+void test1() {
+    /*
+          1   -1
+        o---o---o
+        v0  v2  v1
+    */
+    int V = 3;
+    Graph g(V);
+    add_undirected_edge(g, 0, 2, 1);
+    add_undirected_edge(g, 2, 1, -1);
+    Weight target = 0;
+
+
+    auto cardinality = "6";
+    std::vector<std::vector<bool>> enumerated_expect = {
+        {0, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1},
+        {1, 0, 0},
+        {1, 1, 0},
+        {1, 1, 1}
+    };
+    check(g, target, cardinality, enumerated_expect, false);
 }
 
 void test2() {
@@ -81,9 +83,16 @@ void test2() {
     add_undirected_edge(g, 0, 3, 1);
     add_undirected_edge(g, 2, 1, 1);
     add_undirected_edge(g, 3, 1, 1);
+    Weight target = 2;
 
-    VertexGraphFrontierManager vgfm(g);
-    // vgfm.dump(std::cerr);
+    auto cardinality = "4";
+    std::vector<std::vector<bool>> enumerated_expect = {
+        {0, 1, 1, 1},
+        {1, 0, 1, 1},
+        {1, 1, 0, 1},
+        {1, 1, 1, 0}
+    };
+    check(g, target, cardinality, enumerated_expect, true);
 }
 
 void test3() {
@@ -105,7 +114,7 @@ void test3() {
 
 int main() {
     test1();
-    // test2();
+    test2();
     // test3();
     return 0;
 }

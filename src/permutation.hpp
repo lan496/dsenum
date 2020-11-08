@@ -63,6 +63,10 @@ public:
         return n_;
     }
 
+    const std::vector<Element>& get_sigma() const {
+        return sigma_;
+    }
+
     /// @brief permute i to sigma[i]
     Element permute(const Element i) const {
         return sigma_[i];
