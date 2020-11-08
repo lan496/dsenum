@@ -33,6 +33,7 @@ class ColoringToStructure:
         self.base_structure = base_structure
         self.dshash = dshash
         self.mapping_color_to_species = mapping_color_to_species
+        self.num_sites = self.dshash.num_sites
 
         self.lattice_matrix = np.dot(self.base_matrix.T, self.dshash.hnf).T
         # lattice of derivative structure
@@ -58,10 +59,6 @@ class ColoringToStructure:
         # additional fixed sites
         self.additional_species = additional_species
         self.additional_frac_coords = additional_frac_coords
-        self.additional_species_str = None
-        if self.additional_species is not None:
-            assert len(self.additional_species) == len(self.additional_frac_coords)
-            self.additional_species_str = [str(specie) for specie in self.additional_species]
 
         self.additional_psites = []
         if self.additional_species is not None:
@@ -83,6 +80,9 @@ class ColoringToStructure:
             str(specie) for specie in self.mapping_color_to_species
         ]
 
+        self._precompute_for_poscar_string()
+
+    def _precompute_for_poscar_string(self):
         # precompute comment and lattice vectors for POSCAR output
         self.head_lines = []
         version = dsenum.__version__
@@ -104,13 +104,32 @@ class ColoringToStructure:
             ]
         )
 
+        self.precompute_coords_str = [
+            [
+                str(psite.frac_coords[0]) + " " + str(psite.frac_coords[1]) + " " + str(psite.frac_coords[2])
+                for psite in list_psites
+            ]
+            for list_psites in self.precomputed_psites
+        ]
+
+        if self.additional_species is not None:
+            assert len(self.additional_species) == len(self.additional_frac_coords)
+            self.additional_species_str = [str(specie) for specie in self.additional_species]
+        else:
+            self.additional_species_str = None
+
+        if self.additional_psites is not None:
+            self.additional_coords_str = [str(psite.frac_coords[0]) + " " + str(psite.frac_coords[1]) + " " + str(psite.frac_coords[2]) for psite in self.additional_psites]
+        else:
+            self.additional_coords_str = None
+
     @property
     def base_matrix(self):
         return self.base_structure.lattice.matrix
 
     def convert_to_structure(self, coloring) -> Structure:
         list_psites = [
-            self.precomputed_psites[i][coloring[i]] for i in range(self.dshash.num_sites)
+            self.precomputed_psites[i][coloring[i]] for i in range(self.num_sites)
         ]
         if self.additional_psites is not None:
             list_psites.extend(self.additional_psites)
@@ -120,49 +139,50 @@ class ColoringToStructure:
         return dstruct
 
     def convert_to_poscar_string(self, coloring) -> str:
-        num_sites = self.dshash.num_sites
-        list_frac_coords = [
-            self.precomputed_psites[i][coloring[i]].frac_coords for i in range(num_sites)
+        list_coords_str = [
+            self.precompute_coords_str[i][coloring[i]] for i in range(self.num_sites)
         ]
         if self.additional_psites is not None:
-            list_frac_coords.extend([site.frac_coords for site in self.additional_psites])
+            list_coords_str.extend([s for s in self.additional_coords_str])
 
-        list_species: List[str] = [
-            self.mapping_color_to_species_str[coloring[i]] for i in range(self.dshash.num_sites)
+        list_species = [
+            self.mapping_color_to_species_str[coloring[i]] for i in range(self.num_sites)
         ]
 
         head_lines = self.head_lines[::]
-        poscar_str = self._prepare_poscar_string(head_lines, list_species, list_frac_coords)
+        poscar_str = prepare_poscar_string(head_lines, list_species, list_coords_str)
         return poscar_str
 
-    def _prepare_poscar_string(
-        self, head_lines: List[str], list_species: List[str], list_frac_coords
-    ) -> str:
-        # ref: https://www.vasp.at/wiki/index.php/POSCAR
-        lines = head_lines
 
-        # species
-        counter = []
-        element = ""
-        count = 0
-        for species_str in list_species:
-            if element == "":
-                element = species_str
-                count += 1
-            elif species_str == element:
-                count += 1
-            else:
-                counter.append((element, count))
-                element = species_str
-                count = 1
-        if element != "":
+def prepare_poscar_string(
+    head_lines: List[str], list_species: List[str], list_coords_str: List[str]
+) -> str:
+    # ref: https://www.vasp.at/wiki/index.php/POSCAR
+    lines = head_lines
+
+    # species
+    # TODO: this part is dominant in runtime
+    counter = []
+    element = ""
+    count = 0
+    for species_str in list_species:
+        if element == "":
+            element = species_str
+            count += 1
+        elif species_str == element:
+            count += 1
+        else:
             counter.append((element, count))
-        lines.append(" ".join([e for e, _ in counter]))
-        lines.append(" ".join([str(c) for _, c in counter]))
+            element = species_str
+            count = 1
+    if element != "":
+        counter.append((element, count))
+    lines.append(" ".join([e for e, _ in counter]))
+    lines.append(" ".join([str(c) for _, c in counter]))
 
-        # fractional coords
-        lines.append("Direct")
-        lines.extend([str(fc[0]) + " " + str(fc[1]) + " " + str(fc[2]) for fc in list_frac_coords])
+    # fractional coords
+    lines.append("Direct")
+    lines.extend(list_coords_str)
 
-        poscar_str = "\n".join(lines)
-        return poscar_str
+    poscar_str = "\n".join(lines)
+    return poscar_str
