@@ -107,7 +107,11 @@ def plotter(fig, ax, df, list_num_types):
     ax[0].set_ylabel("Run time (sec)")
     ax[0].set_yscale("log")
     ax[0].legend()
-    ax[0].set_yticks([10 ** i for i in range(-2, 2 + 1)])
+
+    yticks = [10 ** i for i in range(-3, 2 + 1)]
+    ax[0].set_yticks(yticks)
+    ax[0].set_ylim(min(yticks), max(yticks))
+
     xticks = [10 ** i for i in range(0, 6 + 1)]
     ax[0].set_xticks(xticks)
     ax[0].set_xlim(min(xticks), max(xticks))
