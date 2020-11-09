@@ -30,20 +30,59 @@ def get_lattice(kind):
     return struct
 
 
-def get_symmetry_operations(structure):
+def square2d_lattice_symmetry():
+    """
+    symmetry operations of 2D square lattice (p4mm)
+    """
+    # p4mm
+    # fmt: off
+    rotations = np.array([
+        [[1, 0],
+         [0, 1]],   # x, y
+        [[-1, 0],
+         [0, -1]],  # -x, -y
+        [[0, -1],
+         [1, 0]],   # -y, x
+        [[0, 1],
+         [-1, 0]],  # y, -x
+        [[-1, 0],
+         [0, 1]],  # -x, y
+        [[1, 0],
+         [0, -1]],  # x, -y
+        [[0, 1],
+         [1, 0]],  # y, x
+        [[0, -1],
+         [-1, 0]],  # -y, -x
+    ])
+    translations = np.array([
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0],
+    ])
+    # fmt: on
+    return rotations, translations
+
+
+def get_symmetry_operations(structure, symprec: float = 1e-2):
     """
     find symmetry operations for a given structure
 
     Parameters
     ----------
     structure: pymatgen.core.Structure
+    symprec: precision parameter in spglib
 
     Returns
     -------
     rotations: array, (# of symmetry operations, 3, 3)
     translations: array, (# of symmetry operations, 3)
     """
-    sym_dataset = SpacegroupAnalyzer(structure).get_symmetry_dataset()
+    sym_dataset = SpacegroupAnalyzer(structure, symprec=symprec).get_symmetry_dataset()
     rotations = sym_dataset["rotations"]
     translations = sym_dataset["translations"]
     return rotations, translations
