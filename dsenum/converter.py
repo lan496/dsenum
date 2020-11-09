@@ -66,6 +66,10 @@ class DerivativeMultiLatticeHash:
     def num_sites(self) -> int:
         return self.num_site_base * self.index
 
+    @property
+    def num_base_sites(self) -> int:
+        return self.num_site_base
+
     def hash_derivative_site(
         self, dsite: DerivativeSite, return_image: bool = False
     ) -> Union[CanonicalSite, Tuple[CanonicalSite, np.ndarray]]:
@@ -158,6 +162,11 @@ class DerivativeMultiLatticeHash:
         # hash canonical site s.t. self.get_canonical_sites_list <=> identity
         multi_index = (csite.site_index,) + tuple(csite.factor)
         raveled = np.ravel_multi_index(multi_index, self.shape)
+        return raveled
+
+    def ravel_derivative_site(self, dsite: DerivativeSite) -> int:
+        csite = self.hash_derivative_site(dsite)
+        raveled = self.ravel_canonical_site(csite)
         return raveled
 
     def unravel_to_canonical_site(self, indices: int) -> CanonicalSite:
