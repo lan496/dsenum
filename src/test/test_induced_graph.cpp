@@ -11,7 +11,7 @@
 
 using namespace pyzdd;
 using namespace pyzdd::graph;
-using namespace pyzdd::graph::induced_subgrah;
+using namespace pyzdd::graph::induced_subgraph;
 
 void check(const Graph& g, Weight target, std::string cardinality, const std::vector<std::vector<bool>>& enumerated_expect, bool debug) {
     VertexGraphFrontierManager vgfm(g);

@@ -13,6 +13,7 @@
 #include "spec/combination.hpp"
 #include "spec/isomorphism.hpp"
 #include "spec/superperiodic.hpp"
+#include "spec/induced_subgraph.hpp"
 
 namespace pyzdd {
 
@@ -434,6 +435,57 @@ namespace derivative_structure {
         }
     }
 
+    /// @brief enumerate DD for derivative structures with fixed Warren-Cowley SRO
+    /// @param[out] dd DD for output
+    /// @param[in] num_sites the number of sites in supercell
+    /// @param[in] num_types the kinds of species
+    /// @param[in] composition_constraints composition_constraints[i]
+    ///            is a pair of sites and a desired number of label=1
+    /// @param[in] vgfm frontier manager of cluster graph
+    /// @param[in] target target weight without loop offset of vertex-induced subgraph
+    void construct_binary_derivative_structures_with_sro(
+        tdzdd::DdStructure<2>& dd,
+        int num_sites,
+        int num_types,
+        const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
+        const graph::VertexGraphFrontierManager& vgfm,
+        graph::Weight target
+    ) {
+        assert(num_types == 2);
+        size_t num_variables = num_sites;
+
+        // ==== prepare specs ====
+        // spec for composition constraints
+        assert(!composition_constraints.empty());
+        std::vector<choice::Choice> composition_specs;
+        composition_specs.reserve(composition_constraints.size());
+        for (const auto& variables_count: composition_constraints) {
+            std::vector<int> group;
+            group.reserve(variables_count.first.size());
+            for (graph::Vertex v: variables_count.first) {
+                group.emplace_back(vgfm.map_to_internal_vertex_id(v));
+            }
+
+            int k = variables_count.second; // take k elements of 1-branchs
+            choice::Choice spec(num_variables, k, group, false);
+            composition_specs.emplace_back(spec);
+        }
+
+        // spec for SRO
+        graph::induced_subgraph::VertexInducedSubgraphSpec subgraph_spec(vgfm, target);
+
+        // ==== construct DD ====
+        dd = universe::Universe(num_variables);
+
+        for (const auto& spec: composition_specs) {
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+
+        dd.zddSubset(subgraph_spec);
+        dd.zddReduce();
+    }
+
     std::vector<permutation::Element> convert_to_labeling(
         tdzdd::DdStructure<2>::const_iterator const &itr,
         int num_sites,
@@ -456,6 +508,20 @@ namespace derivative_structure {
 
         return labeling;
     }
+
+    std::vector<int> convert_to_labeling_with_graph(
+        const tdzdd::DdStructure<2>::const_iterator& itr,
+        const graph::VertexGraphFrontierManager& vgfm,
+        int num_types
+    )
+    {
+        assert(num_types == 2);
+        int num_variables = vgfm.number_of_vertices();
+        // vertex order in DD is diffenrent from the original variable order in the graph
+        std::vector<int> labeling = vgfm.retrieve_vertices(*itr);
+        return labeling;
+    }
+
 
 } // namespace derivative_structure
 } // namespace pyzdd

@@ -9,7 +9,7 @@
 
 namespace pyzdd {
 namespace graph {
-namespace induced_subgrah {
+namespace induced_subgraph {
 
 /// @brief ZDD to represent vertex-induced subgraphs with the fixed weight.
 ///        here a weight of a subgraph is defined as the sum of weight of

@@ -583,12 +583,12 @@ public:
     }
 
     /// @brief convert items from DD iterator into choices of vertices
-    std::vector<bool> retrieve_vertices(const std::set<Level>& items) const {
-        std::vector<bool> used(V_, false);
+    std::vector<int> retrieve_vertices(const std::set<Level>& items) const {
+        std::vector<int> used(V_, 0);
 
         for (auto level: items) {
             Vertex v = get_vertex(V_ - level);
-            used[v] = true;
+            used[v] = 1;
         }
 
         return used;

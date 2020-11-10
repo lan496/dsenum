@@ -28,6 +28,8 @@ test:
 	./structure.out
 	$(CXX) $(CXXFLAGS) -O3 test_induced_graph.cpp -o inducedgraph.out
 	./inducedgraph.out
+	$(CXX) $(CXXFLAGS) -O3 test_sro.cpp -o sro.out
+	./sro.out
 
 	echo "[success]"
 

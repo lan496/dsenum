@@ -85,7 +85,17 @@ PYBIND11_MODULE(_pyzdd, m) {
         .def("__repr__", [](const pyzdd::graph::Edge &e) {
             return "<Edge(src=" + std::to_string(e.src) + ", dst=" + std::to_string(e.dst) + ", weight=" + std::to_string(e.weight) + ")>";
         });
-    py::class_<pyzdd::graph::Graph> (m, "Graph");
+    py::class_<pyzdd::graph::Graph> (m, "Graph")
+        .def(py::init<int>());
+    m.def(
+        "add_undirected_edge",
+        &pyzdd::graph::add_undirected_edge,
+        py::arg("graph"),
+        py::arg("u"),
+        py::arg("v"),
+        py::arg("weight")
+    );
+
     py::class_<pyzdd::graph::GraphAuxiliary> (m, "GraphAuxiliary")
         .def(py::init<const pyzdd::graph::Graph&>())
         .def_property_readonly("max_frontier_size", &pyzdd::graph::GraphAuxiliary::get_max_frontier_size)
@@ -94,6 +104,25 @@ PYBIND11_MODULE(_pyzdd, m) {
         .def("introduced", &pyzdd::graph::GraphAuxiliary::get_introduced)
         .def("forgotten", &pyzdd::graph::GraphAuxiliary::get_forgotten)
         .def("map_vertex_to_position", &pyzdd::graph::GraphAuxiliary::map_vertex_to_position);
+    py::class_<pyzdd::graph::VertexGraphFrontierManager> (m, "VertexGraphFrontierManager")
+        .def(py::init<const pyzdd::graph::Graph&>())
+        .def("get_max_frontier_size", &pyzdd::graph::VertexGraphFrontierManager::get_max_frontier_size);
+
+    // SRO enumeration
+    m.def(
+        "construct_binary_derivative_structures_with_sro",
+        &pyzdd::derivative_structure::construct_binary_derivative_structures_with_sro,
+        py::arg("dd"),
+        py::arg("num_sites"),
+        py::arg("num_types"),
+        py::arg("composition_constraints"),
+        py::arg("vgfm"),
+        py::arg("target")
+    );
+    m.def(
+        "convert_to_labeling_with_graph",
+        &pyzdd::derivative_structure::convert_to_labeling_with_graph
+    );
 
     // Specifications
     // Combination spec
