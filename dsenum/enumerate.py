@@ -8,9 +8,8 @@ from pymatgen.core import Structure
 from pymatgen.core.periodic_table import DummySpecie, Specie, Element
 import numpy as np
 
-from pyzdd import (
-    Universe,
-    Permutation,
+from pyzdd import Universe, Permutation
+from pyzdd.structure import (
     construct_derivative_structures,
     enumerate_labelings,
 )

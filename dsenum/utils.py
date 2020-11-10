@@ -1,3 +1,7 @@
+from functools import reduce
+from math import gcd
+from typing import List
+
 import numpy as np
 from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
 from pymatgen.core import Lattice, Structure
@@ -139,3 +143,9 @@ def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
 def cast_integer_matrix(arr: np.ndarray) -> np.ndarray:
     arr_int = np.around(arr).astype(np.int)
     return arr_int
+
+
+def gcd_list(lst: List[int]) -> int:
+    if not lst:
+        raise ValueError("Required more than or equal to one elements")
+    return reduce(gcd, lst)

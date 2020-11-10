@@ -102,6 +102,11 @@ class BinaryPairClusterGraph:
     def graph(self) -> nx.Graph:
         return self._graph
 
+    def get_sqs_target_value(self) -> float:
+        site_index = self.point_clusters[0].points[0].site_index
+        c0 = self.composition_ratio[site_index][1] / self.ratio_sum[site_index]
+        return self._weight_sum * c0 - self.loop_offset
+
     def calc_correlation(self, labeling: List[int]) -> float:
         """
         pair correlation between label=1 and label=1.
@@ -120,11 +125,13 @@ class BinaryPairClusterGraph:
         """
         Warren-Cowley short-range order between label=1 and label=0
         """
+        site_index0 = self.point_clusters[0].points[0].site_index
+        site_index1 = self.point_clusters[0].points[1].site_index
         c0 = (
-            self.composition_ratio[self.point_clusters[0].points[0].site_index][1] / self.ratio_sum
+            self.composition_ratio[site_index0][1] / self.ratio_sum[site_index0]
         )
         c1 = (
-            self.composition_ratio[self.point_clusters[0].points[1].site_index][1] / self.ratio_sum
+            self.composition_ratio[site_index1][1] / self.ratio_sum[site_index1]
         )
         sro = 1.0 - (c0 - self.calc_correlation(labeling)) / (c0 * (1.0 - c1))
         return sro
