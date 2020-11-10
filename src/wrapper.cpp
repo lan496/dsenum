@@ -87,15 +87,6 @@ PYBIND11_MODULE(_pyzdd, m) {
         });
     py::class_<pyzdd::graph::Graph> (m, "Graph")
         .def(py::init<int>());
-    m.def(
-        "add_undirected_edge",
-        &pyzdd::graph::add_undirected_edge,
-        py::arg("graph"),
-        py::arg("u"),
-        py::arg("v"),
-        py::arg("weight")
-    );
-
     py::class_<pyzdd::graph::GraphAuxiliary> (m, "GraphAuxiliary")
         .def(py::init<const pyzdd::graph::Graph&>())
         .def_property_readonly("max_frontier_size", &pyzdd::graph::GraphAuxiliary::get_max_frontier_size)

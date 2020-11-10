@@ -1,11 +1,16 @@
-from pyzdd import (
-    Universe,
+import networkx as nx
+
+from pyzdd import Universe
+from pyzdd.graph import (
     Graph,
-    add_undirected_edge,
     VertexGraphFrontierManager,
+    convert_to_raw_graph
+)
+from pyzdd.structure import (
     construct_binary_derivative_structures_with_sro,
     enumerate_labelings_with_graph,
 )
+
 
 def test_sro():
     num_sites = 4
@@ -15,19 +20,24 @@ def test_sro():
     composition_constraints = [
         ([0, 1, 2, 3], 2),
     ]
-    cluster_graph = Graph(num_sites)
-    add_undirected_edge(cluster_graph, 0, 1, 2)
-    add_undirected_edge(cluster_graph, 1, 2, 2)
-    add_undirected_edge(cluster_graph, 2, 3, 2)
-    add_undirected_edge(cluster_graph, 3, 0, 2)
-    vgfm = VertexGraphFrontierManager(cluster_graph)
+
+    cluster_graph = nx.Graph()
+    cluster_graph.add_nodes_from([0, 1, 2, 3])
+    cluster_graph.add_weighted_edges_from([
+        (0, 1, 2),
+        (1, 2, 2),
+        (2, 3, 2),
+        (3, 0, 2),
+    ])
+    raw_graph, _ = convert_to_raw_graph(cluster_graph)
+    vgfm = VertexGraphFrontierManager(raw_graph)
     target = 2
 
     construct_binary_derivative_structures_with_sro(dd, num_sites, num_types, composition_constraints, vgfm, target)
     assert dd.cardinality() == "4"
 
     actual = set()
-    for labeling in enumerate_labelings_with_graph(dd, num_types, cluster_graph):
+    for labeling in enumerate_labelings_with_graph(dd, num_types, raw_graph):
         actual.add(tuple(labeling))
 
     list_expect = [

@@ -2,7 +2,12 @@ from typing import List, Dict, Union, Any
 
 import networkx as nx
 
-from _pyzdd import Edge, Graph, GraphAuxiliary
+from _pyzdd import (
+    Edge,
+    Graph,
+    GraphAuxiliary,
+    VertexGraphFrontierManager,
+)
 
 
 def convert_to_raw_graph(graph: nx.Graph) -> Union[List[List[Edge]], Dict[Any, int]]:

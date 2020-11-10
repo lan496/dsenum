@@ -2,9 +2,9 @@ from pyzdd import (
     Universe,
     Permutation,
     generate_permutation_group,
-    construct_derivative_structures,
-    enumerate_labelings,
 )
+from pyzdd.structure import construct_derivative_structures, enumerate_labelings
+
 
 def test_structure_enumeration():
     num_sites = 4
