@@ -516,7 +516,6 @@ namespace derivative_structure {
     )
     {
         assert(num_types == 2);
-        int num_variables = vgfm.number_of_vertices();
         // vertex order in DD is diffenrent from the original variable order in the graph
         std::vector<int> labeling = vgfm.retrieve_vertices(*itr);
         return labeling;
