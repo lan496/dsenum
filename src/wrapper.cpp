@@ -97,6 +97,8 @@ PYBIND11_MODULE(_pyzdd, m) {
         .def("map_vertex_to_position", &pyzdd::graph::GraphAuxiliary::map_vertex_to_position);
     py::class_<pyzdd::graph::VertexGraphFrontierManager> (m, "VertexGraphFrontierManager")
         .def(py::init<const pyzdd::graph::Graph&>())
+        .def(py::init<const pyzdd::graph::Graph&, const std::vector<pyzdd::graph::Vertex>&>())
+        .def("get_vertex_order", &pyzdd::graph::VertexGraphFrontierManager::get_vertex_order)
         .def("get_max_frontier_size", &pyzdd::graph::VertexGraphFrontierManager::get_max_frontier_size);
 
     // SRO enumeration

@@ -488,7 +488,12 @@ public:
             exit(1);
         }
 
+        // mapping_vertex_
         assert(vertex_order_.size() == V_);
+        mapping_vertex_.resize(V_);
+        for (InternalVertexId vid = 0; vid < V_; ++vid) {
+            mapping_vertex_[vertex_order_[vid]] = vid;
+        }
 
         // construct frontiers, introduced, forgotten, max_frontier_size
         construct_frontiers();
