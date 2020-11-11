@@ -27,10 +27,4 @@ if __name__ == "__main__":
     index = 32
 
     sse = SROStructureEnumerator(aristo, index, num_types, composition_ratios, cluster)
-    labelings_with_transformations = sse.generate()
-    for transformation, labelings in labelings_with_transformations:
-        if labelings:
-            print(transformation)
-            for labeling in labelings:
-                print("    ", labeling)
-            print()
+    labelings_with_transformations = sse.count()

@@ -152,6 +152,10 @@ def test_loop_offset():
 
 def test_fcc_cluster_graph():
     aristo = get_lattice("fcc")
+    composition_ratio = [
+        [1, 1],
+    ]
+
     # L1_0 structure
     transformation = np.array(
         [
@@ -160,10 +164,6 @@ def test_fcc_cluster_graph():
             [0, 0, 1],
         ]
     )
-    composition_ratio = [
-        [1, 1],
-    ]
-
     epcg = EquivalentPointClusterGenerator.from_structure(aristo, transformation)
     converter = epcg.get_converter()
     cluster = PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 1))])
@@ -173,3 +173,23 @@ def test_fcc_cluster_graph():
     assert np.isclose(bpcg.loop_offset, 2.0)
     assert np.isclose(bpcg.get_sqs_target_value(), 1.0)
     assert np.isclose(bpcg.calc_correlation(L1_0), 2.0 / 12)
+    assert np.isclose(bpcg.calc_short_range_order(L1_0), -1.0 / 3.0)
+
+    # L1_1 structure
+    transformation = np.array(
+        [
+            [1, 0, 0],
+            [0, 1, 0],
+            [1, 1, 2],
+        ]
+    )
+    epcg = EquivalentPointClusterGenerator.from_structure(aristo, transformation)
+    converter = epcg.get_converter()
+    cluster = PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 1))])
+    grouped_clusters = epcg.find_equivalent_point_clusters(cluster)
+    bpcg = BinaryPairClusterGraph(converter, grouped_clusters, composition_ratio)
+    L1_1 = [0, 1]  # AuCu structure
+    assert np.isclose(bpcg.loop_offset, 3.0)
+    assert np.isclose(bpcg.get_sqs_target_value(), 0.0)
+    assert np.isclose(bpcg.calc_correlation(L1_1), 3.0 / 12)
+    assert np.isclose(bpcg.calc_short_range_order(L1_1), 0.0)
