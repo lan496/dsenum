@@ -73,8 +73,10 @@ void test_binary() {
         add_undirected_edge(cluster_graph, 1, 2, 2);
         add_undirected_edge(cluster_graph, 2, 3, 2);
         add_undirected_edge(cluster_graph, 3, 0, 2);
-        Weight target = 2;
-        VertexGraphFrontierManager vgfm(cluster_graph);
+        std::vector<VertexGraphFrontierManager> vgfm_vec = {
+            VertexGraphFrontierManager(cluster_graph)
+        };
+        std::vector<Weight> target_vec = {2};
 
         construct_binary_derivative_structures_with_sro(
             dd,
@@ -83,15 +85,15 @@ void test_binary() {
             automorphism,
             translations,
             composition_constraints,
-            vgfm,
-            target
+            vgfm_vec,
+            target_vec
         );
 
         std::string cardinality_expect = "1";
         std::vector<std::vector<int>> enumerated_expect = {
             {0, 0, 1, 1},
         };
-        check(num_sites, num_types, dd, vgfm, cardinality_expect, enumerated_expect);
+        check(num_sites, num_types, dd, vgfm_vec[0], cardinality_expect, enumerated_expect);
     }
 }
 

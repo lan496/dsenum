@@ -35,8 +35,12 @@ def test_sro():
         (3, 0, 2),
     ])
     raw_graph, _ = convert_to_raw_graph(cluster_graph)
-    vgfm = VertexGraphFrontierManager(raw_graph)
-    target = 2
+    vgfm_vec = [
+        VertexGraphFrontierManager(raw_graph)
+    ]
+    targets = [
+        2
+    ]
 
     construct_binary_derivative_structures_with_sro(
         dd,
@@ -45,8 +49,8 @@ def test_sro():
         automorphism,
         translations,
         composition_constraints,
-        vgfm,
-        target
+        vgfm_vec,
+        targets,
     )
     assert dd.cardinality() == "1"
 

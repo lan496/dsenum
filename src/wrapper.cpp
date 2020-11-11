@@ -109,8 +109,8 @@ PYBIND11_MODULE(_pyzdd, m) {
         py::arg("automorphism"),
         py::arg("translations"),
         py::arg("composition_constraints"),
-        py::arg("vgfm"),
-        py::arg("target")
+        py::arg("vgfm_vec"),
+        py::arg("target_vec")
     );
     m.def(
         "convert_to_labeling_with_graph",

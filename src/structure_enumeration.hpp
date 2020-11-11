@@ -453,25 +453,52 @@ namespace derivative_structure {
         const std::vector<permutation::Permutation>& automorphism,
         const std::vector<permutation::Permutation>& translations,
         const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
-        const graph::VertexGraphFrontierManager& vgfm,
-        graph::Weight target
+        const std::vector<graph::VertexGraphFrontierManager>& vgfm_vec,
+        const std::vector<graph::Weight>& targets
     ) {
+        tdzdd::MessageHandler::showMessages(true);
+
         assert(num_types == 2);
+        assert(!vgfm_vec.empty());
         size_t num_variables = num_sites;
 
-        // ==== prepare specs ====
-        // spec for isomorphism elimination
+        // ==== translate permutations with vertex_order ====
+        const auto& vgfm0 = vgfm_vec[0];
+
+        std::vector<permutation::Permutation> reordered_automorphism;
+        reordered_automorphism.reserve(automorphism.size());
+        for (const auto& perm: automorphism) {
+            std::vector<permutation::Element> sigma(num_variables);
+            for (graph::Vertex v = 0; v < static_cast<graph::Vertex>(num_variables); ++v) {
+                sigma[vgfm0.map_to_internal_vertex_id(v)] = vgfm0.map_to_internal_vertex_id(perm.permute(v));
+            }
+            reordered_automorphism.emplace_back(permutation::Permutation(sigma));
+        }
         // sort permutations by max frontier sizes
-        std::vector<permutation::Permutation> sorted_automorphism(automorphism);
-        std::sort(sorted_automorphism.begin(), sorted_automorphism.end(),
+        std::sort(reordered_automorphism.begin(), reordered_automorphism.end(),
                   [](const permutation::Permutation& lhs, const permutation::Permutation& rhs) {
                       auto size_lhs = permutation::PermutationFrontierManager(lhs).get_max_frontier_size();
                       auto size_rhs = permutation::PermutationFrontierManager(rhs).get_max_frontier_size();
                       return size_lhs < size_rhs;
                   });
+
+        std::vector<permutation::Permutation> reordered_translation_group;
+        reordered_translation_group.reserve(translations.size());
+        for (const auto& perm: translations) {
+            std::vector<permutation::Element> sigma(num_variables);
+            for (graph::Vertex v = 0; v < static_cast<graph::Vertex>(num_variables); ++v) {
+                sigma[vgfm0.map_to_internal_vertex_id(v)] = vgfm0.map_to_internal_vertex_id(perm.permute(v));
+            }
+            reordered_translation_group.emplace_back(permutation::Permutation(sigma));
+        }
+
+        // ==== prepare specs ====
+        // spec for isomorphism elimination
+        std::vector<permutation::Permutation> sorted_automorphism(automorphism);
+
         std::vector<permutation::isomorphism::IsomorphismElimination> aut_specs;
-        aut_specs.reserve(sorted_automorphism.size());
-        for (const auto& perm: sorted_automorphism) {
+        aut_specs.reserve(reordered_automorphism.size());
+        for (const auto& perm: reordered_automorphism) {
             permutation::PermutationFrontierManager pfm(perm);
             permutation::isomorphism::IsomorphismElimination spec(pfm);
             aut_specs.emplace_back(spec);
@@ -479,9 +506,9 @@ namespace derivative_structure {
 
         // spec for superperiodic elimination
         std::vector<permutation::superperiodic::SuperperiodicElimination> sp_specs;
-        sp_specs.reserve(translations.size());
+        sp_specs.reserve(reordered_translation_group.size());
         auto identity = permutation::get_identity(num_variables);
-        for (const auto& perm: translations) {
+        for (const auto& perm: reordered_translation_group) {
             if (perm == identity) {
                 continue;
             }
@@ -498,7 +525,7 @@ namespace derivative_structure {
             std::vector<int> group;
             group.reserve(variables_count.first.size());
             for (graph::Vertex v: variables_count.first) {
-                group.emplace_back(vgfm.map_to_internal_vertex_id(v));
+                group.emplace_back(vgfm0.map_to_internal_vertex_id(v));
             }
 
             int k = variables_count.second; // take k elements of 1-branchs
@@ -507,7 +534,22 @@ namespace derivative_structure {
         }
 
         // spec for SRO
-        graph::induced_subgraph::VertexInducedSubgraphSpec subgraph_spec(vgfm, target);
+        std::vector<graph::induced_subgraph::VertexInducedSubgraphSpec> subgraph_specs;
+        size_t num_graphs = vgfm_vec.size();
+        assert(targets.size() == num_graphs);
+        if (num_graphs > 0) {
+            subgraph_specs.reserve(num_graphs);
+            // TODO: better vertex_order choice
+            const auto& vertex_order = vgfm_vec[0].get_vertex_order();
+
+            for (size_t i = 0; i < num_graphs; ++i) {
+                // need to use the same vertex-order!
+                assert(vgfm_vec[i].get_vertex_order() == vertex_order);
+
+                graph::induced_subgraph::VertexInducedSubgraphSpec spec(vgfm_vec[i], targets[i]);
+                subgraph_specs.emplace_back(spec);
+            }
+        }
 
         // spec for removing incompletes
         choice::TakeBoth incomplete_spec(num_variables);
@@ -525,6 +567,12 @@ namespace derivative_structure {
             dd.zddReduce();
         }
 
+        // fix SRO before uniquing by symmetry
+        for (const auto& spec: subgraph_specs) {
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+
         // remove superperiodic
         for (const auto& spec: sp_specs) {
             dd.zddSubset(spec);
@@ -537,9 +585,7 @@ namespace derivative_structure {
             dd.zddReduce();
         }
 
-        // fix SRO
-        dd.zddSubset(subgraph_spec);
-        dd.zddReduce();
+        tdzdd::MessageHandler::showMessages(false);
     }
 
     std::vector<permutation::Element> convert_to_labeling(
