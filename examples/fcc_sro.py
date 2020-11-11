@@ -14,19 +14,23 @@ def get_fcc_structure(a: float):
     return structure
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     """
     enumerate FCC derivative structures with the same 1st-NN-SRO of SQS-AB
     """
     aristo = get_fcc_structure(a=2.856)
     num_types = 2
-    composition_ratios = [
-        [1, 1]
-    ]
+    composition_ratios = [[1, 1]]
     # 1st NN
     cluster = PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 1))])
 
-    index = 2
+    index = 32
 
     sse = SROStructureEnumerator(aristo, index, num_types, composition_ratios, cluster)
     labelings_with_transformations = sse.generate()
+    for transformation, labelings in labelings_with_transformations:
+        if labelings:
+            print(transformation)
+            for labeling in labelings:
+                print("    ", labeling)
+            print()

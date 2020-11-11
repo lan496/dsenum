@@ -69,6 +69,9 @@ class EquivalentPointClusterGenerator:
     def dim(self):
         return self.frac_coords.shape[1]
 
+    def get_converter(self):
+        return self.converter
+
     def _get_dsite(self, frac_coord: np.ndarray) -> DerivativeSite:
         """
         return DerivativeSite from fractional coorinates

@@ -103,9 +103,11 @@ class BinaryPairClusterGraph:
         return self._graph
 
     def get_sqs_target_value(self) -> float:
-        site_index = self.point_clusters[0].points[0].site_index
-        c0 = self.composition_ratio[site_index][1] / self.ratio_sum[site_index]
-        return self._weight_sum * c0 - self.loop_offset
+        site_index0 = self.point_clusters[0].points[0].site_index
+        site_index1 = self.point_clusters[0].points[1].site_index
+        c0 = self.composition_ratio[site_index0][1] / self.ratio_sum[site_index0]
+        c1 = self.composition_ratio[site_index1][1] / self.ratio_sum[site_index1]
+        return self._weight_sum * c0 * c1 - self.loop_offset
 
     def calc_correlation(self, labeling: List[int]) -> float:
         """
@@ -118,8 +120,7 @@ class BinaryPairClusterGraph:
                 for src, dst, weight in self.graph.edges(data="weight")
             ]
         )
-        corr /= self._weight_sum
-        return corr + self.loop_offset
+        return (corr + self.loop_offset) / self._weight_sum
 
     def calc_short_range_order(self, labeling: List[int]) -> float:
         """
@@ -127,11 +128,7 @@ class BinaryPairClusterGraph:
         """
         site_index0 = self.point_clusters[0].points[0].site_index
         site_index1 = self.point_clusters[0].points[1].site_index
-        c0 = (
-            self.composition_ratio[site_index0][1] / self.ratio_sum[site_index0]
-        )
-        c1 = (
-            self.composition_ratio[site_index1][1] / self.ratio_sum[site_index1]
-        )
+        c0 = self.composition_ratio[site_index0][1] / self.ratio_sum[site_index0]
+        c1 = self.composition_ratio[site_index1][1] / self.ratio_sum[site_index1]
         sro = 1.0 - (c0 - self.calc_correlation(labeling)) / (c0 * (1.0 - c1))
         return sro
