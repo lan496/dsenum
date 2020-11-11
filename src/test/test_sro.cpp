@@ -80,17 +80,16 @@ void test_binary() {
             dd,
             num_sites,
             num_types,
+            automorphism,
+            translations,
             composition_constraints,
             vgfm,
             target
         );
 
-        std::string cardinality_expect = "4";
+        std::string cardinality_expect = "1";
         std::vector<std::vector<int>> enumerated_expect = {
             {0, 0, 1, 1},
-            {0, 1, 1, 0},
-            {1, 0, 0, 1},
-            {1, 1, 0, 0}
         };
         check(num_sites, num_types, dd, vgfm, cardinality_expect, enumerated_expect);
     }

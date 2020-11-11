@@ -106,6 +106,8 @@ PYBIND11_MODULE(_pyzdd, m) {
         py::arg("dd"),
         py::arg("num_sites"),
         py::arg("num_types"),
+        py::arg("automorphism"),
+        py::arg("translations"),
         py::arg("composition_constraints"),
         py::arg("vgfm"),
         py::arg("target")

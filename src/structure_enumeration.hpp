@@ -439,6 +439,9 @@ namespace derivative_structure {
     /// @param[out] dd DD for output
     /// @param[in] num_sites the number of sites in supercell
     /// @param[in] num_types the kinds of species
+    /// @param[in] automorphism symmetry group of supercell
+    /// @param[in] translations (Optional) permutation group derived from
+    ////           translations of cell. Required if `remove_superperiodic` is true.
     /// @param[in] composition_constraints composition_constraints[i]
     ///            is a pair of sites and a desired number of label=1
     /// @param[in] vgfm frontier manager of cluster graph
@@ -447,6 +450,8 @@ namespace derivative_structure {
         tdzdd::DdStructure<2>& dd,
         int num_sites,
         int num_types,
+        const std::vector<permutation::Permutation>& automorphism,
+        const std::vector<permutation::Permutation>& translations,
         const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
         const graph::VertexGraphFrontierManager& vgfm,
         graph::Weight target
@@ -455,6 +460,36 @@ namespace derivative_structure {
         size_t num_variables = num_sites;
 
         // ==== prepare specs ====
+        // spec for isomorphism elimination
+        // sort permutations by max frontier sizes
+        std::vector<permutation::Permutation> sorted_automorphism(automorphism);
+        std::sort(sorted_automorphism.begin(), sorted_automorphism.end(),
+                  [](const permutation::Permutation& lhs, const permutation::Permutation& rhs) {
+                      auto size_lhs = permutation::PermutationFrontierManager(lhs).get_max_frontier_size();
+                      auto size_rhs = permutation::PermutationFrontierManager(rhs).get_max_frontier_size();
+                      return size_lhs < size_rhs;
+                  });
+        std::vector<permutation::isomorphism::IsomorphismElimination> aut_specs;
+        aut_specs.reserve(sorted_automorphism.size());
+        for (const auto& perm: sorted_automorphism) {
+            permutation::PermutationFrontierManager pfm(perm);
+            permutation::isomorphism::IsomorphismElimination spec(pfm);
+            aut_specs.emplace_back(spec);
+        }
+
+        // spec for superperiodic elimination
+        std::vector<permutation::superperiodic::SuperperiodicElimination> sp_specs;
+        sp_specs.reserve(translations.size());
+        auto identity = permutation::get_identity(num_variables);
+        for (const auto& perm: translations) {
+            if (perm == identity) {
+                continue;
+            }
+            permutation::PermutationFrontierManager pfm(perm);
+            permutation::superperiodic::SuperperiodicElimination spec(pfm);
+            sp_specs.emplace_back(spec);
+        }
+
         // spec for composition constraints
         assert(!composition_constraints.empty());
         std::vector<choice::Choice> composition_specs;
@@ -474,14 +509,35 @@ namespace derivative_structure {
         // spec for SRO
         graph::induced_subgraph::VertexInducedSubgraphSpec subgraph_spec(vgfm, target);
 
+        // spec for removing incompletes
+        choice::TakeBoth incomplete_spec(num_variables);
+
         // ==== construct DD ====
         dd = universe::Universe(num_variables);
 
+        // remove incomplete
+        dd.zddSubset(incomplete_spec);
+        dd.zddReduce();
+
+        // fix composition
         for (const auto& spec: composition_specs) {
             dd.zddSubset(spec);
             dd.zddReduce();
         }
 
+        // remove superperiodic
+        for (const auto& spec: sp_specs) {
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+
+        // remove symmetry duplicates
+        for (const auto& spec: aut_specs) {
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+
+        // fix SRO
         dd.zddSubset(subgraph_spec);
         dd.zddReduce();
     }
