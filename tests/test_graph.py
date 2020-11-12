@@ -4,7 +4,11 @@ import networkx as nx
 from networkx.generators.lattice import grid_graph
 from networkx import path_graph, complete_graph
 
-from pyzdd.graph import GraphAuxiliary, convert_to_raw_graph
+from pyzdd.graph import (
+    GraphAuxiliary,
+    VertexGraphFrontierManager,
+    convert_to_raw_graph,
+)
 
 
 def test_on_grid_graph():
@@ -13,7 +17,7 @@ def test_on_grid_graph():
     v0----v1----v2
     |     |     |
     |e0   |e4   |e9
-    |     |     |
+    | e3  |  e8 |
     v3----v4----v5
     |     |     |
     |e2   |e7   |e11
@@ -81,3 +85,27 @@ def test_on_grid_graph():
         assert graphaux.map_vertex_to_position(u) == vertex_to_position[u]
 
     assert graphaux.max_frontier_size == frontier_size
+
+
+def test_vertex_order():
+    """
+       e0
+    v0----v1
+    |     |
+    |e3   |e1
+    |     |
+    v2----v3
+       e2
+    """
+    graph = nx.Graph()
+    graph.add_nodes_from([0, 1, 2, 3])
+    graph.add_edges_from([
+        (0, 1),
+        (0, 2),
+        (2, 3),
+        (1, 3),
+    ])
+    raw_graph, _ = convert_to_raw_graph(graph)
+    vertex_order = [0, 1, 3, 2]
+    vgfm = VertexGraphFrontierManager(raw_graph, vertex_order)
+    assert vgfm.get_vertex_order() == vertex_order
