@@ -92,7 +92,7 @@ void test2() {
         {1, 1, 0, 1},
         {1, 1, 1, 0}
     };
-    check(g, target, cardinality, enumerated_expect, true);
+    check(g, target, cardinality, enumerated_expect, false);
 }
 
 void test3() {

@@ -491,7 +491,7 @@ public:
         // mapping_vertex_
         assert(vertex_order_.size() == V_);
         mapping_vertex_.resize(V_);
-        for (InternalVertexId vid = 0; vid < V_; ++vid) {
+        for (InternalVertexId vid = 0; vid < static_cast<InternalVertexId>(V_); ++vid) {
             mapping_vertex_[vertex_order_[vid]] = vid;
         }
 
