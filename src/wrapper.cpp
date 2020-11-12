@@ -10,6 +10,7 @@
 #include "iterator.hpp"
 #include "graph.hpp"
 #include "structure_enumeration.hpp"
+#include "short_range_order.hpp"
 #include "spec/combination.hpp"
 #include "spec/choice.hpp"
 

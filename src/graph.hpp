@@ -424,6 +424,40 @@ private:
     }
 };
 
+
+/// @brief determine variable order by BFS
+std::vector<Vertex> get_vertex_order_by_bfs(const Graph& graph) {
+    auto V = graph.size();
+
+    // order edges by BFS
+    std::vector<Vertex> vertex_order(V);
+    InternalVertexId vertex_count = 0;
+    std::vector<bool> visited_vertex(V, false);
+    for (Vertex u = 0; u < static_cast<Vertex>(V); ++u) {
+        if (visited_vertex[u]) continue;
+
+        std::queue<Vertex> que;
+        que.push(u);
+        while (!que.empty()) {
+            Vertex v = que.front(); que.pop();
+            if (visited_vertex[v]) {
+                continue;
+            }
+            visited_vertex[v] = true;
+            vertex_order[vertex_count++] = v;
+            for (auto e: graph[v]) {
+                if (!visited_vertex[e.dst]) {
+                    que.push(e.dst);
+                }
+            }
+        }
+    }
+    assert(vertex_count == static_cast<InternalVertexId>(V));
+
+    return vertex_order;
+}
+
+
 /// @brief Frontier manager for ZDD represeting vertex-induced subgraphs
 class VertexGraphFrontierManager {
 private:
@@ -459,7 +493,8 @@ public:
     VertexGraphFrontierManager(const Graph& graph) :
         V_(graph.size()),
         E_(get_number_of_edges(graph)),
-        graph_(graph)
+        graph_(graph),
+        vertex_order_(get_vertex_order_by_bfs(graph))
     {
         // sanity check on graph
         assert(is_simple_graph(graph_));
@@ -469,8 +504,12 @@ public:
             exit(1);
         }
 
-        // order vertices by BFS
-        order_vertices();
+        // mapping_vertex_
+        mapping_vertex_.resize(V_);
+        for (InternalVertexId vid = 0; vid < static_cast<InternalVertexId>(V_); ++vid) {
+            mapping_vertex_[vertex_order_[vid]] = vid;
+        }
+
         // construct frontiers, introduced, forgotten, max_frontier_size
         construct_frontiers();
     }
@@ -600,42 +639,6 @@ public:
     }
 
 private:
-    /// @brief determine variable order by BFS
-    void order_vertices() {
-        Vertex V = number_of_vertices();
-
-        // order edges by BFS
-        vertex_order_.resize(V);
-        InternalVertexId vertex_count = 0;
-        std::vector<bool> visited_vertex(V, false);
-        for (Vertex u = 0; u < V; ++u) {
-            if (visited_vertex[u]) continue;
-
-            std::queue<Vertex> que;
-            que.push(u);
-            while (!que.empty()) {
-                Vertex v = que.front(); que.pop();
-                if (visited_vertex[v]) {
-                    continue;
-                }
-                visited_vertex[v] = true;
-                vertex_order_[vertex_count++] = v;
-                for (auto e: graph_[v]) {
-                    if (!visited_vertex[e.dst]) {
-                        que.push(e.dst);
-                    }
-                }
-            }
-        }
-        assert(vertex_count == static_cast<InternalVertexId>(V));
-
-        // mapping_vertex_
-        mapping_vertex_.resize(V);
-        for (InternalVertexId vid = 0; vid < V; ++vid) {
-            mapping_vertex_[vertex_order_[vid]] = vid;
-        }
-    }
-
     void construct_frontiers() {
         auto V = number_of_vertices();
 
@@ -722,6 +725,8 @@ private:
         }
     }
 };
+
+
 
 } // namespace graph
 } // namespace pyzdd
