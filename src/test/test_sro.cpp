@@ -10,7 +10,7 @@
 #include "type.hpp"
 #include "permutation.hpp"
 #include "graph.hpp"
-#include "structure_enumeration.hpp"
+#include "short_range_order.hpp"
 #include "utils.hpp"
 
 using namespace pyzdd;
@@ -22,7 +22,7 @@ void check(
     int num_sites,
     int num_types,
     const tdzdd::DdStructure<2>& dd,
-    const graph::VertexGraphFrontierManager& vgfm,
+    const std::vector<Vertex>& vertex_order,
     const std::string cardinality_expect,
     const std::vector<std::vector<int>>& enumerated_expect)
 {
@@ -39,16 +39,17 @@ void check(
     for (auto labeling: enumerated_expect) {
         uset_expect.insert(labeling);
     }
+
     std::unordered_set<std::vector<int>, VectorHash<int>> uset_actual;
+    auto converter = BinaryVertexConverter(num_sites, vertex_order);
     for (auto itr = dd.begin(), end = dd.end(); itr != end; ++itr) {
-        auto labeling = vgfm.retrieve_vertices(*itr);
+        auto labeling = converter.retrieve_vertices(*itr);
         uset_actual.insert(labeling);
     }
     assert(uset_actual == uset_expect);
 }
 
 void test_binary() {
-    // reproduce Fig.2
     int num_sites = 4;
     int num_types = 2;
     auto c4 = Permutation(std::vector<Element>{1, 2, 3, 0});
@@ -73,27 +74,31 @@ void test_binary() {
         add_undirected_edge(cluster_graph, 1, 2, 2);
         add_undirected_edge(cluster_graph, 2, 3, 2);
         add_undirected_edge(cluster_graph, 3, 0, 2);
-        std::vector<VertexGraphFrontierManager> vgfm_vec = {
-            VertexGraphFrontierManager(cluster_graph)
-        };
-        std::vector<Weight> target_vec = {2};
+        auto vertex_order = get_vertex_order_by_bfs(cluster_graph);
 
-        construct_binary_derivative_structures_with_sro(
+        std::vector<Graph> graphs = {
+            cluster_graph,
+        };
+        std::vector<Weight> targets = {2};
+
+        construct_derivative_structures_with_sro(
             dd,
             num_sites,
             num_types,
+            vertex_order,
             automorphism,
             translations,
             composition_constraints,
-            vgfm_vec,
-            target_vec
+            graphs,
+            targets,
+            true  // remove superperiodic
         );
 
         std::string cardinality_expect = "1";
         std::vector<std::vector<int>> enumerated_expect = {
             {0, 0, 1, 1},
         };
-        check(num_sites, num_types, dd, vgfm_vec[0], cardinality_expect, enumerated_expect);
+        check(num_sites, num_types, dd, vertex_order, cardinality_expect, enumerated_expect);
     }
 }
 

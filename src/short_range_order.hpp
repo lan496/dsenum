@@ -18,44 +18,73 @@
 namespace pyzdd {
 namespace derivative_structure {
 
-/// @brief enumerate DD for derivative structures with fixed Warren-Cowley SRO
-/// @param[out] dd DD for output
-/// @param[in] num_sites the number of sites in supercell
-/// @param[in] num_types the kinds of species
-/// @param[in] automorphism symmetry group of supercell
-/// @param[in] translations (Optional) permutation group derived from
-////           translations of cell. Required if `remove_superperiodic` is true.
-/// @param[in] composition_constraints composition_constraints[i]
-///            is a pair of sites and a desired number of label=1
-/// @param[in] vgfm frontier manager of cluster graph
-/// @param[in] target target weight without loop offset of vertex-induced subgraph
-void construct_binary_derivative_structures_with_sro(
+class BinaryVertexConverter {
+    size_t num_variables_;
+    std::vector<graph::Vertex> vertex_order_;
+    std::vector<graph::InternalVertexId> mapping_vertex_;
+public:
+    BinaryVertexConverter() = delete;
+    BinaryVertexConverter(int num_sites, const std::vector<graph::Vertex>& vertex_order) :
+        num_variables_(static_cast<size_t>(num_sites)),
+        vertex_order_(vertex_order)
+    {
+        // mapping_vertex_
+        mapping_vertex_.resize(num_variables_);
+        for (graph::InternalVertexId vid = 0; vid < static_cast<graph::InternalVertexId>(num_variables_); ++vid) {
+            mapping_vertex_[vertex_order_[vid]] = vid;
+        }
+    }
+
+    permutation::Permutation reorder_premutation(const permutation::Permutation& perm) const {
+        std::vector<permutation::Element> sigma(num_variables_);
+        for (graph::Vertex v = 0; v < static_cast<graph::Vertex>(num_variables_); ++v) {
+            sigma[map_to_internal_vertex_id(v)] = map_to_internal_vertex_id(perm.permute(v));
+        }
+        return permutation::Permutation(sigma);
+    }
+
+    std::vector<int> retrieve_vertices(const std::set<Level>& items) const {
+        std::vector<int> used(num_variables_, 0);
+
+        for (auto level: items) {
+            graph::Vertex v = get_vertex(num_variables_ - level);
+            used[v] = 1;
+        }
+
+        return used;
+    }
+
+    graph::InternalVertexId map_to_internal_vertex_id(graph::Vertex v) const {
+        return mapping_vertex_[v];
+    }
+
+private:
+    graph::Vertex get_vertex(graph::InternalVertexId vid) const {
+        return vertex_order_[vid];
+    }
+};
+
+
+void prepare_binary_derivative_structures_with_sro_(
     tdzdd::DdStructure<2>& dd,
     int num_sites,
     int num_types,
+    const std::vector<graph::Vertex>& vertex_order,
     const std::vector<permutation::Permutation>& automorphism,
     const std::vector<permutation::Permutation>& translations,
     const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
-    const std::vector<graph::VertexGraphFrontierManager>& vgfm_vec,
-    const std::vector<graph::Weight>& targets
-) {
-    tdzdd::MessageHandler::showMessages(true);
-
-    assert(num_types == 2);
-    assert(!vgfm_vec.empty());
+    bool remove_superperiodic
+)
+{
     size_t num_variables = num_sites;
+    BinaryVertexConverter converter(num_sites, vertex_order);
 
     // ==== translate permutations with vertex_order ====
-    const auto& vgfm0 = vgfm_vec[0];
-
     std::vector<permutation::Permutation> reordered_automorphism;
     reordered_automorphism.reserve(automorphism.size());
     for (const auto& perm: automorphism) {
-        std::vector<permutation::Element> sigma(num_variables);
-        for (graph::Vertex v = 0; v < static_cast<graph::Vertex>(num_variables); ++v) {
-            sigma[vgfm0.map_to_internal_vertex_id(v)] = vgfm0.map_to_internal_vertex_id(perm.permute(v));
-        }
-        reordered_automorphism.emplace_back(permutation::Permutation(sigma));
+        auto reordered_perm = converter.reorder_premutation(perm);
+        reordered_automorphism.emplace_back(reordered_perm);
     }
     // sort permutations by max frontier sizes
     std::sort(reordered_automorphism.begin(), reordered_automorphism.end(),
@@ -68,118 +97,207 @@ void construct_binary_derivative_structures_with_sro(
     std::vector<permutation::Permutation> reordered_translation_group;
     reordered_translation_group.reserve(translations.size());
     for (const auto& perm: translations) {
-        std::vector<permutation::Element> sigma(num_variables);
-        for (graph::Vertex v = 0; v < static_cast<graph::Vertex>(num_variables); ++v) {
-            sigma[vgfm0.map_to_internal_vertex_id(v)] = vgfm0.map_to_internal_vertex_id(perm.permute(v));
-        }
-        reordered_translation_group.emplace_back(permutation::Permutation(sigma));
+        auto reordered_perm = converter.reorder_premutation(perm);
+        reordered_translation_group.emplace_back(reordered_perm);
     }
 
-    // ==== prepare specs ====
-    // spec for isomorphism elimination
-    std::vector<permutation::Permutation> sorted_automorphism(automorphism);
-
-    std::vector<permutation::isomorphism::IsomorphismElimination> aut_specs;
-    aut_specs.reserve(reordered_automorphism.size());
-    for (const auto& perm: reordered_automorphism) {
-        permutation::PermutationFrontierManager pfm(perm);
-        permutation::isomorphism::IsomorphismElimination spec(pfm);
-        aut_specs.emplace_back(spec);
-    }
-
-    // spec for superperiodic elimination
-    std::vector<permutation::superperiodic::SuperperiodicElimination> sp_specs;
-    sp_specs.reserve(reordered_translation_group.size());
-    auto identity = permutation::get_identity(num_variables);
-    for (const auto& perm: reordered_translation_group) {
-        if (perm == identity) {
-            continue;
-        }
-        permutation::PermutationFrontierManager pfm(perm);
-        permutation::superperiodic::SuperperiodicElimination spec(pfm);
-        sp_specs.emplace_back(spec);
-    }
+    // ======== construct DD ========
+    dd = universe::Universe(num_variables);
 
     // spec for composition constraints
     assert(!composition_constraints.empty());
-    std::vector<choice::Choice> composition_specs;
-    composition_specs.reserve(composition_constraints.size());
     for (const auto& variables_count: composition_constraints) {
         std::vector<int> group;
         group.reserve(variables_count.first.size());
         for (graph::Vertex v: variables_count.first) {
-            group.emplace_back(vgfm0.map_to_internal_vertex_id(v));
+            group.emplace_back(converter.map_to_internal_vertex_id(v));
         }
 
         int k = variables_count.second; // take k elements of 1-branchs
         choice::Choice spec(num_variables, k, group, false);
-        composition_specs.emplace_back(spec);
-    }
 
-    // spec for SRO
-    std::vector<graph::induced_subgraph::VertexInducedSubgraphSpec> subgraph_specs;
-    size_t num_graphs = vgfm_vec.size();
-    assert(targets.size() == num_graphs);
-    if (num_graphs > 0) {
-        subgraph_specs.reserve(num_graphs);
-        // TODO: better vertex_order choice
-        const auto& vertex_order = vgfm_vec[0].get_vertex_order();
-
-        for (size_t i = 0; i < num_graphs; ++i) {
-            // need to use the same vertex-order!
-            assert(vgfm_vec[i].get_vertex_order() == vertex_order);
-
-            graph::induced_subgraph::VertexInducedSubgraphSpec spec(vgfm_vec[i], targets[i]);
-            subgraph_specs.emplace_back(spec);
-        }
-    }
-
-    // spec for removing incompletes
-    choice::TakeBoth incomplete_spec(num_variables);
-
-    // ==== construct DD ====
-    dd = universe::Universe(num_variables);
-
-    // remove incomplete
-    dd.zddSubset(incomplete_spec);
-    dd.zddReduce();
-
-    // fix composition
-    for (const auto& spec: composition_specs) {
-        dd.zddSubset(spec);
-        dd.zddReduce();
-    }
-
-    // fix SRO before uniquing by symmetry
-    for (const auto& spec: subgraph_specs) {
-        dd.zddSubset(spec);
-        dd.zddReduce();
-    }
-
-    // remove superperiodic
-    for (const auto& spec: sp_specs) {
         dd.zddSubset(spec);
         dd.zddReduce();
     }
 
     // remove symmetry duplicates
-    for (const auto& spec: aut_specs) {
+    for (const auto& perm: reordered_automorphism) {
+        permutation::PermutationFrontierManager pfm(perm);
+        permutation::isomorphism::IsomorphismElimination spec(pfm);
         dd.zddSubset(spec);
         dd.zddReduce();
     }
 
+    // remove superperiodic
+    if (remove_superperiodic) {
+        auto identity = permutation::get_identity(num_variables);
+        for (const auto& perm: reordered_translation_group) {
+            if (perm == identity) {
+                continue;
+            }
+            permutation::PermutationFrontierManager pfm(perm);
+            permutation::superperiodic::SuperperiodicElimination spec(pfm);
+            dd.zddSubset(spec);
+            dd.zddReduce();
+        }
+    }
+
+}
+
+/// @brief enumerate DD for derivative structures with fixed short-range order (SRO)
+/// @param[out] dd DD for output
+/// @param[in] num_sites the number of sites in supercell
+/// @param[in] num_types the kinds of species
+/// @param[in] automorphism symmetry group of supercell
+/// @param[in] translations (Optional) permutation group derived from
+////           translations of cell. Required if `remove_superperiodic` is true.
+/// @param[in] composition_constraints composition_constraints[i]
+///            is a pair of sites and a desired number of label=1
+/// @param[in] remove_superperiodic iff true, remove superperiodic structures
+void prepare_derivative_structures_with_sro(
+    tdzdd::DdStructure<2>& dd,
+    int num_sites,
+    int num_types,
+    const std::vector<graph::Vertex>& vertex_order,
+    const std::vector<permutation::Permutation>& automorphism,
+    const std::vector<permutation::Permutation>& translations,
+    const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
+    bool remove_superperiodic
+)
+{
+    // sanity check
+    assert(num_sites >= 1);
+    assert(num_types >= 2);
+    for (const auto& perm: automorphism) {
+        if (perm.get_size() != static_cast<size_t>(num_sites)) {
+            std::cerr << "The number of elements of permutation should be num_sites." << std::endl;
+            exit(1);
+        }
+    }
+    for (const auto& perm: translations) {
+        if (perm.get_size() != static_cast<size_t>(num_sites)) {
+            std::cerr << "The number of elements of permutation should be num_sites." << std::endl;
+            exit(1);
+        }
+    }
+    // TODO: sanity check on composition_constraints
+    if (remove_superperiodic && translations.empty()) {
+        std::cerr << "Translational group is required for removing superperiodic structures.";
+        exit(1);
+    }
+
+    tdzdd::MessageHandler::showMessages(true);
+    if (num_types == 2) {
+        prepare_binary_derivative_structures_with_sro_(
+            dd,
+            num_sites,
+            num_types,
+            vertex_order,
+            automorphism,
+            translations,
+            composition_constraints,
+            remove_superperiodic
+        );
+    } else {
+        std::cerr << "TODO: multicomponent system" << std::endl;
+        exit(1);
+    }
     tdzdd::MessageHandler::showMessages(false);
 }
 
-std::vector<int> convert_to_labeling_with_graph(
-    const tdzdd::DdStructure<2>::const_iterator& itr,
-    const graph::VertexGraphFrontierManager& vgfm,
-    int num_types
+
+/// @brief restrict a pair correlation for derivative structures
+/// @param[out] dd DD for output
+/// @param[in] num_sites the number of sites in supercell
+/// @param[in] num_types the kinds of species
+/// @param[in] graph frontier manager of cluster graph
+/// @param[in] target target weight without loop offset of vertex-induced subgraph
+void restrict_pair_correlation(
+    tdzdd::DdStructure<2>& dd,
+    int num_sites,
+    int num_types,
+    const std::vector<graph::Vertex>& vertex_order,
+    const graph::Graph& graph,
+    const graph::Weight target
 )
 {
-    assert(num_types == 2);
+    tdzdd::MessageHandler::showMessages(true);
+    if (num_types == 2) {
+        // need to use the same vertex-order!
+        graph::VertexGraphFrontierManager vgfm(graph, vertex_order);
+        graph::induced_subgraph::VertexInducedSubgraphSpec spec(vgfm, target);
+        dd.zddSubset(spec);
+        dd.zddReduce();
+    } else {
+        std::cerr << "TODO: multicomponent system" << std::endl;
+        exit(1);
+    }
+    tdzdd::MessageHandler::showMessages(false);
+}
+
+
+/// @brief enumerate DD for derivative structures with fixed short-range order (SRO)
+/// @param[out] dd DD for output
+/// @param[in] num_sites the number of sites in supercell
+/// @param[in] num_types the kinds of species
+/// @param[in] automorphism symmetry group of supercell
+/// @param[in] translations (Optional) permutation group derived from
+////           translations of cell. Required if `remove_superperiodic` is true.
+/// @param[in] composition_constraints composition_constraints[i]
+///            is a pair of sites and a desired number of label=1
+/// @param[in] vgfm frontier manager of cluster graph
+/// @param[in] target target weight without loop offset of vertex-induced subgraph
+/// @param[in] remove_superperiodic iff true, remove superperiodic structures
+void construct_derivative_structures_with_sro(
+    tdzdd::DdStructure<2>& dd,
+    int num_sites,
+    int num_types,
+    const std::vector<graph::Vertex>& vertex_order,
+    const std::vector<permutation::Permutation>& automorphism,
+    const std::vector<permutation::Permutation>& translations,
+    const std::vector<std::pair<std::vector<int>, int>>& composition_constraints,
+    const std::vector<graph::Graph>& graphs,
+    const std::vector<graph::Weight>& targets,
+    bool remove_superperiodic
+)
+{
+    // ==== construct DD ====
+    prepare_derivative_structures_with_sro(
+        dd,
+        num_sites,
+        num_types,
+        vertex_order,
+        automorphism,
+        translations,
+        composition_constraints,
+        remove_superperiodic
+    );
+
+    // fix SRO
+    // TODO: better vertex_order choice
+    size_t num_graphs = graphs.size();
+    assert(targets.size() == num_graphs);
+    for (size_t i = 0; i < num_graphs; ++i) {
+        // need to use the same vertex-order!
+        restrict_pair_correlation(
+            dd,
+            num_sites,
+            num_types,
+            vertex_order,
+            graphs[i],
+            targets[i]
+        );
+    }
+}
+
+
+std::vector<int> convert_to_binary_labeling_with_graph(
+    const tdzdd::DdStructure<2>::const_iterator& itr,
+    const BinaryVertexConverter& converter
+)
+{
     // vertex order in DD is diffenrent from the original variable order in the graph
-    std::vector<int> labeling = vgfm.retrieve_vertices(*itr);
+    std::vector<int> labeling = converter.retrieve_vertices(*itr);
     return labeling;
 }
 

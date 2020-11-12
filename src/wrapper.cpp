@@ -101,23 +101,57 @@ PYBIND11_MODULE(_pyzdd, m) {
         .def(py::init<const pyzdd::graph::Graph&, const std::vector<pyzdd::graph::Vertex>&>())
         .def("get_vertex_order", &pyzdd::graph::VertexGraphFrontierManager::get_vertex_order)
         .def("get_max_frontier_size", &pyzdd::graph::VertexGraphFrontierManager::get_max_frontier_size);
+    m.def(
+        "get_vertex_order_by_bfs",
+        &pyzdd::graph::get_vertex_order_by_bfs,
+        py::arg("graph")
+    );
 
     // SRO enumeration
     m.def(
-        "construct_binary_derivative_structures_with_sro",
-        &pyzdd::derivative_structure::construct_binary_derivative_structures_with_sro,
+        "prepare_derivative_structures_with_sro",
+        &pyzdd::derivative_structure::prepare_derivative_structures_with_sro,
         py::arg("dd"),
         py::arg("num_sites"),
         py::arg("num_types"),
+        py::arg("vertex_order"),
         py::arg("automorphism"),
         py::arg("translations"),
         py::arg("composition_constraints"),
-        py::arg("vgfm_vec"),
-        py::arg("target_vec")
+        py::arg("remove_superperiodic")
     );
     m.def(
-        "convert_to_labeling_with_graph",
-        &pyzdd::derivative_structure::convert_to_labeling_with_graph
+        "restrict_pair_correlation",
+        &pyzdd::derivative_structure::restrict_pair_correlation,
+        py::arg("dd"),
+        py::arg("num_sites"),
+        py::arg("num_types"),
+        py::arg("vertex_order"),
+        py::arg("graph"),
+        py::arg("target")
+    );
+    m.def(
+        "construct_derivative_structures_with_sro",
+        &pyzdd::derivative_structure::construct_derivative_structures_with_sro,
+        py::arg("dd"),
+        py::arg("num_sites"),
+        py::arg("num_types"),
+        py::arg("vertex_order"),
+        py::arg("automorphism"),
+        py::arg("translations"),
+        py::arg("composition_constraints"),
+        py::arg("graphs"),
+        py::arg("targets"),
+        py::arg("remove_superperiodic")
+    );
+    // converter
+    py::class_<pyzdd::derivative_structure::BinaryVertexConverter> (m, "BinaryVertexConverter")
+        .def(py::init<int, const std::vector<pyzdd::graph::Vertex>&>());
+    m.def(
+        "convert_to_binary_labeling_with_graph",
+        &pyzdd::derivative_structure::convert_to_binary_labeling_with_graph,
+        py::arg("itr"),
+        py::arg("converter")
     );
 
     // Specifications

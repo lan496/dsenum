@@ -3,12 +3,12 @@ import networkx as nx
 from pyzdd import Universe, Permutation, generate_permutation_group
 from pyzdd.graph import (
     Graph,
-    VertexGraphFrontierManager,
-    convert_to_raw_graph
+    convert_to_raw_graph,
+    get_vertex_order_by_bfs,
 )
 from pyzdd.structure import (
-    construct_binary_derivative_structures_with_sro,
-    enumerate_labelings_with_graph,
+    construct_derivative_structures_with_sro,
+    enumerate_binary_labelings_with_graph,
 )
 
 
@@ -35,27 +35,30 @@ def test_sro():
         (3, 0, 2),
     ])
     raw_graph, _ = convert_to_raw_graph(cluster_graph)
-    vgfm_vec = [
-        VertexGraphFrontierManager(raw_graph)
+    vertex_order = get_vertex_order_by_bfs(raw_graph)
+    graphs = [
+        raw_graph,
     ]
     targets = [
-        2
+        2,
     ]
 
-    construct_binary_derivative_structures_with_sro(
+    construct_derivative_structures_with_sro(
         dd,
         num_sites,
         num_types,
+        vertex_order,
         automorphism,
         translations,
         composition_constraints,
-        vgfm_vec,
+        graphs,
         targets,
+        remove_superperiodic=True,
     )
     assert dd.cardinality() == "1"
 
     actual = set()
-    for labeling in enumerate_labelings_with_graph(dd, num_types, raw_graph):
+    for labeling in enumerate_binary_labelings_with_graph(dd, num_sites, vertex_order):
         actual.add(tuple(labeling))
 
     list_expect = [

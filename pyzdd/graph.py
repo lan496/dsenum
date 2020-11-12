@@ -7,6 +7,7 @@ from _pyzdd import (
     Graph,
     GraphAuxiliary,
     VertexGraphFrontierManager,
+    get_vertex_order_by_bfs,
 )
 
 

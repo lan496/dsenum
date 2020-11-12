@@ -1,13 +1,14 @@
 from typing import Generator, List
 
 from pyzdd import Universe
-from pyzdd.graph import Graph, VertexGraphFrontierManager
+from pyzdd.graph import Graph, get_vertex_order_by_bfs
 
 from _pyzdd import (
+    BinaryVertexConverter,
     construct_derivative_structures,
-    construct_binary_derivative_structures_with_sro,
+    construct_derivative_structures_with_sro,
     convert_to_labeling,
-    convert_to_labeling_with_graph,
+    convert_to_binary_labeling_with_graph,
 )
 
 
@@ -36,15 +37,15 @@ def enumerate_labelings(dd: Universe, num_sites, num_types) -> Generator[List[in
         itr.next()
 
 
-def enumerate_labelings_with_graph(dd: Universe, num_types: int, cluster_graph: Graph) -> Generator[List[int], None, None]:
+def enumerate_binary_labelings_with_graph(dd: Universe, num_sites: int, vertex_order: List[int]) -> Generator[List[int], None, None]:
     """
     yield labeling of derivative structure with a cluster graph
 
     Parameters
     ----------
     dd: DD for enumerating derivative structures
-    num_types: the number of kinds of species
-    cluster_graph
+    num_sites: the number of sites in supercell
+    vertex_order
 
     Returns
     -------
@@ -55,8 +56,8 @@ def enumerate_labelings_with_graph(dd: Universe, num_types: int, cluster_graph: 
 
     itr = dd.begin()
     end = dd.end()
-    vgfm = VertexGraphFrontierManager(cluster_graph)
+    converter = BinaryVertexConverter(num_sites, vertex_order)
     while itr != end:
-        labeling = convert_to_labeling_with_graph(itr, vgfm, num_types)
+        labeling = convert_to_binary_labeling_with_graph(itr, converter)
         yield labeling
         itr.next()
