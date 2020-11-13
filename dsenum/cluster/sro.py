@@ -4,14 +4,18 @@ import numpy as np
 from pymatgen.core import Structure
 from tqdm import tqdm
 
-from pyzdd import Universe
-from pyzdd.graph import convert_to_raw_graph, VertexGraphFrontierManager
+from pyzdd import Universe, Permutation
+from pyzdd.graph import (
+    convert_to_raw_graph,
+    VertexGraphFrontierManager,
+    get_vertex_order_by_bfs,
+)
 from pyzdd.structure import (
-    construct_binary_derivative_structures_with_sro,
-    enumerate_labelings_with_graph,
+    construct_derivative_structures_with_sro,
+    enumerate_binary_labelings_with_graph,
 )
 
-from dsenum.permutation_group import DerivativeMultiLatticeHash
+from dsenum.permutation_group import DerivativeMultiLatticeHash, DerivativeStructurePermutation
 from dsenum.cluster.point_cluster import PointCluster, EquivalentPointClusterGenerator
 from dsenum.cluster.cluster_graph import BinaryPairClusterGraph
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
@@ -40,7 +44,8 @@ class SROStructureEnumerator:
         index: int,
         num_types: int,
         composition_ratios: List[List[int]],
-        distinct_cluster: PointCluster,
+        distinct_clusters: List[PointCluster],
+        remove_superperiodic=False,
     ):
         self._base_structure = base_structure
         self._index = index
@@ -65,7 +70,9 @@ class SROStructureEnumerator:
         self._supercell_composition_constraints = supercell_composition_constraints
         self._possible = possible
 
-        self._distinct_cluster = distinct_cluster
+        assert len(distinct_clusters) > 0
+        self._distinct_clusters = distinct_clusters
+        self._remove_superperiodic = remove_superperiodic
 
     @property
     def base_structure(self):
@@ -108,40 +115,72 @@ class SROStructureEnumerator:
         return list of labelings with a fixed SRO and concentration
         """
         displacement_set = self.base_structure.frac_coords
-        converter = DerivativeMultiLatticeHash(transformation, displacement_set)
+
+        # site converter
+        ds_permutation = DerivativeStructurePermutation(
+            transformation,
+            displacement_set,
+            self._rotations,
+            self._translations,
+        )
+        converter = ds_permutation.dhash
+
+        # permutation group from symmetry operations
+        automorphism = [
+            Permutation(sigma) for sigma in ds_permutation.get_symmetry_operation_permutations()
+        ]
+        translation_group = [Permutation(sigma) for sigma in ds_permutation._prm_t]
 
         epcg = EquivalentPointClusterGenerator(
             displacement_set, self._rotations, self._translations, converter
         )
-        pair_clusters = epcg.find_equivalent_point_clusters(self._distinct_cluster)
-        bpcg = BinaryPairClusterGraph(converter, pair_clusters, self._composition_ratios)
 
-        # target value for SQS
-        target = bpcg.get_sqs_target_value()
-        if not np.isclose(np.around(target), target):
-            # if `target` is not integer, impossible to satisfy SRO constraint
-            return []
-        target = int(np.around(target))
+        # fix vertex order
+        pair_clusters0 = epcg.find_equivalent_point_clusters(self._distinct_clusters[0])
+        bpcg0 = BinaryPairClusterGraph(converter, pair_clusters0, self._composition_ratios)
+        raw_graph0, _ = convert_to_raw_graph(bpcg0.graph)
+        vertex_order = get_vertex_order_by_bfs(raw_graph0)
 
-        raw_graph, _ = convert_to_raw_graph(bpcg.graph)
-        vgfm = VertexGraphFrontierManager(raw_graph)
-        print("Max frontier size:", vgfm.get_max_frontier_size())
+        graphs = []
+        targets = []
+        for cluster in self._distinct_clusters:
+            pair_clusters = epcg.find_equivalent_point_clusters(cluster)
+            bpcg = BinaryPairClusterGraph(converter, pair_clusters, self._composition_ratios)
+            raw_graph, _ = convert_to_raw_graph(bpcg.graph)
+            graphs.append(raw_graph)
+
+            target = bpcg.get_sqs_target_value()
+            # target value for SQS
+            if not np.isclose(np.around(target), target):
+                # if `target` is not integer, impossible to satisfy SRO constraint
+                return []
+            target = int(np.around(target))
+            targets.append(target)
 
         dd = Universe()
-        construct_binary_derivative_structures_with_sro(
+        construct_derivative_structures_with_sro(
             dd,
             self.num_sites,
             self._num_types,
+            vertex_order,
+            automorphism,
+            translation_group,
             self._supercell_composition_constraints,
-            vgfm,
-            target,
+            graphs,
+            targets,
+            self._remove_superperiodic,
         )
         print("Cardinality:", dd.cardinality())
 
         if only_count:
             return int(dd.cardinality())
         else:
-            labelings = list(enumerate_labelings_with_graph(dd, self._num_types, raw_graph))
+            if self._num_types == 2:
+                labelings = list(
+                    enumerate_binary_labelings_with_graph(dd, self.num_sites, vertex_order)
+                )
+            else:
+                raise NotImplementedError
             return labelings
 
 

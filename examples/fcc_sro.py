@@ -21,10 +21,33 @@ if __name__ == "__main__":
     aristo = get_fcc_structure(a=2.856)
     num_types = 2
     composition_ratios = [[1, 1]]
-    # 1st NN
-    cluster = PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 1))])
+    clusters = [
+        # 1st NN
+        PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 1))]),
+        # 2nd NN
+        PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (1, 1, -1))]),
+        # 3rd NN
+        PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 1, 1))]),
+        # 4th NN
+        PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 2))]),
+        # 5th NN
+        # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (2, 1, -1))]),
+        # # 6th NN
+        # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (1, 1, 1))]),
+        # # 7th NN
+        # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 1, 2))]),
+        # # 8th NN
+        # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (2, 2, -2))]),
+    ]
 
     index = 32
 
-    sse = SROStructureEnumerator(aristo, index, num_types, composition_ratios, cluster)
+    sse = SROStructureEnumerator(
+        aristo,
+        index,
+        num_types,
+        composition_ratios,
+        clusters,
+        remove_superperiodic=True,
+    )
     labelings_with_transformations = sse.count()
