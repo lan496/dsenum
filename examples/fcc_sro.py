@@ -27,9 +27,9 @@ if __name__ == "__main__":
         # 2nd NN
         PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (1, 1, -1))]),
         # 3rd NN
-        PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 1, 1))]),
+        # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 1, 1))]),
         # 4th NN
-        PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 2))]),
+        # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (0, 0, 2))]),
         # 5th NN
         # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (2, 1, -1))]),
         # # 6th NN
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         # PointCluster([DerivativeSite(0, (0, 0, 0)), DerivativeSite(0, (2, 2, -2))]),
     ]
 
-    index = 32
+    index = 8
 
     sse = SROStructureEnumerator(
         aristo,

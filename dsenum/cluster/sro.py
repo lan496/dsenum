@@ -2,6 +2,7 @@ from typing import List, Tuple, Union
 
 import numpy as np
 from pymatgen.core import Structure
+from pymatgen.core.periodic_table import DummySpecie, Specie, Element
 from tqdm import tqdm
 
 from pyzdd import Universe, Permutation
@@ -19,6 +20,7 @@ from dsenum.permutation_group import DerivativeMultiLatticeHash, DerivativeStruc
 from dsenum.cluster.point_cluster import PointCluster, EquivalentPointClusterGenerator
 from dsenum.cluster.cluster_graph import BinaryPairClusterGraph
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
+from dsenum.derivative_structure import ColoringToStructure
 from dsenum.utils import gcd_list
 
 
@@ -45,6 +47,7 @@ class SROStructureEnumerator:
         num_types: int,
         composition_ratios: List[List[int]],
         distinct_clusters: List[PointCluster],
+        mapping_color_species: List[Union[str, Element, Specie, DummySpecie]] = None,
         remove_superperiodic=False,
     ):
         self._base_structure = base_structure
@@ -74,6 +77,12 @@ class SROStructureEnumerator:
         self._distinct_clusters = distinct_clusters
         self._remove_superperiodic = remove_superperiodic
 
+        if mapping_color_species and len(mapping_color_species) != self.num_types:
+            raise ValueError("mapping_color_species must have num_type species.")
+        if mapping_color_species is None:
+            mapping_color_species = [DummySpecie(str(i)) for i in range(1, self.num_types + 1)]
+        self.mapping_color_species = mapping_color_species
+
     @property
     def base_structure(self):
         return self._base_structure
@@ -86,7 +95,43 @@ class SROStructureEnumerator:
     def num_sites(self):
         return self.num_base_sites * self._index
 
-    def generate(self) -> List[Tuple[np.ndarray, List[List[int]]]]:
+    @property
+    def num_types(self):
+        return self._num_types
+
+    def generate_structures(
+        self,
+        additional_species=None,
+        additional_frac_coords=None,
+    ) -> List[Structure]:
+        displacement_set = self.base_structure.frac_coords
+        list_dstructs: List[Structure] = []
+        if not self._possible:
+            return list_dstructs
+
+        for transformation in tqdm(self._list_reduced_HNF):
+            list_labelings = self.generate_with_hnf(transformation, only_count=False)  # type: ignore
+
+            # convert to Structure object
+            ds_permutation = DerivativeStructurePermutation(
+                transformation,
+                displacement_set,
+                self._rotations,
+                self._translations,
+            )
+            cts = ColoringToStructure(
+                self.base_structure,
+                ds_permutation.dhash,
+                self.mapping_color_species,
+                additional_species=additional_species,
+                additional_frac_coords=additional_frac_coords,
+            )
+            list_ds_hnf = [cts.convert_to_structure(cl) for cl in list_labelings]  # type: ignore
+            list_dstructs.extend(list_ds_hnf)
+
+        return list_dstructs
+
+    def generate_labelings(self) -> List[Tuple[np.ndarray, List[List[int]]]]:
         all_labelings_and_transformations = []
         for transformation in tqdm(self._list_reduced_HNF):
             list_labelings: List[List[int]] = []
