@@ -86,7 +86,10 @@ def reduce_HNF_list_by_parent_lattice_symmetry(
 
 
 def generate_symmetry_distinct_superlattices(
-    index: int, structure: Structure, return_symops=False
+    index: int,
+    structure: Structure,
+    return_symops=False,
+    symprec=1e-2,
 ):
     """
     generate symmetry distict HNF
@@ -103,7 +106,7 @@ def generate_symmetry_distinct_superlattices(
     (Optional) rotations: array, (# of symmetry operations, 3, 3)
     (Optional) translations: array, (# of symmetry operations, 3)
     """
-    rotations, translations = get_symmetry_operations(structure)
+    rotations, translations = get_symmetry_operations(structure, symprec=symprec)
     list_HNF = generate_all_superlattices(index)
     list_reduced_HNF = reduce_HNF_list_by_parent_lattice_symmetry(list_HNF, rotations)
     if return_symops:
