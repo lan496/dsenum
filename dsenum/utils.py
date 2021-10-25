@@ -1,9 +1,9 @@
 import numpy as np
 from pymatgen.analysis.structure_analyzer import SpacegroupAnalyzer
+from pymatgen.analysis.structure_prediction.volume_predictor import DLSVolumePredictor
 from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 from pymatgen.io.cif import CifWriter
-from pymatgen.analysis.structure_prediction.volume_predictor import DLSVolumePredictor
 
 from ._version import get_versions  # type: ignore
 
@@ -137,5 +137,5 @@ def refine_and_resize_structure(struct, refine_cell=True, resize_volume=True):
 
 
 def cast_integer_matrix(arr: np.ndarray) -> np.ndarray:
-    arr_int = np.around(arr).astype(np.int)
+    arr_int = np.around(arr).astype(int)
     return arr_int

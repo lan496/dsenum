@@ -17,3 +17,13 @@ exclude = '''
   | docs
 )/
 '''
+
+[tool.pytest.ini_options]
+addopts = "--benchmark-skip"
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning:yaml:",
+    "ignore::PendingDeprecationWarning:yaml:",
+    "ignore::DeprecationWarning:pymatgen:",
+    "ignore::PendingDeprecationWarning:pymatgen:",
+]

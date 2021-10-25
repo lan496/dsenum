@@ -20,7 +20,7 @@ def generate_all_superlattices(index: int) -> List[np.ndarray]:
     """
 
     def make_HNF(a, b, c, d, e, f):
-        arr = np.zeros((3, 3), dtype=np.int)
+        arr = np.zeros((3, 3), dtype=int)
         arr[np.tril_indices(3)] = np.array([a, b, c, d, e, f])
         return arr
 
