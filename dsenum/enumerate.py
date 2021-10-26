@@ -1,25 +1,25 @@
-from time import time
-from warnings import warn
-from typing import List, Union, Tuple, cast
 from abc import ABCMeta, abstractmethod
+from time import time
+from typing import List, Tuple, Union, cast
+from warnings import warn
 
-from tqdm import tqdm
-from pymatgen.core import Structure
-from pymatgen.core.periodic_table import DummySpecie, Specie, Element
 import numpy as np
+from pymatgen.core import Structure
+from pymatgen.core.periodic_table import DummySpecie, Element, Specie
+from tqdm import tqdm
 
-from dsenum.utils import get_symmetry_operations
-from dsenum.superlattice import generate_symmetry_distinct_superlattices
+from dsenum.coloring import SiteColoringEnumerator
 from dsenum.coloring_generator import (
     BaseColoringGenerator,
     ColoringGenerator,
     FixedConcentrationColoringGenerator,
     ListBasedColoringGenerator,
 )
-from dsenum.coloring import SiteColoringEnumerator
-from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.converter import convert_site_constraints
 from dsenum.derivative_structure import ColoringToStructure
+from dsenum.permutation_group import DerivativeStructurePermutation
+from dsenum.superlattice import generate_symmetry_distinct_superlattices
+from dsenum.utils import get_symmetry_operations
 
 
 class AbstractStructureEnumerator(metaclass=ABCMeta):
@@ -135,6 +135,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
 
         displacement_set = self.base_structure.frac_coords
         list_ds = []
+        list_transformations = []
         for hnf in tqdm(self.list_reduced_HNF):
             ds_permutation = DerivativeStructurePermutation(
                 hnf, displacement_set, self.rotations, self.translations
@@ -158,12 +159,14 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
                 list_ds_hnf = [cts.convert_to_poscar_string(cl) for cl in list_colorings_hnf]
 
             list_ds.extend(list_ds_hnf)
+            if return_transformations:
+                list_transformations.extend([hnf] * len(list_ds_hnf))
 
         end = time()
         print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
 
         if return_transformations:
-            return list_ds, self.list_reduced_HNF
+            return list_ds, list_transformations
         else:
             return list_ds
 
