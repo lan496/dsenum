@@ -1,15 +1,14 @@
 from copy import deepcopy
-from dataclasses import dataclass, astuple
+from dataclasses import astuple, dataclass
 from itertools import combinations
 from typing import List, Tuple
 
 import numpy as np
 from pymatgen.core import Structure
-from tqdm import tqdm
 
-from dsenum.site import DerivativeSite
 from dsenum.converter import DerivativeMultiLatticeHash
-from dsenum.utils import get_symmetry_operations, cast_integer_matrix
+from dsenum.site import DerivativeSite
+from dsenum.utils import cast_integer_matrix, get_symmetry_operations
 
 
 @dataclass
@@ -255,7 +254,7 @@ class EquivalentPointClusterGenerator:
 
         # generate symmetry-equivalent point clusters
         grouped_clusters_sizes = []
-        for point_cluster in tqdm(distinct_temp_point_clusters):
+        for point_cluster in distinct_temp_point_clusters:
             cluster_size = self.get_point_cluster_size(point_cluster, structure.lattice.matrix)
             equivs = self.find_equivalent_point_clusters(point_cluster)
             grouped_clusters_sizes.append((equivs, cluster_size))
