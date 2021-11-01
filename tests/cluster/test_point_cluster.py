@@ -1,12 +1,12 @@
-import pytest
 import numpy as np
-from pymatgen.core import Structure, Lattice
+import pytest
+from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 
-from dsenum.site import DerivativeSite
+from dsenum.cluster.point_cluster import EquivalentPointClusterGenerator, PointCluster
 from dsenum.converter import DerivativeMultiLatticeHash
-from dsenum.cluster.point_cluster import PointCluster, EquivalentPointClusterGenerator
-from dsenum.utils import square2d_lattice_symmetry, get_symmetry_operations
+from dsenum.site import DerivativeSite
+from dsenum.utils import get_symmetry_operations, square2d_lattice_symmetry
 
 
 def test_point_cluster():
@@ -193,6 +193,14 @@ def test_perovskite_oxygen_substructure(epcg_perovskite_oxygen_substructure):
                                     ])
     # fmt: on
 
+    # singlet cluster
+    grouped_singlets, _ = epcg_perovskite_oxygen_substructure.get_all_clusters(
+        oxygen_substructure, cutoff=1e-8, order=1
+    )
+    assert len(grouped_singlets) == 1
+    assert len(grouped_singlets[0]) == 3  # O1, O2, O3 sites are equivalent
+
+    # pair cluster
     grouped_point_clusters, sizes = epcg_perovskite_oxygen_substructure.get_all_clusters(
         oxygen_substructure, cutoff=2.01, order=2
     )

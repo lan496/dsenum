@@ -185,11 +185,18 @@ class EquivalentPointClusterGenerator:
                 list_points.append(point)
         list_points = list(set(list_points))
 
+        # Find distinct singlet clusters
+        distinct_point_clusters: List[PointCluster] = []
+        found_singlets = set()
+        for site_index in range(len(self.frac_coords)):
+            cluster = PointCluster([DerivativeSite(site_index, (0, 0, 0))])
+            if cluster in found_singlets:
+                continue
+            distinct_point_clusters.append(cluster)
+            for sym_cluster in self.find_equivalent_point_clusters(cluster):
+                found_singlets.add(sym_cluster)
+
         # grow pairs to triplet, quadruple, ...
-        distinct_point_clusters: List[PointCluster] = [
-            PointCluster([DerivativeSite(site_index, (0, 0, 0))])
-            for site_index in range(len(self.frac_coords))
-        ]
         for num_nn in range(2, order + 1):
             next_distinct_point_clusters: List[PointCluster] = []
             found = set([])
