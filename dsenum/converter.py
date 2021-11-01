@@ -1,9 +1,9 @@
 from itertools import product
-from typing import Optional, List, Tuple, Union, cast
+from typing import List, Optional, Tuple, Union, cast
 
 import numpy as np
 
-from dsenum.site import DerivativeSite, CanonicalSite
+from dsenum.site import CanonicalSite, DerivativeSite
 from dsenum.smith_normal_form import smith_normal_form
 from dsenum.utils import cast_integer_matrix
 
@@ -95,7 +95,7 @@ class DerivativeMultiLatticeHash:
                 self.invariant_factors
             )
             derivative_jimage = cast_integer_matrix(derivative_jimage)
-            derivative_jimage = np.dot(self.right, derivative_jimage)
+            derivative_jimage = np.dot(self.right, derivative_jimage).astype(int)
             return csite, derivative_jimage
         else:
             return csite
@@ -177,7 +177,7 @@ class DerivativeMultiLatticeHash:
 
     def embed_to_derivative_site(self, csite: CanonicalSite) -> DerivativeSite:
         jimage_base = cast_integer_matrix(np.dot(self.left_inv, csite.factor))
-        dsite = DerivativeSite(csite.site_index, tuple(jimage_base))
+        dsite = DerivativeSite(csite.site_index, tuple(jimage_base.tolist()))
         return dsite
 
 

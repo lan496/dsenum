@@ -26,4 +26,7 @@ filterwarnings = [
     "ignore::PendingDeprecationWarning:yaml:",
     "ignore::DeprecationWarning:pymatgen:",
     "ignore::PendingDeprecationWarning:pymatgen:",
+    "ignore::PendingDeprecationWarning:ruamel:",
+    "ignore::PendingDeprecationWarning:monty:",
+    "ignore::DeprecationWarning:past:",
 ]

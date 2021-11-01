@@ -83,7 +83,7 @@ class EquivalentPointClusterGenerator:
         for site_index, fc in enumerate(self.frac_coords):
             jimage = cast_integer_matrix(frac_coord - fc)
             if np.allclose(fc + jimage, frac_coord):
-                dsite = DerivativeSite(site_index, tuple(jimage))
+                dsite = DerivativeSite(site_index, tuple(jimage.tolist()))
                 return dsite
         raise ValueError(f"invalid fractional coordinates: {frac_coord}")
 
@@ -99,7 +99,8 @@ class EquivalentPointClusterGenerator:
 
         offset = np.array(points[0].jimage)
         shifed_new_points = [
-            DerivativeSite(p.site_index, tuple(np.array(p.jimage) - offset)) for p in points
+            DerivativeSite(p.site_index, tuple((np.array(p.jimage, dtype=int) - offset).tolist()))
+            for p in points
         ]
         return PointCluster(shifed_new_points)
 
