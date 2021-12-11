@@ -118,19 +118,20 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         self.num_elements_each_color = [int(np.around(factor * cr)) for cr in self.color_ratio]
 
     def generate_all_colorings(self):
-        first_coloring = []
-        for i in range(self.num_color):
-            first_coloring.extend([i for _ in range(self.num_elements_each_color[i])])
-
         if self.site_constraints:
             list_colorings = []
             flags = dict()
-            for cl in multiset_permutations(first_coloring):
-                # TODO: more efficient way to adopt site_constraints
-                if satisfy_site_constraints(self.site_constraints, cl):
+            # Apply site_constraints first
+            for cl_compressed in product(*[range(len(sc)) for sc in self.site_constraints]):
+                cl = [self.site_constraints[i][idx] for i, idx in enumerate(cl_compressed)]
+                if self._check_composition(cl):
                     list_colorings.append(cl)
                     flags[hash_in_all_configuration(cl, self.num_color)] = True
         else:
+            first_coloring = []
+            for i in range(self.num_color):
+                first_coloring.extend([i for _ in range(self.num_elements_each_color[i])])
+
             # TODO: inefficient to cast to list
             list_colorings = list(multiset_permutations(first_coloring))
             flags = {
@@ -153,6 +154,12 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         else:
             for cl in multiset_permutations(first_coloring):
                 yield cl
+
+    def _check_composition(self, coloring) -> bool:
+        counts = [0 for _ in range(self.num_color)]
+        for c in coloring:
+            counts[c] += 1
+        return counts == self.num_elements_each_color
 
 
 def satisfy_site_constraints(site_constraints, coloring):
