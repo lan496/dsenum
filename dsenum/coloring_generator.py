@@ -5,7 +5,7 @@ from typing import List
 import numpy as np
 from sympy.utilities.iterables import multiset_permutations
 
-from dsenum.core import hash_in_all_configuration  # type: ignore
+from dsenum.core import get_composition, hash_in_all_configuration  # type: ignore
 
 
 class BaseColoringGenerator(metaclass=ABCMeta):
@@ -124,7 +124,7 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
             # Apply site_constraints first
             for cl_compressed in product(*[range(len(sc)) for sc in self.site_constraints]):
                 cl = [self.site_constraints[i][idx] for i, idx in enumerate(cl_compressed)]
-                if self._check_composition(cl):
+                if get_composition(cl, self.num_color) == self.num_elements_each_color:
                     list_colorings.append(cl)
                     flags[hash_in_all_configuration(cl, self.num_color)] = True
         else:
@@ -154,12 +154,6 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
         else:
             for cl in multiset_permutations(first_coloring):
                 yield cl
-
-    def _check_composition(self, coloring) -> bool:
-        counts = [0 for _ in range(self.num_color)]
-        for c in coloring:
-            counts[c] += 1
-        return counts == self.num_elements_each_color
 
 
 def satisfy_site_constraints(site_constraints, coloring):

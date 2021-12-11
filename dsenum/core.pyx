@@ -16,3 +16,12 @@ def hash_in_all_configuration(coloring, num_color):
 def act_permutation(perm, coloring):
     new_coloring = [coloring[perm[i]] for i in range(len(coloring))]
     return new_coloring
+
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def get_composition(coloring, num_color):
+    composition = [0 for _ in range(num_color)]
+    for c in coloring:
+        composition[c] += 1
+    return composition
