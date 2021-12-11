@@ -110,16 +110,19 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
 
     def generate(
         self,
-        return_transformations=False,
+        return_colorings=False,
         additional_species=None,
         additional_frac_coords=None,
         output="pymatgen",
-    ) -> Union[List[Union[Structure, str]], Tuple[List[Union[Structure, str]], List[np.ndarray]]]:
+    ) -> Union[
+        List[Union[Structure, str]],
+        Tuple[List[Union[Structure, str]], List[np.ndarray], List[List[int]]],
+    ]:
         """
         Parameters
         ----------
-        return_transformations: bool, optional
-            if true, return transformation matrices in addition
+        return_colorings: bool, optional
+            if true, return transformation matrices and colorings in addition
         additional_species: list of pymatgen.core.Species, optional
             species which are nothing to do with ordering
         additional_frac_coords: np.ndarray, optional
@@ -129,6 +132,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         -------
         list_ds: list of derivative structure
         list_transformations: list of transformation matrices, optional
+        list_colorings: list of colorings, optional
         """
         assert (output == "pymatgen") or (output == "poscar")
         start = time()
@@ -136,6 +140,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         displacement_set = self.base_structure.frac_coords
         list_ds = []
         list_transformations = []
+        list_colorings = []
         for hnf in tqdm(self.list_reduced_HNF):
             ds_permutation = DerivativeStructurePermutation(
                 hnf, displacement_set, self.rotations, self.translations
@@ -159,14 +164,15 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
                 list_ds_hnf = [cts.convert_to_poscar_string(cl) for cl in list_colorings_hnf]
 
             list_ds.extend(list_ds_hnf)
-            if return_transformations:
+            if return_colorings:
                 list_transformations.extend([hnf] * len(list_ds_hnf))
+                list_colorings.extend(list_colorings_hnf)
 
         end = time()
         print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
 
-        if return_transformations:
-            return list_ds, list_transformations
+        if return_colorings:
+            return list_ds, list_transformations, list_colorings
         else:
             return list_ds
 
