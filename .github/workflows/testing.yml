@@ -36,7 +36,7 @@ jobs:
           python -m pytest -v --cov=dsenum --cov-config=setup.cfg --cov-report=xml tests/
 
       - name: Upload coverage to Codecov
-        if: matrix.python == '3.8'
+        if: matrix.python-version == '3.8'
         uses: codecov/codecov-action@v2
         with:
           file: ./coverage.xml
