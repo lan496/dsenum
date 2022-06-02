@@ -27,3 +27,39 @@ Benchmark
 .. code-block:: shell
 
     pytest --benchmark-only --benchmark-columns=mean,stddev tests/
+
+Documentation
+-------------
+
+Local build
+
+.. code-block:: shell
+
+    sphinx-autobuild --host 0.0.0.0 docs docs_build
+
+Release
+-------
+
+Create and push git tag
+
+.. code-block:: shell
+
+    git tag v0.3.1
+    git push origin --tags
+
+Confirm the version number
+
+.. code-block:: shell
+
+    python -m setuptools_scm
+
+Publish in PyPI
+---------------
+
+.. code-block:: shell
+
+    pip install twine
+    python setup.py sdist bdist_wheel
+
+    # Test PyPI
+    python -m twine upload --repository testpypi dist/*
