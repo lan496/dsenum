@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Index" href="genindex.html" /><link rel="prev" title="Change Log" href="changelog.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
-        <title>Developer Note - dsenum 0.3.6.dev5+gf5282b2 documentation</title>
+        <title>Developer Note - dsenum 0.3.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">dsenum 0.3.6.dev5+gf5282b2 documentation</div></a>
+      <a href="index.html"><div class="brand">dsenum 0.3.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -146,7 +146,7 @@
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   
-  <span class="sidebar-brand-text">dsenum 0.3.6.dev5+gf5282b2 documentation</span>
+  <span class="sidebar-brand-text">dsenum 0.3.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -217,6 +217,35 @@
 </pre></div>
 </div>
 </section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">#</a></h2>
+<p>Local build</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>sphinx-autobuild --host <span class="m">0</span>.0.0.0 docs docs_build
+</pre></div>
+</div>
+</section>
+<section id="release">
+<h2>Release<a class="headerlink" href="#release" title="Permalink to this headline">#</a></h2>
+<p>Create and push git tag</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>git tag v0.3.1
+git push origin --tags
+</pre></div>
+</div>
+<p>Confirm the version number</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python -m setuptools_scm
+</pre></div>
+</div>
+</section>
+<section id="publish-in-pypi">
+<h2>Publish in PyPI<a class="headerlink" href="#publish-in-pypi" title="Permalink to this headline">#</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install twine
+python setup.py sdist bdist_wheel
+
+<span class="c1"># Test PyPI</span>
+python -m twine upload --repository testpypi dist/*
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -279,6 +308,9 @@
 <li><a class="reference internal" href="#cython">Cython</a></li>
 <li><a class="reference internal" href="#github-actions">Github Actions</a></li>
 <li><a class="reference internal" href="#benchmark">Benchmark</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#release">Release</a></li>
+<li><a class="reference internal" href="#publish-in-pypi">Publish in PyPI</a></li>
 </ul>
 </li>
 </ul>
