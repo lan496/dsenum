@@ -122,5 +122,7 @@ dmypy.json
 *.vscode
 
 # documents
-docs/source/dsenum.rst
-docs/source/modules.rst
+docs_build/
+
+gh-pages
+gh-pages.pub

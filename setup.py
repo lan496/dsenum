@@ -50,7 +50,9 @@ setup(
         ],
         "docs": [
             "sphinx",
-            "sphinx-rtd-theme",
+            "sphinx-autobuild",
+            "furo",
+            "m2r2",
         ],
     },
     tests_require=["pytest"],
