@@ -1,5 +1,3 @@
 include versioneer.py
 include dsenum/_version.py
-include requirements.txt
-include environment.yml
 include LICENSE

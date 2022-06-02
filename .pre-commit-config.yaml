@@ -1,27 +1,28 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.2.0
     hooks:
       - id: check-added-large-files
       - id: check-yaml
   # formatter
   - repo: https://github.com/ambv/black
-    rev: stable
+    rev: 22.3.0
     hooks:
     - id: black
   # linter
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
+    rev: 3.9.2
     hooks:
     - id: flake8
+      exclude: ^docs/
   # type annotation
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.782
+    rev: v0.960
     hooks:
     - id: mypy
   # isort
   - repo: https://github.com/pycqa/isort
-    rev: 5.9.3
+    rev: 5.10.1
     hooks:
       - id: isort
         name: isort (python)
@@ -32,3 +33,8 @@ repos:
       - id: isort
         name: isort (pyi)
         types: [pyi]
+  # Upgrade syntax
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.32.1
+    hooks:
+      - id: pyupgrade

@@ -1,9 +1,0 @@
-sphinx
-sphinx-rtd-theme
-pytest>=6.0.0
-pytest-cov
-pytest-benchmark
-pre-commit
-black
-mypy
-versioneer

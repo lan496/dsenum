@@ -1,7 +1,0 @@
-pymatgen>=2020.4.29
-numpy
-sympy
-scipy
-matplotlib
-joblib
-tqdm
