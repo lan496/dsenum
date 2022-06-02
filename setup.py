@@ -22,7 +22,7 @@ setup(
     packages=find_packages("dsneum"),
     package_data={"dsenum": ["py.typed"]},
     py_modules=[splitext(basename(path))[0] for path in glob("dsenum/*.py")],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     setup_requires=["setuptools_scm", "numpy"],
     install_requires=[
         "setuptools",
@@ -65,7 +65,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
