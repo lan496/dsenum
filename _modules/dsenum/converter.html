@@ -1,71 +1,35 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>dsenum.converter &mdash; dsenum 0+untagged.1.g05d34bd documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dsenum.converter &mdash; dsenum 0+untagged.1.g30aff7e documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> dsenum
-          
-
-          
+            <a href="../../index.html" class="icon icon-home"> dsenum
           </a>
-
-          
-            
-            
               <div class="version">
                 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -73,94 +37,45 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../supercell.html">Supercell Construction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">dsenum</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">dsenum</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
           <li><a href="../dsenum.html">dsenum</a> &raquo;</li>
-        
       <li>dsenum.converter</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for dsenum.converter</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">dsenum.site</span> <span class="kn">import</span> <span class="n">DerivativeSite</span><span class="p">,</span> <span class="n">CanonicalSite</span>
+<span class="kn">from</span> <span class="nn">dsenum.site</span> <span class="kn">import</span> <span class="n">CanonicalSite</span><span class="p">,</span> <span class="n">DerivativeSite</span>
 <span class="kn">from</span> <span class="nn">dsenum.smith_normal_form</span> <span class="kn">import</span> <span class="n">smith_normal_form</span>
 <span class="kn">from</span> <span class="nn">dsenum.utils</span> <span class="kn">import</span> <span class="n">cast_integer_matrix</span>
 
@@ -223,6 +138,10 @@
     <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_site_base</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_base_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_site_base</span>
+
 <div class="viewcode-block" id="DerivativeMultiLatticeHash.hash_derivative_site"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.hash_derivative_site">[docs]</a>    <span class="k">def</span> <span class="nf">hash_derivative_site</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">dsite</span><span class="p">:</span> <span class="n">DerivativeSite</span><span class="p">,</span> <span class="n">return_image</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">CanonicalSite</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">CanonicalSite</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
@@ -248,7 +167,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">invariant_factors</span>
             <span class="p">)</span>
             <span class="n">derivative_jimage</span> <span class="o">=</span> <span class="n">cast_integer_matrix</span><span class="p">(</span><span class="n">derivative_jimage</span><span class="p">)</span>
-            <span class="n">derivative_jimage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">derivative_jimage</span><span class="p">)</span>
+            <span class="n">derivative_jimage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">derivative_jimage</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">csite</span><span class="p">,</span> <span class="n">derivative_jimage</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">csite</span></div>
@@ -317,6 +236,11 @@
         <span class="n">raveled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span><span class="n">multi_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">raveled</span></div>
 
+<div class="viewcode-block" id="DerivativeMultiLatticeHash.ravel_derivative_site"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.ravel_derivative_site">[docs]</a>    <span class="k">def</span> <span class="nf">ravel_derivative_site</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dsite</span><span class="p">:</span> <span class="n">DerivativeSite</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">csite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_derivative_site</span><span class="p">(</span><span class="n">dsite</span><span class="p">)</span>
+        <span class="n">raveled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ravel_canonical_site</span><span class="p">(</span><span class="n">csite</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">raveled</span></div>
+
 <div class="viewcode-block" id="DerivativeMultiLatticeHash.unravel_to_canonical_site"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.unravel_to_canonical_site">[docs]</a>    <span class="k">def</span> <span class="nf">unravel_to_canonical_site</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CanonicalSite</span><span class="p">:</span>
         <span class="n">unraveled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">site_index</span><span class="p">,</span> <span class="n">factor</span> <span class="o">=</span> <span class="n">unraveled</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">unraveled</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -325,7 +249,7 @@
 
 <div class="viewcode-block" id="DerivativeMultiLatticeHash.embed_to_derivative_site"><a class="viewcode-back" href="../../dsenum.html#dsenum.converter.DerivativeMultiLatticeHash.embed_to_derivative_site">[docs]</a>    <span class="k">def</span> <span class="nf">embed_to_derivative_site</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csite</span><span class="p">:</span> <span class="n">CanonicalSite</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DerivativeSite</span><span class="p">:</span>
         <span class="n">jimage_base</span> <span class="o">=</span> <span class="n">cast_integer_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left_inv</span><span class="p">,</span> <span class="n">csite</span><span class="o">.</span><span class="n">factor</span><span class="p">))</span>
-        <span class="n">dsite</span> <span class="o">=</span> <span class="n">DerivativeSite</span><span class="p">(</span><span class="n">csite</span><span class="o">.</span><span class="n">site_index</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">jimage_base</span><span class="p">))</span>
+        <span class="n">dsite</span> <span class="o">=</span> <span class="n">DerivativeSite</span><span class="p">(</span><span class="n">csite</span><span class="o">.</span><span class="n">site_index</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">jimage_base</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">dsite</span></div></div>
 
 
@@ -350,49 +274,30 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2020, Kohei Shinohara
-
-    </p>
+    <p>&#169; Copyright 2020, Kohei Shinohara.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

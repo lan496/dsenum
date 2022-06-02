@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dsenum.cluster.point_cluster &mdash; dsenum 0+untagged.1.g30aff7e documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> dsenum
+          </a>
+              <div class="version">
+                0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../supercell.html">Supercell Construction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">dsenum</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dsenum</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../dsenum.html">dsenum</a> &raquo;</li>
+      <li>dsenum.cluster.point_cluster</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dsenum.cluster.point_cluster</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">astuple</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Structure</span>
+
+<span class="kn">from</span> <span class="nn">dsenum.converter</span> <span class="kn">import</span> <span class="n">DerivativeMultiLatticeHash</span>
+<span class="kn">from</span> <span class="nn">dsenum.site</span> <span class="kn">import</span> <span class="n">DerivativeSite</span>
+<span class="kn">from</span> <span class="nn">dsenum.utils</span> <span class="kn">import</span> <span class="n">cast_integer_matrix</span><span class="p">,</span> <span class="n">get_symmetry_operations</span>
+
+
+<div class="viewcode-block" id="PointCluster"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.PointCluster">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PointCluster</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cluster class represents the set of DerivativeSite</span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    points: list of Point</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DerivativeSite</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">points_str</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;site_index=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">site_index</span><span class="si">}</span><span class="s2">, jimage=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">jimage</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">]</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="s2">&quot;PointCluster[&quot;</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">points_str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+        <span class="k">return</span> <span class="n">rep</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">PointCluster</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator">[docs]</a><span class="k">class</span> <span class="nc">EquivalentPointClusterGenerator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    find equivalent point clusters</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frac_coords: np.ndarray, (None, dim)</span>
+<span class="sd">    rotations: np.ndarray(None, dim, dim)</span>
+<span class="sd">    translations: np.ndarray(None, dim, dim)</span>
+<span class="sd">    converter: DerivativeMultiLatticeHash</span>
+<span class="sd">        converter for periodic boundary condition</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frac_coords</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">rotations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">translations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">converter</span><span class="p">:</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span> <span class="o">=</span> <span class="n">frac_coords</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="o">=</span> <span class="n">rotations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">translations</span> <span class="o">=</span> <span class="n">translations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">converter</span> <span class="o">=</span> <span class="n">converter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_get_dsite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frac_coord</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DerivativeSite</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return DerivativeSite from fractional coorinates</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        frac_coords: (dim, )</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dsite: DerivativeSite</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">site_index</span><span class="p">,</span> <span class="n">fc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">):</span>
+            <span class="n">jimage</span> <span class="o">=</span> <span class="n">cast_integer_matrix</span><span class="p">(</span><span class="n">frac_coord</span> <span class="o">-</span> <span class="n">fc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">fc</span> <span class="o">+</span> <span class="n">jimage</span><span class="p">,</span> <span class="n">frac_coord</span><span class="p">):</span>
+                <span class="n">dsite</span> <span class="o">=</span> <span class="n">DerivativeSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">jimage</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+                <span class="k">return</span> <span class="n">dsite</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid fractional coordinates: </span><span class="si">{</span><span class="n">frac_coord</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.normalize_point_cluster"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.normalize_point_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_point_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point_cluster</span><span class="p">:</span> <span class="n">PointCluster</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointCluster</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        normalize point-cluster such that,</span>
+<span class="sd">            - jimage of cluster[0] is (0, 0, 0)</span>
+<span class="sd">            - points are in ascending order</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># sort sites by (site_index, jimage)</span>
+        <span class="n">tuple_points</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">astuple</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">point_cluster</span><span class="o">.</span><span class="n">points</span><span class="p">])</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">DerivativeSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="n">jimage</span><span class="p">)</span> <span class="k">for</span> <span class="n">site_index</span><span class="p">,</span> <span class="n">jimage</span> <span class="ow">in</span> <span class="n">tuple_points</span><span class="p">]</span>
+
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">jimage</span><span class="p">)</span>
+        <span class="n">shifed_new_points</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">DerivativeSite</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">site_index</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">jimage</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">PointCluster</span><span class="p">(</span><span class="n">shifed_new_points</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.operate_point_cluster"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.operate_point_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">operate_point_cluster</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">point_cluster</span><span class="p">:</span> <span class="n">PointCluster</span><span class="p">,</span> <span class="n">R</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tau</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointCluster</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        operate (R, tau) to a point cluster</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">point_cluster</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+            <span class="n">site_index</span><span class="p">,</span> <span class="n">jimage</span> <span class="o">=</span> <span class="n">astuple</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+            <span class="n">new_frac_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">[</span><span class="n">site_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">jimage</span><span class="p">))</span> <span class="o">+</span> <span class="n">tau</span>
+            <span class="n">new_point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dsite</span><span class="p">(</span><span class="n">new_frac_coord</span><span class="p">)</span>
+            <span class="n">new_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_point</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PointCluster</span><span class="p">(</span><span class="n">new_points</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.find_equivalent_point_clusters"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.find_equivalent_point_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">find_equivalent_point_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point_cluster</span><span class="p">:</span> <span class="n">PointCluster</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PointCluster</span><span class="p">]:</span>
+        <span class="c1"># (rotations, translations) should contain identity operation</span>
+        <span class="n">equiv_clusters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">normalize_point_cluster</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operate_point_cluster</span><span class="p">(</span><span class="n">point_cluster</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">tau</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">R</span><span class="p">,</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">translations</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">all_equiv_clusters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># apply translation</span>
+        <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">equiv_clusters</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">converter</span><span class="o">.</span><span class="n">get_lattice_points</span><span class="p">():</span>
+                <span class="n">translated_cluster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operate_point_cluster</span><span class="p">(</span>
+                    <span class="n">cluster</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lp</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">all_equiv_clusters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">translated_cluster</span><span class="p">)</span>
+        <span class="c1"># to account for multiplicity, do not unique all_equiv_clusters</span>
+        <span class="k">return</span> <span class="n">all_equiv_clusters</span></div>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.get_point_cluster_size"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_point_cluster_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_point_cluster_size</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">point_cluster</span><span class="p">:</span> <span class="n">PointCluster</span><span class="p">,</span> <span class="n">lattice_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        cluster size is defined as a maximum distance between sites in a point cluster</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lattice_matrix: (dim, dim)</span>
+<span class="sd">            row-wise basis vectors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">s0</span><span class="p">,</span> <span class="n">s1</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">point_cluster</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">f0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">[</span><span class="n">s0</span><span class="o">.</span><span class="n">site_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">s0</span><span class="o">.</span><span class="n">jimage</span><span class="p">)</span>
+            <span class="n">f1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">[</span><span class="n">s1</span><span class="o">.</span><span class="n">site_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">s1</span><span class="o">.</span><span class="n">jimage</span><span class="p">)</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">lattice_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">f1</span> <span class="o">-</span> <span class="n">f0</span><span class="p">))</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">size</span></div>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.get_distinct_point_clusters"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_distinct_point_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">get_distinct_point_clusters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PointCluster</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return all distinct `order`-sites point-clusters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        structure: Structure</span>
+<span class="sd">        cutoff: float</span>
+<span class="sd">            cutoff radius</span>
+<span class="sd">        order: int</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        distinct_point_clusters: List[PointCluster]</span>
+<span class="sd">            returned list of point clusters are sorted by cluster size in the ascending order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># search neighbor points whose distnace from some site in the unit cell is less than cutoff.</span>
+        <span class="n">list_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DerivativeSite</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">structure</span><span class="p">:</span>
+            <span class="n">neighbors</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_neighbors</span><span class="p">(</span><span class="n">site</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">nn_distance</span> <span class="o">-</span> <span class="n">cutoff</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dsite</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">)</span>
+                <span class="n">list_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+        <span class="n">list_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">list_points</span><span class="p">))</span>
+
+        <span class="c1"># Find distinct singlet clusters</span>
+        <span class="n">distinct_point_clusters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PointCluster</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">found_singlets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">site_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">)):</span>
+            <span class="n">cluster</span> <span class="o">=</span> <span class="n">PointCluster</span><span class="p">([</span><span class="n">DerivativeSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))])</span>
+            <span class="k">if</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">found_singlets</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">distinct_point_clusters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sym_cluster</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_equivalent_point_clusters</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
+                <span class="n">found_singlets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sym_cluster</span><span class="p">)</span>
+
+        <span class="c1"># grow pairs to triplet, quadruple, ...</span>
+        <span class="k">for</span> <span class="n">num_nn</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">next_distinct_point_clusters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PointCluster</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+
+            <span class="k">for</span> <span class="n">added_point</span> <span class="ow">in</span> <span class="n">list_points</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">precluster</span> <span class="ow">in</span> <span class="n">distinct_point_clusters</span><span class="p">:</span>
+                    <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DerivativeSite</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">precluster</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">added_point</span><span class="p">]</span>
+                    <span class="n">point_cluster</span><span class="p">:</span> <span class="n">PointCluster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_point_cluster</span><span class="p">(</span>
+                        <span class="n">PointCluster</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="c1"># skip an overlapped cluster</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">point_cluster</span><span class="o">.</span><span class="n">points</span><span class="p">))</span> <span class="o">!=</span> <span class="n">num_nn</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># skip too large point cluster</span>
+                    <span class="n">cluster_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_point_cluster_size</span><span class="p">(</span>
+                        <span class="n">point_cluster</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">cluster_size</span> <span class="o">-</span> <span class="n">cutoff</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="k">if</span> <span class="n">point_cluster</span> <span class="ow">in</span> <span class="n">found</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">next_distinct_point_clusters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point_cluster</span><span class="p">)</span>
+
+                    <span class="n">equiv_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_equivalent_point_clusters</span><span class="p">(</span><span class="n">point_cluster</span><span class="p">)</span>
+                    <span class="n">found</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">equiv_clusters</span><span class="p">)</span>
+
+            <span class="n">distinct_point_clusters</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">next_distinct_point_clusters</span><span class="p">)</span>
+
+        <span class="c1"># sort by cluser size</span>
+        <span class="n">distinct_point_clusters</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pcl</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_point_cluster_size</span><span class="p">(</span><span class="n">pcl</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">distinct_point_clusters</span></div>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.get_all_clusters"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_all_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_clusters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PointCluster</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        return all `order`-sites clusters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        structure: Structure</span>
+<span class="sd">        cutoff: float</span>
+<span class="sd">            cutoff radius</span>
+<span class="sd">        order: int</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        grouped_point_clusters: List[List[PointCluster]]</span>
+<span class="sd">            grouped_points_clusters[i] is a list of the i-th equivalent group of clusters</span>
+<span class="sd">        point_cluster_sizes: List[float]</span>
+<span class="sd">            point_cluster_sizes[i] is a size of the i-th equivalent group of clusters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># find distinct point clusters</span>
+        <span class="n">distinct_temp_point_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_distinct_point_clusters</span><span class="p">(</span>
+            <span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">eps</span>
+        <span class="p">)</span>
+
+        <span class="c1"># generate symmetry-equivalent point clusters</span>
+        <span class="n">grouped_clusters_sizes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">point_cluster</span> <span class="ow">in</span> <span class="n">distinct_temp_point_clusters</span><span class="p">:</span>
+            <span class="n">cluster_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_point_cluster_size</span><span class="p">(</span><span class="n">point_cluster</span><span class="p">,</span> <span class="n">structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+            <span class="n">equivs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_equivalent_point_clusters</span><span class="p">(</span><span class="n">point_cluster</span><span class="p">)</span>
+            <span class="n">grouped_clusters_sizes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">equivs</span><span class="p">,</span> <span class="n">cluster_size</span><span class="p">))</span>
+
+        <span class="c1"># sort by cluster size</span>
+        <span class="n">grouped_clusters_sizes</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">grouped_point_clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcls</span> <span class="k">for</span> <span class="n">gcls</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">grouped_clusters_sizes</span><span class="p">]</span>
+        <span class="n">point_cluster_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">size</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">grouped_clusters_sizes</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">grouped_point_clusters</span><span class="p">,</span> <span class="n">point_cluster_sizes</span></div>
+
+<div class="viewcode-block" id="EquivalentPointClusterGenerator.from_structure"><a class="viewcode-back" href="../../../dsenum.cluster.html#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.from_structure">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_structure</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">transformation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">symprec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        create EquivalentPointClusterGenerator from pymatgen.core.Structure</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        structure: pymatgen.core.Structure, base structure</span>
+<span class="sd">        transformation: transformation matrix of sublattice</span>
+<span class="sd">        symprec: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">frac_coords</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">frac_coords</span>
+        <span class="n">rotations</span><span class="p">,</span> <span class="n">translations</span> <span class="o">=</span> <span class="n">get_symmetry_operations</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">symprec</span><span class="p">)</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="n">DerivativeMultiLatticeHash</span><span class="p">(</span><span class="n">transformation</span><span class="p">,</span> <span class="n">frac_coords</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">frac_coords</span><span class="o">=</span><span class="n">frac_coords</span><span class="p">,</span>
+            <span class="n">rotations</span><span class="o">=</span><span class="n">rotations</span><span class="p">,</span>
+            <span class="n">translations</span><span class="o">=</span><span class="n">translations</span><span class="p">,</span>
+            <span class="n">converter</span><span class="o">=</span><span class="n">converter</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Kohei Shinohara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

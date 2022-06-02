@@ -1,6 +1,14 @@
 dsenum package
 ==============
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   dsenum.cluster
+
 Submodules
 ----------
 
@@ -24,14 +32,6 @@ dsenum.converter module
 -----------------------
 
 .. automodule:: dsenum.converter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dsenum.core module
-------------------
-
-.. automodule:: dsenum.core
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,73 +1,39 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Supercell Construction &mdash; dsenum 0+untagged.1.g05d34bd documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supercell Construction &mdash; dsenum 0+untagged.1.g30aff7e documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="dsenum" href="modules.html" />
     <link rel="prev" title="Installation" href="install.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> dsenum
-          
-
-          
+            <a href="index.html" class="icon icon-home"> dsenum
           </a>
-
-          
-            
-            
               <div class="version">
                 0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -75,18 +41,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Supercell Construction</a><ul>
@@ -98,87 +53,48 @@
 <li class="toctree-l1"><a class="reference internal" href="modules.html">dsenum</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">dsenum</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Supercell Construction</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/supercell.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="supercell-construction">
-<h1>Supercell Construction<a class="headerlink" href="#supercell-construction" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="constructing-supercell-for-a-general-transformation-matrix">
-<h2>constructing supercell for a general transformation matrix<a class="headerlink" href="#constructing-supercell-for-a-general-transformation-matrix" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="supercell-construction">
+<h1>Supercell Construction<a class="headerlink" href="#supercell-construction" title="Permalink to this heading"></a></h1>
+<section id="constructing-supercell-for-a-general-transformation-matrix">
+<h2>constructing supercell for a general transformation matrix<a class="headerlink" href="#constructing-supercell-for-a-general-transformation-matrix" title="Permalink to this heading"></a></h2>
 <p>We describe a rigorous way to associate a supercell with its primitive cell.
 In what follows, we explain in a three-dimensional case.</p>
 <p>We put a collection of point coordinates in a primitive cell as <span class="math notranslate nohighlight">\(D\)</span>.
 Any point coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> in the crystallographic pattern are uniquely decomposed as</p>
 <div class="math notranslate nohighlight" id="equation-dsite">
-<span class="eqno">(1)<a class="headerlink" href="#equation-dsite" title="Permalink to this equation">¶</a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{m},\quad \mathbf{d} \in D,\, \mathbf{m} \in \mathbb{Z}^{3}\]</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-dsite" title="Permalink to this equation"></a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{m},\quad \mathbf{d} \in D,\, \mathbf{m} \in \mathbb{Z}^{3}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{m}\)</span> indicates indices of a lattice point of a unit cell that the point coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> belongs.
 When we consider translational symmetry of a sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span>, two lattice points <span class="math notranslate nohighlight">\(\mathbf{m}, \mathbf{m}'\)</span> are equivalent if the distance between the two lattice points is a translation of <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span>, that is,</p>
 <div class="math notranslate nohighlight" id="equation-eq-equiv-lattice-points">
-<span class="eqno">(2)<a class="headerlink" href="#equation-eq-equiv-lattice-points" title="Permalink to this equation">¶</a></span>\[\mathbf{m} - \mathbf{m}' \in \mathbf{M}\mathbb{Z}^{3}.\]</div>
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-equiv-lattice-points" title="Permalink to this equation"></a></span>\[\mathbf{m} - \mathbf{m}' \in \mathbf{M}\mathbb{Z}^{3}.\]</div>
 <p>The Smith normal form (SNF) of the transformation matrix <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> is useful to concretely write down Eq. <a class="reference internal" href="#equation-eq-equiv-lattice-points">(2)</a>.
 The SNF is one of the decomposition of an integer matrix <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-eq-snf">
-<span class="eqno">(3)<a class="headerlink" href="#equation-eq-snf" title="Permalink to this equation">¶</a></span>\[\mathbf{S} = \mathbf{PMQ}\]</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-snf" title="Permalink to this equation"></a></span>\[\mathbf{S} = \mathbf{PMQ}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{Q}\)</span> are unimodular matrices, and <span class="math notranslate nohighlight">\(\mathbf{S}\)</span> is a diagonal integer matrix,</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{S} =
@@ -190,19 +106,19 @@ The SNF is one of the decomposition of an integer matrix <span class="math notra
 <p>Here <span class="math notranslate nohighlight">\(S_{11}\)</span> is a divisor of <span class="math notranslate nohighlight">\(S_{22}\)</span>, and <span class="math notranslate nohighlight">\(S_{22}\)</span> is a divisor of <span class="math notranslate nohighlight">\(S_{33}\)</span>.
 We can rewrite Eq. <a class="reference internal" href="#equation-eq-equiv-lattice-points">(2)</a> with Eq. <a class="reference internal" href="#equation-eq-snf">(3)</a> as</p>
 <div class="math notranslate nohighlight" id="equation-eq-equiv-represents">
-<span class="eqno">(4)<a class="headerlink" href="#equation-eq-equiv-represents" title="Permalink to this equation">¶</a></span>\[[\mathbf{Pm}]_{\mathbf{S}} = [\mathbf{Pm}']_{\mathbf{S}}\]</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-equiv-represents" title="Permalink to this equation"></a></span>\[[\mathbf{Pm}]_{\mathbf{S}} = [\mathbf{Pm}']_{\mathbf{S}}\]</div>
 <p>where <span class="math notranslate nohighlight">\([\cdot]_{\mathbf{S}}\)</span> indicates to take modulus for the <span class="math notranslate nohighlight">\(i\)</span>th row by <span class="math notranslate nohighlight">\(S_{ii}\)</span>.
 We mention that the range of <span class="math notranslate nohighlight">\([\cdot]_{\mathbf{S}}\)</span> is <span class="math notranslate nohighlight">\(\mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}}\)</span> because a value of the <span class="math notranslate nohighlight">\(i\)</span>th row is a remainder by <span class="math notranslate nohighlight">\(S_{ii}\)</span>.
 Using Eq. <a class="reference internal" href="#equation-eq-equiv-represents">(4)</a>, the point coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> are decomposed with the translation of the sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-eq-site-decomposition">
-<span class="eqno">(5)<a class="headerlink" href="#equation-eq-site-decomposition" title="Permalink to this equation">¶</a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml} ,\, \quad \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}},\, \mathbf{l} \in \mathbb{Z}^{3}.\]</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-site-decomposition" title="Permalink to this equation"></a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml} ,\, \quad \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}},\, \mathbf{l} \in \mathbb{Z}^{3}.\]</div>
 <p>In Eq. <a class="reference internal" href="#equation-eq-site-decomposition">(5)</a>, the terms <span class="math notranslate nohighlight">\(\mathbf{d} + \mathbf{P}^{-1}\mathbf{f}\)</span> denote point coordinates in the supercell and <span class="math notranslate nohighlight">\(\mathbf{l}\)</span> stands for the indices of a supercell.</p>
 <p>The collection of point coordinates in <span class="math notranslate nohighlight">\(D_{\mathbf{M}}\)</span> is the set of sites inside the parallelepiped spanned by the set of basis vectors <span class="math notranslate nohighlight">\(\mathbf{AM}\)</span>,</p>
 <div class="math notranslate nohighlight">
 \[D_{\mathbf{M}} = \left\{ \mathbf{d} + \mathbf{m} \mid \mathbf{d} \in D, \mathbf{m} \in \mathbb{Z}^{3} \right\} \cap \mathbf{M} [0, 1)^{3} .\]</div>
 <p>Using Eq. <a class="reference internal" href="#equation-eq-site-decomposition">(5)</a>, we have explicit point coordinates in the supercell:</p>
 <div class="math notranslate nohighlight" id="equation-eq-concrete-supercell">
-<span class="eqno">(6)<a class="headerlink" href="#equation-eq-concrete-supercell" title="Permalink to this equation">¶</a></span>\[D_{\mathbf{M}} =
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-concrete-supercell" title="Permalink to this equation"></a></span>\[D_{\mathbf{M}} =
 \left\{
     \mathbf{d} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{M} \mathbf{l}_{\mathbf{f}} \mid
     \mathbf{d} \in D,\, \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}}
@@ -231,9 +147,9 @@ We can construct one representative for <span class="math notranslate nohighligh
     \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}}
 \right\}.\]</div>
 <p>The permutation group <span class="math notranslate nohighlight">\(\Sigma_{\mathbf{M}}\)</span> is obtained from finite operations in <span class="math notranslate nohighlight">\(\mathcal{H}_{\mathbf{M}} / T_{L}\)</span> and <span class="math notranslate nohighlight">\(T_{L} / T_{L_{\mathbf{M}}}\)</span> as its generators.</p>
-</div>
-<div class="section" id="convention-in-dsenum">
-<h2>convention in dsenum<a class="headerlink" href="#convention-in-dsenum" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convention-in-dsenum">
+<h2>convention in dsenum<a class="headerlink" href="#convention-in-dsenum" title="Permalink to this heading"></a></h2>
 <p><cite>dsenum.site.DerivativeSite</cite> represents a pair of <span class="math notranslate nohighlight">\(\mathbf{d}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{m}\)</span> in Eq. <a class="reference internal" href="#equation-dsite">(1)</a>.</p>
 <p>The following instance of <cite>DerivativeSite</cite></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dsite</span> <span class="o">=</span> <span class="n">dsenum</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">DerivativeSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="n">jimage</span><span class="p">)</span>
@@ -250,71 +166,46 @@ We can construct one representative for <span class="math notranslate nohighligh
 <p>corresponds to</p>
 <div class="math notranslate nohighlight">
 \[\mathbf{x} = \mathbf{d}_{\mathrm{site\_index}} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml}\]</div>
-</div>
-<div class="section" id="references">
-<h2>references<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="references">
+<h2>references<a class="headerlink" href="#references" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Gus L. W. Hart and Rodney W. Forcade, “Algorithm for generating derivative structures,” Phys. Rev. B 77 224115, (2008)</p></li>
 <li><p>Gus L. W. Hart and Rodney W. Forcade, “Generating derivative structures from multilattices: Application to hcp alloys,” Phys. Rev. B 80 014120 (2009)</p></li>
 <li><p>Lyuwen Fu, Mordechai Kornbluth, Zhengqian Cheng, and Chris A. Marianetti, “Group theoretical approach to computing phonons and their interactions”, Phys. Rev. B 100, 014303 (2019)</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="modules.html" class="btn btn-neutral float-right" title="dsenum" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="dsenum" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2020, Kohei Shinohara
-
-    </p>
+    <p>&#169; Copyright 2020, Kohei Shinohara.</p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

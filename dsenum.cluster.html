@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dsenum.cluster package &mdash; dsenum 0+untagged.1.g30aff7e documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="dsenum package" href="dsenum.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> dsenum
+          </a>
+              <div class="version">
+                0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="supercell.html">Supercell Construction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">dsenum</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="dsenum.html">dsenum package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="dsenum.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">dsenum.cluster package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.coloring">dsenum.coloring module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.coloring_generator">dsenum.coloring_generator module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.converter">dsenum.converter module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.core">dsenum.core module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.derivative_structure">dsenum.derivative_structure module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.enumerate">dsenum.enumerate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.permutation_group">dsenum.permutation_group module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.polya">dsenum.polya module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.site">dsenum.site module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.smith_normal_form">dsenum.smith_normal_form module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.superlattice">dsenum.superlattice module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum.utils">dsenum.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dsenum.html#module-dsenum">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">dsenum</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">dsenum</a> &raquo;</li>
+          <li><a href="dsenum.html">dsenum package</a> &raquo;</li>
+      <li>dsenum.cluster package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dsenum.cluster.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dsenum-cluster-package">
+<h1>dsenum.cluster package<a class="headerlink" href="#dsenum-cluster-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-dsenum.cluster.point_cluster">
+<span id="dsenum-cluster-point-cluster-module"></span><h2>dsenum.cluster.point_cluster module<a class="headerlink" href="#module-dsenum.cluster.point_cluster" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dsenum.cluster.point_cluster.</span></span><span class="sig-name descname"><span class="pre">EquivalentPointClusterGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frac_coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">converter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dsenum.html#dsenum.converter.DerivativeMultiLatticeHash" title="dsenum.converter.DerivativeMultiLatticeHash"><span class="pre">DerivativeMultiLatticeHash</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>find equivalent point clusters
+:param frac_coords:
+:type frac_coords: np.ndarray, (None, dim)
+:param rotations:
+:type rotations: np.ndarray(None, dim, dim)
+:param translations:
+:type translations: np.ndarray(None, dim, dim)
+:param converter: converter for periodic boundary condition
+:type converter: DerivativeMultiLatticeHash</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.dim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.find_equivalent_point_clusters">
+<span class="sig-name descname"><span class="pre">find_equivalent_point_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.find_equivalent_point_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.find_equivalent_point_clusters" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.from_structure">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symprec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.from_structure" title="Permalink to this definition"></a></dt>
+<dd><p>create EquivalentPointClusterGenerator from pymatgen.core.Structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>pymatgen.core.Structure</em><em>, </em><em>base structure</em>) – </p></li>
+<li><p><strong>transformation</strong> (<em>transformation matrix of sublattice</em>) – </p></li>
+<li><p><strong>symprec</strong> (<em>float</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_all_clusters">
+<span class="sig-name descname"><span class="pre">get_all_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.get_all_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_all_clusters" title="Permalink to this definition"></a></dt>
+<dd><p>return all <cite>order</cite>-sites clusters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – </p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – cutoff radius</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>grouped_point_clusters</strong> (<em>List[List[PointCluster]]</em>) – grouped_points_clusters[i] is a list of the i-th equivalent group of clusters</p></li>
+<li><p><strong>point_cluster_sizes</strong> (<em>List[float]</em>) – point_cluster_sizes[i] is a size of the i-th equivalent group of clusters</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_distinct_point_clusters">
+<span class="sig-name descname"><span class="pre">get_distinct_point_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.get_distinct_point_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_distinct_point_clusters" title="Permalink to this definition"></a></dt>
+<dd><p>return all distinct <cite>order</cite>-sites point-clusters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – </p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – cutoff radius</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>distinct_point_clusters</strong> – returned list of point clusters are sorted by cluster size in the ascending order.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster">PointCluster</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_point_cluster_size">
+<span class="sig-name descname"><span class="pre">get_point_cluster_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.get_point_cluster_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.get_point_cluster_size" title="Permalink to this definition"></a></dt>
+<dd><p>cluster size is defined as a maximum distance between sites in a point cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>lattice_matrix</strong> (<em>(</em><em>dim</em><em>, </em><em>dim</em><em>)</em>) – row-wise basis vectors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.normalize_point_cluster">
+<span class="sig-name descname"><span class="pre">normalize_point_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a></span></span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.normalize_point_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.normalize_point_cluster" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>normalize point-cluster such that,</dt><dd><ul class="simple">
+<li><p>jimage of cluster[0] is (0, 0, 0)</p></li>
+<li><p>points are in ascending order</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.operate_point_cluster">
+<span class="sig-name descname"><span class="pre">operate_point_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_cluster</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#dsenum.cluster.point_cluster.PointCluster" title="dsenum.cluster.point_cluster.PointCluster"><span class="pre">PointCluster</span></a></span></span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#EquivalentPointClusterGenerator.operate_point_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.EquivalentPointClusterGenerator.operate_point_cluster" title="Permalink to this definition"></a></dt>
+<dd><p>operate (R, tau) to a point cluster</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.PointCluster">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dsenum.cluster.point_cluster.</span></span><span class="sig-name descname"><span class="pre">PointCluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dsenum.html#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite"><span class="pre">DerivativeSite</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/cluster/point_cluster.html#PointCluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.cluster.point_cluster.PointCluster" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>cluster class represents the set of DerivativeSite
+.. attribute:: points</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>list of Point</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dsenum.cluster.point_cluster.PointCluster.points">
+<span class="sig-name descname"><span class="pre">points</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dsenum.html#dsenum.site.DerivativeSite" title="dsenum.site.DerivativeSite"><span class="pre">DerivativeSite</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#dsenum.cluster.point_cluster.PointCluster.points" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-dsenum.cluster">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-dsenum.cluster" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dsenum.html" class="btn btn-neutral float-left" title="dsenum package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Kohei Shinohara.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
