@@ -1,4 +1,3 @@
-======================
 Supercell Construction
 ======================
 
@@ -7,7 +6,7 @@ Supercell Construction
 ..
 
 
-constructing supercell for a general transformation matrix
+Constructing supercell for a general transformation matrix
 ----------------------------------------------------------
 
 We describe a rigorous way to associate a supercell with its primitive cell.
@@ -123,7 +122,7 @@ We can construct one representative for :math:`T_{L} / T_{L_{\mathbf{M}}}` in th
 
 The permutation group :math:`\Sigma_{\mathbf{M}}` is obtained from finite operations in :math:`\mathcal{H}_{\mathbf{M}} / T_{L}` and :math:`T_{L} / T_{L_{\mathbf{M}}}` as its generators.
 
-convention in dsenum
+Convention in dsenum
 --------------------
 `dsenum.site.DerivativeSite` represents a pair of :math:`\mathbf{d}` and :math:`\mathbf{m}` in Eq. :eq:`dsite`.
 
@@ -151,7 +150,7 @@ corresponds to
 .. math::
     \mathbf{x} = \mathbf{d}_{\mathrm{site\_index}} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml}
 
-references
+References
 ----------
 * Gus L. W. Hart and Rodney W. Forcade, "Algorithm for generating derivative structures," Phys. Rev. B 77 224115, (2008)
 * Gus L. W. Hart and Rodney W. Forcade, "Generating derivative structures from multilattices: Application to hcp alloys," Phys. Rev. B 80 014120 (2009)

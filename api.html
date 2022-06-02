@@ -2,9 +2,12 @@
 <html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="#" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Change Log" href="changelog.html" /><link rel="prev" title="Supercell Construction" href="supercell.html" />
 
-    <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/><title>Search - dsenum 0.3.5.dev30+gf5282b2 documentation</title><link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.04.07"/>
+        <title>API Reference - dsenum 0.3.5.dev30+gf5282b2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=68f4518137b9aefe99b631505a2064c3c42c9852" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -145,17 +148,17 @@
   
   <span class="sidebar-brand-text">dsenum 0.3.5.dev30+gf5282b2 documentation</span>
   
-</a><form class="sidebar-search-container" method="get" action="#" role="search">
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="supercell.html">Supercell Construction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer_note.html">Developer Note</a></li>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
@@ -191,25 +194,65 @@
           </label>
         </div>
         <article role="main">
-          
-<noscript>
-<div class="admonition error">
-  <p class="admonition-title">Error</p>
-  <p>
-    Please activate JavaScript to enable the search functionality.
-  </p>
-</div>
-</noscript>
-
-<div id="search-results"></div>
+          <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="dsenum.StructureEnumerator">
+<span class="sig-prename descclassname"><span class="pre">dsenum.</span></span><span class="sig-name descname"><span class="pre">StructureEnumerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_structure</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pymatgen.core.structure.Structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping_color_species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pymatgen.core.periodic_table.Element</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pymatgen.core.periodic_table.Specie</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pymatgen.core.periodic_table.DummySpecie</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_site_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_exchange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_superperiodic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_incomplete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'direct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dsenum/enumerate.html#StructureEnumerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dsenum.StructureEnumerator" title="Permalink to this definition">#</a></dt>
+<dd><p>Enumerate derivative structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_structure</strong> (<em>pymatgen.core.Structure</em>) – Aristotype for derivative structures</p></li>
+<li><p><strong>index</strong> (<em>int</em>) – How many times to expand unit cell</p></li>
+<li><p><strong>num_types</strong> (<em>int</em>) – The number of species in derivative structures.
+<cite>num_types</cite> may be larger than the number of the kinds of species in <cite>base_structure</cite>: for example, you consider vacancies in derivative structures.</p></li>
+<li><p><strong>mapping_color_species</strong> (<em>optional</em>) – If specified, use these species in derivative structures.
+The length of this list should be equal to <cite>num_types</cite></p></li>
+<li><p><strong>composition_constraints</strong> (<em>(</em><em>Optional</em><em>) </em><em>List</em><em>[</em><em>int</em><em>]</em>) – composition_constraints[i] is the ratio of the i-th species in mapping_color_species</p></li>
+<li><p><strong>base_site_constraints</strong> (<em>(</em><em>Optional</em><em>) </em><em>List</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>(</em><em>num_elements</em><em>, </em><em>num_color</em><em>)</em>) – e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.</p></li>
+<li><p><strong>color_exchange</strong> (<em>(</em><em>Optional</em><em>) </em><em>bool</em>) – identify color-exchanging</p></li>
+<li><p><strong>remove_superperiodic</strong> (<em>(</em><em>Optional</em><em>) </em><em>bool</em>) – iff true, discard superperiodic coloring</p></li>
+<li><p><strong>remove_incomplete</strong> (<em>(</em><em>Optional</em><em>) </em><em>bool</em>) – </p></li>
+<li><p><strong>method</strong> (<em>(</em><em>Optional</em><em>) </em><em>str</em>) – “direct” or “lexicographic”, so far</p></li>
+<li><p><strong>n_jobs</strong> (<em>(</em><em>Optional</em><em>) </em><em>int</em>) – core in lexicographic coset enumeration(only used when method=’lexicographic’)</p></li>
+<li><p><strong>list_reduced_HNF</strong> – </p></li>
+<li><p><strong>rotations</strong> – </p></li>
+<li><p><strong>translations</strong> – </p></li>
+<li><p><strong>site_constraints</strong> – </p></li>
+<li><p><strong>mapping_color_species</strong> – </p></li>
+<li><p><strong>cl_generator</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+</section>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="changelog.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Change Log</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="supercell.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Supercell Construction</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -240,8 +283,5 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/furo.js"></script>
-    
-<script src="_static/searchtools.js"></script>
-<script src="_static/language_data.js"></script>
-<script src="searchindex.js"></script></body>
+    </body>
 </html>
