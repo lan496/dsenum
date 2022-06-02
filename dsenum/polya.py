@@ -44,7 +44,7 @@ def get_inventory_coefficient(type_of_perm: tuple, didx, num_elements_of_each_co
         list_k = [e // didx for e in nec]
         if sum(list_k) != type_of_perm[didx - 1]:
             continue
-        complement = tuple([e1 - e2 for e1, e2 in zip(num_elements_of_each_color, nec)])
+        complement = tuple(e1 - e2 for e1, e2 in zip(num_elements_of_each_color, nec))
         ret += get_multinomial_coefficient(list_k) * get_inventory_coefficient(
             type_of_perm, didx - 1, complement
         )

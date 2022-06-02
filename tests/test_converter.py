@@ -19,10 +19,10 @@ def test_converter():
             num_sites = converter.num_sites
 
             all_factors = converter.get_all_factors()
-            assert len(set([tuple((f)) for f in all_factors])) == index
+            assert len({tuple(f) for f in all_factors}) == index
 
             all_lattice_points = converter.get_lattice_points()
-            assert len(set([tuple(f) for f in all_lattice_points])) == index
+            assert len({tuple(f) for f in all_lattice_points}) == index
 
             all_periodic_sites = converter.get_canonical_sites_list()
             assert len(set(all_periodic_sites)) == num_sites

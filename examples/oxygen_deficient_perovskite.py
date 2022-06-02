@@ -1,13 +1,12 @@
 import os
 
 import numpy as np
-from pymatgen.core import Lattice, Structure
-from pymatgen.core.periodic_table import Specie, DummySpecie
 from pymatgen.analysis.structure_matcher import StructureMatcher
+from pymatgen.core import Lattice, Structure
+from pymatgen.core.periodic_table import DummySpecie, Specie
 
 from dsenum import StructureEnumerator
-from dsenum.utils import write_cif, refine_and_resize_structure
-
+from dsenum.utils import refine_and_resize_structure, write_cif
 
 if __name__ == "__main__":
     lattice = Lattice(3.945 * np.eye(3))
@@ -43,7 +42,7 @@ if __name__ == "__main__":
     num_oxygen_ub = index * 3
     structures = []
     for ds in list_dstructs:
-        num_oxygen = sum([(str(sp) == "O") for sp in ds.species])
+        num_oxygen = sum((str(sp) == "O") for sp in ds.species)
         if num_oxygen_lb <= num_oxygen and num_oxygen <= num_oxygen_ub:
             structures.append(ds)
     print(index, len(structures))

@@ -1,7 +1,7 @@
 import numpy as np
 
-from dsenum.superlattice import generate_all_superlattices
 from dsenum.smith_normal_form import smith_normal_form
+from dsenum.superlattice import generate_all_superlattices
 
 
 def test_smf():

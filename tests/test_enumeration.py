@@ -1,14 +1,16 @@
-from tqdm import tqdm
 import pytest
+from tqdm import tqdm
 
+from dsenum.coloring import SiteColoringEnumerator
+from dsenum.coloring_generator import (
+    ColoringGenerator,
+    FixedConcentrationColoringGenerator,
+)
 from dsenum.enumerate import StructureEnumerator
-from dsenum.coloring_generator import ColoringGenerator, FixedConcentrationColoringGenerator
 from dsenum.permutation_group import DerivativeStructurePermutation
-from dsenum.utils import get_lattice
 from dsenum.polya import polya_counting, polya_fixed_degrees_counting
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
-from dsenum.coloring import SiteColoringEnumerator
-
+from dsenum.utils import get_lattice
 
 obj = {
     "fcc": {

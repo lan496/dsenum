@@ -2,8 +2,8 @@ from itertools import product
 
 import numpy as np
 
-from dsenum.site import CanonicalSite
 from dsenum.converter import DerivativeMultiLatticeHash
+from dsenum.site import CanonicalSite
 from dsenum.utils import cast_integer_matrix
 
 
