@@ -36,7 +36,7 @@ setup(
         "joblib",
         "tqdm",
     ],
-    extras_requires={
+    extras_require={
         "dev": [
             "pytest>=6.0.0",
             "pytest-cov",

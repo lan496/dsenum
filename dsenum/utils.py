@@ -5,7 +5,7 @@ from pymatgen.core import Lattice, Structure
 from pymatgen.core.periodic_table import DummySpecie
 from pymatgen.io.cif import CifWriter
 
-from dsenum import __version__
+from dsenum._version import __version__
 
 
 def get_lattice(kind):
