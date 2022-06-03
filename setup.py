@@ -3,8 +3,9 @@ from os.path import basename, splitext
 from pathlib import Path
 
 from setuptools import Extension, find_packages, setup
+from Cython.Build import cythonize
 
-ext_modules = [Extension("dsenum.core", sources=["dsenum/core.c"], extra_compile_args=["-O3"])]
+ext_modules = [Extension("dsenum.core", ["dsenum/core.pyx"], extra_compile_args=["-O3"])]
 
 # Import the README and use it as the long-description.
 with open(Path(__file__).resolve().parent / "README.md") as f:
@@ -23,7 +24,6 @@ setup(
     package_data={"dsenum": ["py.typed"]},
     py_modules=[splitext(basename(path))[0] for path in glob("dsenum/*.py")],
     python_requires=">=3.8",
-    setup_requires=["setuptools_scm", "numpy"],
     install_requires=[
         "setuptools",
         "setuptools_scm",
@@ -56,7 +56,7 @@ setup(
         ],
     },
     tests_require=["pytest"],
-    ext_modules=ext_modules,
+    ext_modules=cythonize(ext_modules),
     include_package_data=True,
     zip_safe=False,
     classifiers=[
