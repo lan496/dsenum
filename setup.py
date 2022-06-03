@@ -60,6 +60,7 @@ setup(
     ext_modules=cythonize(ext_modules),
     include_package_data=True,
     zip_safe=False,
+    use_scm_version=True,
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
