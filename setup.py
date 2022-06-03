@@ -24,6 +24,7 @@ setup(
     package_data={"dsenum": ["py.typed"]},
     py_modules=[splitext(basename(path))[0] for path in glob("dsenum/*.py")],
     python_requires=">=3.8",
+    setup_requires=["setuptools_scm", "numpy", "Cython>=0.29.1"],
     install_requires=[
         "setuptools",
         "setuptools_scm",
