@@ -2,7 +2,7 @@ from typing import List, Union
 
 import numpy as np
 from pymatgen.core import Lattice, Structure
-from pymatgen.core.periodic_table import Specie, DummySpecie, Element
+from pymatgen.core.periodic_table import DummySpecie, Element, Specie
 from pymatgen.core.sites import PeriodicSite
 
 import dsenum
@@ -106,7 +106,11 @@ class ColoringToStructure:
 
         self.precompute_coords_str = [
             [
-                str(psite.frac_coords[0]) + " " + str(psite.frac_coords[1]) + " " + str(psite.frac_coords[2])
+                str(psite.frac_coords[0])
+                + " "
+                + str(psite.frac_coords[1])
+                + " "
+                + str(psite.frac_coords[2])
                 for psite in list_psites
             ]
             for list_psites in self.precomputed_psites
@@ -119,7 +123,14 @@ class ColoringToStructure:
             self.additional_species_str = None
 
         if self.additional_psites is not None:
-            self.additional_coords_str = [str(psite.frac_coords[0]) + " " + str(psite.frac_coords[1]) + " " + str(psite.frac_coords[2]) for psite in self.additional_psites]
+            self.additional_coords_str = [
+                str(psite.frac_coords[0])
+                + " "
+                + str(psite.frac_coords[1])
+                + " "
+                + str(psite.frac_coords[2])
+                for psite in self.additional_psites
+            ]
         else:
             self.additional_coords_str = None
 
@@ -128,9 +139,7 @@ class ColoringToStructure:
         return self.base_structure.lattice.matrix
 
     def convert_to_structure(self, coloring) -> Structure:
-        list_psites = [
-            self.precomputed_psites[i][coloring[i]] for i in range(self.num_sites)
-        ]
+        list_psites = [self.precomputed_psites[i][coloring[i]] for i in range(self.num_sites)]
         if self.additional_psites is not None:
             list_psites.extend(self.additional_psites)
 

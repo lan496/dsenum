@@ -1,22 +1,20 @@
-from typing import List
 from queue import Queue
+from typing import List
 
 import joblib
 import matplotlib as mpl
-
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
+from pymatgen.core import DummySpecie, Lattice, Structure
 from sympy.combinatorics import Permutation
 from sympy.combinatorics.perm_groups import PermutationGroup
 from tqdm import tqdm
-from pymatgen.core import Lattice, Structure, DummySpecie
-import numpy as np
 
 from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.superlattice import generate_all_superlattices
 from dsenum.utils import get_lattice, get_symmetry_operations
-
 
 mpl.use("Agg")  # noqa
 
@@ -47,7 +45,7 @@ def get_generators(perms: List[Permutation]):
 
         gens.append(g)
 
-        que = Queue()
+        que = Queue()  # type: ignore
         for h in perms_tmp:
             que.put(h)
 

@@ -1,7 +1,9 @@
+from dsenum.permutation_group import (
+    DerivativeStructurePermutation,
+    is_permutation_group,
+)
 from dsenum.superlattice import generate_symmetry_distinct_superlattices
 from dsenum.utils import get_lattice
-
-from dsenum.permutation_group import DerivativeStructurePermutation, is_permutation_group
 
 
 def test_permutations():

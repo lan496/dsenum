@@ -1,11 +1,11 @@
 from abc import ABCMeta, abstractmethod
 from itertools import permutations
 from multiprocessing import Pool, cpu_count
-from typing import cast, List, Tuple
+from typing import List, Tuple, cast
 
-from dsenum.permutation_group import DerivativeStructurePermutation
 from dsenum.coloring_generator import BaseColoringGenerator
-from dsenum.core import hash_in_all_configuration, act_permutation  # type: ignore
+from dsenum.core import act_permutation, hash_in_all_configuration  # type: ignore
+from dsenum.permutation_group import DerivativeStructurePermutation
 
 
 class AbstractEnumerator(metaclass=ABCMeta):

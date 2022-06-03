@@ -1,9 +1,9 @@
 import numpy as np
+import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
-from pymatgen.core.periodic_table import Specie, DummySpecie, Element
+from pymatgen.core.periodic_table import DummySpecie, Element, Specie
 from pymatgen.io.vasp.inputs import Poscar
-import pytest
 
 from dsenum import StructureEnumerator
 from dsenum.utils import get_lattice

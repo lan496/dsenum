@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pymatgen.core import Structure, Lattice
+from pymatgen.core import Lattice, Structure
 
 from dsenum import StructureEnumerator
 from dsenum.utils import get_lattice

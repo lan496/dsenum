@@ -161,12 +161,12 @@ class DerivativeMultiLatticeHash:
     def ravel_canonical_site(self, csite: CanonicalSite) -> int:
         # hash canonical site s.t. self.get_canonical_sites_list <=> identity
         multi_index = (csite.site_index,) + tuple(csite.factor)
-        raveled = np.ravel_multi_index(multi_index, self.shape)
+        raveled: int = np.ravel_multi_index(multi_index, self.shape)
         return raveled
 
     def ravel_derivative_site(self, dsite: DerivativeSite) -> int:
         csite = self.hash_derivative_site(dsite)
-        raveled = self.ravel_canonical_site(csite)
+        raveled: int = self.ravel_canonical_site(csite)  # type: ignore
         return raveled
 
     def unravel_to_canonical_site(self, indices: int) -> CanonicalSite:

@@ -94,7 +94,7 @@ class EquivalentPointClusterGenerator:
             - points are in ascending order
         """
         # sort sites by (site_index, jimage)
-        tuple_points = sorted([astuple(p) for p in point_cluster.points])
+        tuple_points = sorted(astuple(p) for p in point_cluster.points)
         points = [DerivativeSite(site_index, jimage) for site_index, jimage in tuple_points]
 
         offset = np.array(points[0].jimage)
@@ -120,12 +120,10 @@ class EquivalentPointClusterGenerator:
 
     def find_equivalent_point_clusters(self, point_cluster: PointCluster) -> List[PointCluster]:
         # (rotations, translations) should contain identity operation
-        equiv_clusters = set(
-            [
-                self.normalize_point_cluster(self.operate_point_cluster(point_cluster, R, tau))
-                for R, tau in zip(self.rotations, self.translations)
-            ]
-        )
+        equiv_clusters = {
+            self.normalize_point_cluster(self.operate_point_cluster(point_cluster, R, tau))
+            for R, tau in zip(self.rotations, self.translations)
+        }
 
         all_equiv_clusters = []
         # apply translation
@@ -200,7 +198,7 @@ class EquivalentPointClusterGenerator:
         # grow pairs to triplet, quadruple, ...
         for num_nn in range(2, order + 1):
             next_distinct_point_clusters: List[PointCluster] = []
-            found = set([])
+            found = set()
 
             for added_point in list_points:
                 for precluster in distinct_point_clusters:
