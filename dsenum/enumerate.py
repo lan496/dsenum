@@ -88,11 +88,10 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         self.translations = translations
 
         # site constraints
+        self.site_constraints = None
         if base_site_constraints:
             assert len(base_site_constraints) == self.num_sites_base
             self.site_constraints = convert_site_constraints(base_site_constraints, self.index)
-        else:
-            self.site_constraints = None
 
         if mapping_color_species and len(mapping_color_species) != self.num_types:
             raise ValueError("mapping_color_species must have num_type species.")

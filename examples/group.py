@@ -45,7 +45,7 @@ def get_generators(perms: List[Permutation]):
 
         gens.append(g)
 
-        que = Queue()
+        que = Queue()  # type: ignore
         for h in perms_tmp:
             que.put(h)
 

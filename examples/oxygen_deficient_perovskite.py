@@ -35,14 +35,14 @@ if __name__ == "__main__":
     )
     list_dstructs = se.generate(
         additional_species=additional_species, additional_frac_coords=additional_frac_coords
-    )
+    )  # type: ignore
 
     # leave only SrTiO_{3-x} (0 <= x <= 1)
     num_oxygen_lb = index * 2
     num_oxygen_ub = index * 3
     structures = []
     for ds in list_dstructs:
-        num_oxygen = sum((str(sp) == "O") for sp in ds.species)
+        num_oxygen = sum((str(sp) == "O") for sp in ds.species)  # type: ignore
         if num_oxygen_lb <= num_oxygen and num_oxygen <= num_oxygen_ub:
             structures.append(ds)
     print(index, len(structures))
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     os.makedirs(dirname, exist_ok=True)
     for i, dstruct in enumerate(structures):
         # remove void
-        dstruct.remove_species([mapping_color_species[0]])
+        dstruct.remove_species([mapping_color_species[0]])  # type: ignore
 
         filename = os.path.join(dirname, f"{index}_{i}.cif")
         write_cif(filename, dstruct, refine_cell=True)

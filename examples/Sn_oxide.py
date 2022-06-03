@@ -65,11 +65,11 @@ if __name__ == "__main__":
             remove_superperiodic=True,
             remove_incomplete=False,
         )
-        list_dstructs = se.generate()
+        list_dstructs = se.generate()  # type: ignore
 
         for i, dstruct in enumerate(list_dstructs):
             # remove void
-            dstruct.remove_species([mapping_color_species[0]])
+            dstruct.remove_species([mapping_color_species[0]])  # type: ignore
 
             filename = os.path.join(dirname, f"SnO1-x_{index}_{i}.cif")
             write_cif(filename, dstruct, refine_cell=True)

@@ -35,18 +35,18 @@ def test_coloring_generator_with_site_constraints():
     cg = ColoringGenerator(num_elements, num_color, site_constraints)
 
     colorings_expect = {
-            (0, 1, 2, 1, 0, 0),
-            (0, 1, 2, 1, 0, 1),
-            (0, 1, 2, 1, 0, 2),
-            (0, 1, 2, 1, 2, 0),
-            (0, 1, 2, 1, 2, 1),
-            (0, 1, 2, 1, 2, 2),
-            (0, 1, 2, 2, 0, 0),
-            (0, 1, 2, 2, 0, 1),
-            (0, 1, 2, 2, 0, 2),
-            (0, 1, 2, 2, 2, 0),
-            (0, 1, 2, 2, 2, 1),
-            (0, 1, 2, 2, 2, 2),
+        (0, 1, 2, 1, 0, 0),
+        (0, 1, 2, 1, 0, 1),
+        (0, 1, 2, 1, 0, 2),
+        (0, 1, 2, 1, 2, 0),
+        (0, 1, 2, 1, 2, 1),
+        (0, 1, 2, 1, 2, 2),
+        (0, 1, 2, 2, 0, 0),
+        (0, 1, 2, 2, 0, 1),
+        (0, 1, 2, 2, 0, 2),
+        (0, 1, 2, 2, 2, 0),
+        (0, 1, 2, 2, 2, 1),
+        (0, 1, 2, 2, 2, 2),
     }
     list_colorings, flags = cg.generate_all_colorings()
     assert {tuple(e) for e in list_colorings} == colorings_expect
@@ -63,18 +63,18 @@ def test_fixed_concentration_coloring_generator():
     fcg = FixedConcentrationColoringGenerator(num_elements, num_color, color_ratio)
 
     colorings_expect = {
-            (0, 1, 2, 2),
-            (0, 2, 1, 2),
-            (0, 2, 2, 1),
-            (1, 0, 2, 2),
-            (1, 2, 0, 2),
-            (1, 2, 2, 0),
-            (2, 0, 1, 2),
-            (2, 0, 2, 1),
-            (2, 1, 0, 2),
-            (2, 1, 2, 0),
-            (2, 2, 0, 1),
-            (2, 2, 1, 0),
+        (0, 1, 2, 2),
+        (0, 2, 1, 2),
+        (0, 2, 2, 1),
+        (1, 0, 2, 2),
+        (1, 2, 0, 2),
+        (1, 2, 2, 0),
+        (2, 0, 1, 2),
+        (2, 0, 2, 1),
+        (2, 1, 0, 2),
+        (2, 1, 2, 0),
+        (2, 2, 0, 1),
+        (2, 2, 1, 0),
     }
 
     list_colorings, flags = fcg.generate_all_colorings()

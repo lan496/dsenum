@@ -121,8 +121,8 @@ class EquivalentPointClusterGenerator:
     def find_equivalent_point_clusters(self, point_cluster: PointCluster) -> List[PointCluster]:
         # (rotations, translations) should contain identity operation
         equiv_clusters = {
-                self.normalize_point_cluster(self.operate_point_cluster(point_cluster, R, tau))
-                for R, tau in zip(self.rotations, self.translations)
+            self.normalize_point_cluster(self.operate_point_cluster(point_cluster, R, tau))
+            for R, tau in zip(self.rotations, self.translations)
         }
 
         all_equiv_clusters = []
