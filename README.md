@@ -15,21 +15,17 @@ Derivative structure enumerator for multilattice
 
 ## Installation
 
-- Python>=3.8
+dsenum works with Python3.8+ and can be installed via PyPI:
 
-Install in local:
+```shell
+pip install hsnf
+```
+
+Or in local:
 ```shell
 git clone git@github.com:lan496/dsenum.git
 cd dsenum
 pip install -e .
-```
-
-For development:
-```shell
-git clone git@github.com:lan496/dsenum.git
-cd dsenum
-pip install -e ".[dev,docs]"
-pre-commit install
 ```
 
 ## Usage

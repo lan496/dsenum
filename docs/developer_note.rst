@@ -1,6 +1,17 @@
 Developer Note
 ==============
 
+Installation
+------------
+
+.. code-block:: shell
+
+    git clone git@github.com:lan496/dsenum.git
+    cd dsenum
+    pip install -e ".[dev,docs]"
+    pre-commit install
+
+
 Cython
 ------
 
