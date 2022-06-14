@@ -2,9 +2,9 @@ from itertools import product
 from typing import List, Optional, Tuple, Union, cast
 
 import numpy as np
+from hsnf import smith_normal_form
 
 from dsenum.site import CanonicalSite, DerivativeSite
-from dsenum.smith_normal_form import smith_normal_form
 from dsenum.utils import cast_integer_matrix
 
 """

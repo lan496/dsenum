@@ -33,6 +33,7 @@ setup(
         "matplotlib",
         "joblib",
         "tqdm",
+        "hsnf==0.3.13",
     ],
     extras_require={
         "dev": [
