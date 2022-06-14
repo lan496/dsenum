@@ -120,6 +120,13 @@ dmypy.json
 *.cif
 *.joblib
 *.vscode
+*.txt
+*.pdf
+*.lprof
+wheelhouse/
+
+# Cython
+src/dsenum/core.c
 
 # documents
 docs_build/

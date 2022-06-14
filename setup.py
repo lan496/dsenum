@@ -37,6 +37,7 @@ setup(
     ],
     extras_require={
         "dev": [
+            "ipython",
             "pytest>=6.0.0",
             "pytest-cov",
             "pytest-benchmark",

@@ -133,6 +133,9 @@ class DerivativeStructurePermutation:
         return list_permutations
 
     def get_symmetry_operation_permutations(self):
+        """
+        return permutation representation of the symmetry group of the supercell
+        """
         list_permutations = []
 
         for p1 in self.prm_t:

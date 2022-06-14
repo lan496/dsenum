@@ -1,12 +1,18 @@
 from abc import ABCMeta, abstractmethod
 from time import time
-from typing import List, Tuple, Union, cast
+from typing import List, Set, Tuple, Union, cast
 from warnings import warn
 
 import numpy as np
 from pymatgen.core import Structure
 from pymatgen.core.periodic_table import DummySpecie, Element, Specie
 from tqdm import tqdm
+
+try:
+    from pyzdd import Permutation, Universe
+    from pyzdd.structure import construct_derivative_structures, enumerate_labelings
+except ImportError:
+    pass
 
 from dsenum.coloring import SiteColoringEnumerator
 from dsenum.coloring_generator import (
@@ -55,7 +61,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
     list_reduced_HNF
     rotations
     translations
-    site_constraints
+    site_constraints: site_constraints[i] is a list of allowed species at the i-th site in supercell
     mapping_color_species
     """
 
@@ -74,6 +80,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         self.base_structure = base_structure
         self.index = index
         self.num_types = num_types
+        self.composition_constraints = composition_constraints
 
         # settings
         self.color_exchange = color_exchange
@@ -241,15 +248,15 @@ class StructureEnumerator(AbstractStructureEnumerator):
         n_jobs=1,
     ):
         super().__init__(
-            base_structure,
-            index,
-            num_types,
-            mapping_color_species,
-            composition_constraints,
-            base_site_constraints,
-            color_exchange,
-            remove_superperiodic,
-            remove_incomplete,
+            base_structure=base_structure,
+            index=index,
+            num_types=num_types,
+            mapping_color_species=mapping_color_species,
+            composition_constraints=composition_constraints,
+            base_site_constraints=base_site_constraints,
+            color_exchange=color_exchange,
+            remove_superperiodic=remove_superperiodic,
+            remove_incomplete=remove_incomplete,
         )
         self.method = method
         self.n_jobs = n_jobs
@@ -263,7 +270,7 @@ class StructureEnumerator(AbstractStructureEnumerator):
 
         # composition constraints
         # typing.cast causes no runtime effect
-        if composition_constraints is None:
+        if self.composition_constraints is None:
             cl_generator = cast(
                 BaseColoringGenerator,
                 ColoringGenerator(
@@ -276,7 +283,7 @@ class StructureEnumerator(AbstractStructureEnumerator):
                 FixedConcentrationColoringGenerator(
                     self.num_sites,
                     self.num_types,
-                    composition_constraints,
+                    self.composition_constraints,
                     site_constraints=self.site_constraints,
                 ),
             )
@@ -302,6 +309,172 @@ class StructureEnumerator(AbstractStructureEnumerator):
         colorings = sc_enum.unique_colorings()
 
         return colorings
+
+
+class ZddStructureEnumerator(AbstractStructureEnumerator):
+    """
+    Enumerate derivative structures.
+    Parameters
+    ----------
+    base_structure: pymatgen.core.Structure
+        Aristotype for derivative structures
+    index: int
+        How many times to expand unit cell
+    num_types: int
+        The number of species in derivative structures.
+        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
+    mapping_color_species: optional
+        If specified, use these species in derivative structures.
+        The length of this list should be equal to `num_types`
+    composition_constraints: (Optional) List[int]
+        composition_constraints[i] is the ratio of the i-th species in mapping_color_species
+    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)
+        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+    remove_superperiodic: (Optional) bool
+        iff true, discard superperiodic coloring
+    remove_incomplete: (Optional) bool
+    Arguments
+    ---------
+    list_reduced_HNF
+    rotations
+    translations
+    site_constraints
+    mapping_color_species
+    """
+
+    def __init__(
+        self,
+        base_structure: Structure,
+        index: int,
+        num_types: int,
+        mapping_color_species: List[Union[str, Element, Specie, DummySpecie]] = None,
+        composition_constraints=None,
+        base_site_constraints=None,
+        remove_superperiodic=True,
+        remove_incomplete=True,
+    ):
+        super().__init__(
+            base_structure=base_structure,
+            index=index,
+            num_types=num_types,
+            mapping_color_species=mapping_color_species,
+            composition_constraints=composition_constraints,
+            base_site_constraints=base_site_constraints,
+            remove_superperiodic=remove_superperiodic,
+            remove_incomplete=remove_incomplete,
+        )
+
+        self.prohibited_site_constraints = []
+        if self.site_constraints is not None:
+            all_species: Set[int] = set()
+            all_species.update(range(self.num_types))
+            for allowed_species in self.site_constraints:
+                prohibited = list(all_species.difference(set(allowed_species)))
+                self.prohibited_site_constraints.append(prohibited)
+            assert len(self.prohibited_site_constraints) == self.num_sites
+
+    def _generate_coloring_with_hnf(
+        self,
+        hnf: np.ndarray,
+        ds_permutation: DerivativeStructurePermutation,
+        additional_species,
+        additional_frac_coords,
+    ) -> List[List[int]]:
+        dd = Universe()
+
+        num_sites = ds_permutation.num_sites
+        automorphism = [
+            Permutation(sigma) for sigma in ds_permutation.get_symmetry_operation_permutations()
+        ]
+        translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
+
+        composition_constraints_dd: List[int] = []
+        if self.composition_constraints is not None:
+            ratio_sum = np.sum(self.composition_constraints)
+            if num_sites % ratio_sum != 0:
+                # impossible to satisfy composition constraints
+                return []
+            else:
+                composition_constraints_dd = [
+                    ratio * (num_sites // ratio_sum) for ratio in self.composition_constraints
+                ]
+
+        construct_derivative_structures(
+            dd,
+            num_sites=num_sites,
+            num_types=self.num_types,
+            automorphism=automorphism,
+            translations=translations,
+            composition_constraints=composition_constraints_dd,
+            site_constraints=self.prohibited_site_constraints,
+            remove_incomplete=self.remove_incomplete,
+            remove_superperiodic=self.remove_superperiodic,
+        )
+
+        colorings = list(enumerate_labelings(dd, num_sites, self.num_types))
+        return colorings
+
+    def count(self) -> int:
+        """
+        Returns
+        -------
+        count: int
+        """
+        start = time()
+
+        displacement_set = self.base_structure.frac_coords
+        count = 0
+        for hnf in tqdm(self.list_reduced_HNF):
+            ds_permutation = DerivativeStructurePermutation(
+                hnf, displacement_set, self.rotations, self.translations
+            )
+            # enumerate colorings
+            count_hnf = self._count_with_hnf(hnf, ds_permutation)
+
+            count += count_hnf
+
+        end = time()
+        print("total: {} (Time: {:.4}sec)".format(count, end - start))
+
+        return count
+
+    def _count_with_hnf(
+        self,
+        hnf: np.ndarray,
+        ds_permutation: DerivativeStructurePermutation,
+    ) -> int:
+        dd = Universe()
+
+        num_sites = ds_permutation.num_sites
+        automorphism = [
+            Permutation(sigma) for sigma in ds_permutation.get_symmetry_operation_permutations()
+        ]
+        translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
+
+        composition_constraints_dd: List[int] = []
+        if self.composition_constraints is not None:
+            ratio_sum = np.sum(self.composition_constraints)
+            if num_sites % ratio_sum != 0:
+                # impossible to satisfy composition constraints
+                return 0
+            else:
+                composition_constraints_dd = [
+                    ratio * (num_sites // ratio_sum) for ratio in self.composition_constraints
+                ]
+
+        construct_derivative_structures(
+            dd,
+            num_sites=num_sites,
+            num_types=self.num_types,
+            automorphism=automorphism,
+            translations=translations,
+            composition_constraints=composition_constraints_dd,
+            site_constraints=self.prohibited_site_constraints,
+            remove_incomplete=self.remove_incomplete,
+            remove_superperiodic=self.remove_superperiodic,
+        )
+
+        return int(dd.cardinality())
 
 
 def enumerate_derivative_structures(
