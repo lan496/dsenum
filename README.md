@@ -50,11 +50,37 @@ print(len(dstructs))  # -> 12
 
 See `examples/Sn_oxide.py` for more complicated use cases.
 
-## Official Implementation
-- https://github.com/msg-byu/enumlib
+## How to cite dsenum
 
-## References
-- https://journals.aps.org/prb/abstract/10.1103/PhysRevB.77.224115
-- https://journals.aps.org/prb/abstract/10.1103/PhysRevB.80.014120
-- https://iopscience.iop.org/article/10.1088/0953-8984/25/10/105401
-- http://blog.dlfer.xyz/post/2016-10-27-smith-normal-form/
+If you use `dsenum.ZddStructureEnumerator` in your research, please cite the following articles.
+
+```
+@article{doi:10.1063/5.0021663,
+    author = {Shinohara,Kohei  and Seko,Atsuto  and Horiyama,Takashi  and Ishihata,Masakazu  and Honda,Junya  and Tanaka,Isao },
+    title = {Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram},
+    journal = {J. Chem. Phys.},
+    volume = {153},
+    number = {10},
+    pages = {104109},
+    year = {2020},
+    doi = {10.1063/5.0021663},
+    URL = {https://doi.org/10.1063/5.0021663},
+}
+```
+
+```
+@inproceedings{Horiyama2018,
+  memo ={Isomorphism Elimination by Zero-Suppressed Binary Decision Diagrams},
+  author={Takashi Horiyama and Masahiro Miyasaka and Riku Sasaki},
+  booktitle={the Canadian Conference on Computational Geometry},
+  pages={360--366},
+  address={Winnipeg, Manitoba, Canada}
+  year={2018},
+  url={http://www.cs.umanitoba.ca/~cccg2018/papers/session7B-p2.pdf}
+}
+```
+
+## Acknowledgments
+
+I acknowledge Dr. Takashi Horiyama for sharing his implementation of the frontier method for isomorphism-elimination decision diagram.
+I also appreciate his kindness to allow publishing the code.

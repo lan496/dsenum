@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: |
+  If you use `dsenum.ZddStructureEnumerator` in your research, please cite the following articles.
+authors:
+- family-names: Shinohara
+  given-names: Kohei
+  orcid: https://orcid.org/0000-0002-5907-2549
+- family-names: Seko
+  given-names: Atsuto
+  orcid: https://orcid.org/0000-0002-2473-3837
+- family-names: Horiyama
+  given-names: Takashi
+  orcid: https://orcid.org/0000-0001-9451-259X
+- family-names: Ishihata
+  given-names: Masakazu
+- family-names: Honda
+  given-names: Junya
+- family-names: Tanaka
+  given-names: Isao
+  orcid: https://orcid.org/0000-0002-4616-118X
+title: 'Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram'
+version: 0.3.16  # replace with version you use
+doi: 10.1063/5.0021663
+url: https://doi.org/10.1063/5.0021663
+journal: J. Chem. Phys.
+volume: 153
+pages: 104109
+year: 2020
