@@ -9,61 +9,43 @@ from dsenum import StructureEnumerator
 from dsenum.utils import get_lattice
 
 
-def test_fcc():
-    base_structure = get_lattice("fcc")
+@pytest.mark.parametrize("kind", ["fcc", "sc", "hcp"])
+@pytest.mark.parametrize("index", [2, 3, 4])
+def test_basic_structure(kind, index):
+    base_structure = get_lattice(kind)
     num_type = 2
-    indices = [2, 3, 4]
     species = ["Cu", "Au"]
 
-    check(base_structure, num_type, indices, species, "fcc")
+    se = StructureEnumerator(
+        base_structure,
+        index,
+        num_type,
+        species,
+        color_exchange=True,
+        remove_superperiodic=True,
+    )
+    list_ds = se.generate()
+
+    stm = StructureMatcher(ltol=1e-4, stol=1e-4)
+    grouped = stm.group_structures(list_ds)
+    assert len(grouped) == len(list_ds)
 
 
-def test_sc():
-    base_structure = get_lattice("sc")
-    num_type = 2
-    indices = [2, 3, 4]
-    species = [Element("Cu"), Element("Au")]
-
-    check(base_structure, num_type, indices, species, "sc")
-
-
-def test_hcp():
-    base_structure = get_lattice("hcp")
-    num_type = 2
-    indices = [2, 3, 4]
-    species = [Specie("Cu"), Specie("Au")]
-
-    check(base_structure, num_type, indices, species, "hcp")
-
-
-def check(base_structure, num_type, indices, species, name):
-    for index in indices:
-        se = StructureEnumerator(
-            base_structure,
-            index,
-            num_type,
-            species,
-            color_exchange=True,
-            remove_superperiodic=True,
-        )
-        list_ds = se.generate()
-
-        stm = StructureMatcher(ltol=1e-4, stol=1e-4)
-        grouped = stm.group_structures(list_ds)
-        assert len(grouped) == len(list_ds)
-
-
-def test_coloring_with_fixed_species():
+@pytest.fixture
+def sto_perovskite() -> Structure:
     lattice = Lattice(3.945 * np.eye(3))
     species = ["Sr", "Ti", "O", "O", "O"]
     frac_coords = np.array(
         [[0, 0, 0], [0.5, 0.5, 0.5], [0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]
     )
-    aristo = Structure(lattice, species, frac_coords)
-    base_structure = aristo.copy()
+    return Structure(lattice, species, frac_coords)
+
+
+def test_coloring_with_fixed_species(sto_perovskite: Structure):
+    base_structure = sto_perovskite.copy()
     base_structure.remove_species(["Sr", "Ti"])
-    additional_species = species[:2]
-    additional_frac_coords = frac_coords[:2]
+    additional_species = sto_perovskite.species[:2]
+    additional_frac_coords = sto_perovskite.frac_coords[:2]
 
     mapping_color_species = [DummySpecie("X"), "O"]
     num_types = len(mapping_color_species)
@@ -93,7 +75,7 @@ def test_coloring_with_fixed_species():
         [0, 1],  # O or V
     ]
     se2 = StructureEnumerator(
-        aristo,
+        sto_perovskite,
         index,
         num_types2,
         mapping_color_species=mapping_color_species2,
@@ -111,8 +93,14 @@ def test_coloring_with_fixed_species():
     assert all([(len(matched) == 2) for matched in grouped])
 
 
-def test_poscar_string():
-    base_structure = get_lattice("sc")
+@pytest.mark.parametrize(
+    "kind",
+    [
+        "sc",
+    ],
+)
+def test_poscar_string(kind):
+    base_structure = get_lattice(kind)
     num_type = 2
     index = 4
     species = [Element("Cu"), Element("Au")]

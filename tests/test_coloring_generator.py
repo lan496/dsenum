@@ -1,11 +1,8 @@
-import pytest
-
 from dsenum.coloring_generator import (
     ColoringGenerator,
     FixedConcentrationColoringGenerator,
     satisfy_site_constraints,
 )
-from dsenum.utils import get_lattice
 
 
 def test_coloring_generator():

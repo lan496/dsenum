@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from pymatgen.core import Lattice, Structure
 
 from dsenum.superlattice import (
@@ -72,40 +73,27 @@ def test_generate_all_superlattices():
         assert len(list_HNF) == expected
 
 
-def test_reduce_HNF_list_by_parent_lattice_symmetry():
-    # confirm table 4
-    obj = {
-        "fcc": {
-            "structure": get_lattice("fcc"),
-            "num_expected": [1, 2, 3, 7, 5, 10, 7, 20, 14, 18],
-        },
-        "bcc": {
-            "structure": get_lattice("bcc"),
-            "num_expected": [1, 2, 3, 7, 5, 10, 7, 20, 14, 18],
-        },
-        "sc": {"structure": get_lattice("sc"), "num_expected": [1, 3, 3, 9, 5, 13, 7, 24, 14, 23]},
-        "hex": {
-            "structure": get_lattice("hex"),
-            "num_expected": [1, 3, 5, 11, 7, 19, 11, 34, 23, 33],
-        },
-        "tetragonal": {
-            "structure": get_lattice("tet"),
-            "num_expected": [1, 5, 5, 17, 9, 29, 13, 51, 28, 53],
-        },
-        "hcp": {
-            "structure": get_lattice("hcp"),
-            "num_expected": [1, 3, 5, 11, 7, 19, 11, 34, 23, 33],
-        },
-    }
-
-    for name, dct in obj.items():
-        structure = dct["structure"]
-        for index, expected in zip(range(1, len(dct["num_expected"]) + 1), dct["num_expected"]):
-            list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
-            assert len(list_reduced_HNF) == expected
+@pytest.mark.parametrize(
+    "kind,list_expected",
+    [
+        ("fcc", [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]),
+        ("bcc", [1, 2, 3, 7, 5, 10, 7, 20, 14, 18]),
+        ("sc", [1, 3, 3, 9, 5, 13, 7, 24, 14, 23]),
+        ("hex", [1, 3, 5, 11, 7, 19, 11, 34, 23, 33]),
+        ("tet", [1, 5, 5, 17, 9, 29, 13, 51, 28, 53]),
+        ("hcp", [1, 3, 5, 11, 7, 19, 11, 34, 23, 33]),
+    ],
+)
+def test_reduce_HNF_list_by_parent_lattice_symmetry(kind, list_expected):
+    # Confirm table 4
+    structure = get_lattice(kind)
+    for index, expected in zip(range(1, len(list_expected) + 1), list_expected):
+        list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
+        assert len(list_reduced_HNF) == expected
 
 
-def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc():
+@pytest.mark.parametrize("kind", ["fcc", "bcc"])
+def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc(kind):
     # https://oeis.org/A045790
     lst_num = [
         1,
@@ -159,27 +147,10 @@ def test_reduce_HNF_list_by_parent_lattice_symmetry_fcc_bcc():
         146,
         280,
     ]
-    obj = {
-        "fcc": {"structure": get_face_centered_cubic(), "num_expected": lst_num},
-        "bcc": {"structure": get_body_centered_cubic(), "num_expected": lst_num},
-    }
 
-    for name, dct in obj.items():
-        for index, expected in zip(range(1, len(dct["num_expected"]) + 1), dct["num_expected"]):
-            if index >= 20:
-                continue
-            structure = dct["structure"]
-            list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
-            assert len(list_reduced_HNF) == expected
-
-
-def get_face_centered_cubic():
-    latt = Lattice(np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-    struct = Structure(latt, ["Al"], [[0, 0, 0]])
-    return struct
-
-
-def get_body_centered_cubic():
-    latt = Lattice(np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]]))
-    struct = Structure(latt, ["Fe"], [[0, 0, 0]])
-    return struct
+    structure = get_lattice(kind)
+    for index, expected in zip(range(1, len(lst_num) + 1), lst_num):
+        if index >= 20:
+            continue
+        list_reduced_HNF = generate_symmetry_distinct_superlattices(index, structure)
+        assert len(list_reduced_HNF) == expected

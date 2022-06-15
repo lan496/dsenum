@@ -6,13 +6,9 @@ from warnings import warn
 import numpy as np
 from pymatgen.core import Structure
 from pymatgen.core.periodic_table import DummySpecie, Element, Specie
+from pyzdd import Permutation, Universe
+from pyzdd.structure import construct_derivative_structures, enumerate_labelings
 from tqdm import tqdm
-
-try:
-    from pyzdd import Permutation, Universe
-    from pyzdd.structure import construct_derivative_structures, enumerate_labelings
-except ImportError:
-    pass
 
 from dsenum.coloring import SiteColoringEnumerator
 from dsenum.coloring_generator import (
