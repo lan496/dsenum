@@ -34,6 +34,7 @@ setup(
         "joblib",
         "tqdm",
         "hsnf==0.3.13",
+        "pyzdd @ git+https://github.com/lan496/pyzdd.git@v0.2.3#egg=pyzdd",  # PEP 508
     ],
     extras_require={
         "dev": [

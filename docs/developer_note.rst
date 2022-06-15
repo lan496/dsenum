@@ -5,16 +5,11 @@ Installation
 ------------
 
 .. code-block:: shell
-    git clone --recursive git@github.com:lan496/pyzdd.git
-    pushd pyzdd
-    pip install -e .
-    popd
 
     git clone git@github.com:lan496/dsenum.git
     cd dsenum
     pip install -e ".[dev,docs]"
     pre-commit install
-
 
 Cython
 ------
