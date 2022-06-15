@@ -2,8 +2,52 @@ import numpy as np
 import pytest
 from pymatgen.core import Lattice, Structure
 
-from dsenum import StructureEnumerator
+from dsenum import StructureEnumerator, ZddStructureEnumerator
 from dsenum.utils import get_lattice
+
+
+@pytest.mark.parametrize("method", ["direct", "zdd", "zdd_count"])
+@pytest.mark.benchmark(group="basic-binary")
+def test_basic_binary(method, benchmark):
+    setting = {
+        "base_structure": get_lattice("fcc"),
+        "index": 16,
+        "num_types": 2,
+        "remove_incomplete": True,
+        "remove_superperiodic": True,
+    }
+
+    if method == "direct":
+        se = StructureEnumerator(**setting)
+        benchmark.pedantic(se.generate, kwargs={"output": "poscar"}, iterations=1)
+    else:
+        zse = ZddStructureEnumerator(**setting)
+        if method == "zdd":
+            benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
+        elif method == "zdd_count":
+            benchmark.pedantic(zse.count, iterations=1)
+
+
+@pytest.mark.parametrize("method", ["direct", "zdd", "zdd_count"])
+@pytest.mark.benchmark(group="basic-ternary")
+def test_basic_ternary(method, benchmark):
+    setting = {
+        "base_structure": get_lattice("fcc"),
+        "index": 10,
+        "num_types": 3,
+        "remove_incomplete": True,
+        "remove_superperiodic": True,
+    }
+
+    if method == "direct":
+        se = StructureEnumerator(**setting)
+        benchmark.pedantic(se.generate, kwargs={"output": "poscar"}, iterations=1)
+    else:
+        zse = ZddStructureEnumerator(**setting)
+        if method == "zdd":
+            benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
+        elif method == "zdd_count":
+            benchmark.pedantic(zse.count, iterations=1)
 
 
 def get_rutile_structure():
@@ -28,118 +72,85 @@ def get_rutile_structure():
     return structure
 
 
-def get_common_settings():
-    data = {
+@pytest.mark.parametrize("method", ["direct", "zdd", "zdd_count"])
+@pytest.mark.benchmark(group="composition")
+def test_composition_constraints(method, benchmark):
+    setting = {
         "base_structure": get_rutile_structure(),
         "index": 2,
         "num_types": 3,
+        "composition_constraints": [1, 3, 2],
+        "remove_incomplete": True,
+        "remove_superperiodic": True,
     }
-    return data
+
+    if method == "direct":
+        se = StructureEnumerator(**setting)
+        benchmark.pedantic(se.generate, kwargs={"output": "poscar"}, iterations=1)
+    else:
+        zse = ZddStructureEnumerator(**setting)
+        if method == "zdd":
+            benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
+        elif method == "zdd_count":
+            benchmark.pedantic(zse.count, iterations=1)
 
 
-@pytest.mark.benchmark(group="basic")
-def test_direct(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "direct"
-    se = StructureEnumerator(**setting)
-
-    benchmark.pedantic(se.generate, iterations=1)
-
-
-@pytest.mark.benchmark(group="basic")
-def test_lexicographic(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "lexicographic"
-    se = StructureEnumerator(**setting)
-
-    benchmark.pedantic(se.generate, iterations=1)
-
-
-@pytest.mark.benchmark(group="composition")
-def test_direct_with_composition(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "direct"
-    setting["composition_constraints"] = [1, 3, 2]
-    se = StructureEnumerator(**setting)
-
-    benchmark.pedantic(se.generate, iterations=1)
-
-
-@pytest.mark.benchmark(group="composition")
-def test_lexicographic_with_composition(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "lexicographic"
-    setting["composition_constraints"] = [1, 3, 2]
-    se = StructureEnumerator(**setting)
-
-    benchmark.pedantic(se.generate, iterations=1)
-
-
+@pytest.mark.parametrize("method", ["direct", "zdd", "zdd_count"])
 @pytest.mark.benchmark(group="site")
-def test_direct_with_site(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "direct"
-    setting["base_site_constraints"] = [
-        [2],  # 2a
-        [2],  # 2a
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-    ]
-    se = StructureEnumerator(**setting)
+def test_site_constraints(method, benchmark):
+    setting = {
+        "base_structure": get_rutile_structure(),
+        "index": 4,
+        "num_types": 3,
+        "base_site_constraints": [
+            [2],  # 2a
+            [2],  # 2a
+            [0, 1],  # 4f
+            [0, 1],  # 4f
+            [0, 1],  # 4f
+            [0, 1],  # 4f
+        ],
+        "remove_incomplete": True,
+        "remove_superperiodic": True,
+    }
 
-    benchmark.pedantic(se.generate, iterations=1)
-
-
-@pytest.mark.benchmark(group="site")
-def test_lexicographic_with_site(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "lexicographic"
-    setting["base_site_constraints"] = [
-        [2],  # 2a
-        [2],  # 2a
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-    ]
-    se = StructureEnumerator(**setting)
-
-    benchmark.pedantic(se.generate, iterations=1)
+    if method == "direct":
+        se = StructureEnumerator(**setting)
+        benchmark.pedantic(se.generate, kwargs={"output": "poscar"}, iterations=1)
+    else:
+        zse = ZddStructureEnumerator(**setting)
+        if method == "zdd":
+            benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
+        elif method == "zdd_count":
+            benchmark.pedantic(zse.count, iterations=1)
 
 
+@pytest.mark.parametrize("method", ["direct", "zdd", "zdd_count"])
 @pytest.mark.benchmark(group="composition-site")
-def test_direct_with_composition_and_site(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "direct"
-    setting["composition_constraints"] = [1, 3, 2]
-    setting["base_site_constraints"] = [
-        [2],  # 2a
-        [2],  # 2a
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-    ]
-    se = StructureEnumerator(**setting)
+def test_composition_site_constraints(method, benchmark):
+    setting = {
+        "base_structure": get_rutile_structure(),
+        "index": 4,
+        "num_types": 3,
+        "composition_constraints": [1, 3, 2],
+        "base_site_constraints": [
+            [2],  # 2a
+            [2],  # 2a
+            [0, 1],  # 4f
+            [0, 1],  # 4f
+            [0, 1],  # 4f
+            [0, 1],  # 4f
+        ],
+        "remove_incomplete": True,
+        "remove_superperiodic": True,
+    }
 
-    benchmark.pedantic(se.generate, iterations=1)
-
-
-@pytest.mark.benchmark(group="composition-site")
-def test_lexicographic_with_composition_and_site(benchmark):
-    setting = get_common_settings()
-    setting["method"] = "lexicographic"
-    setting["composition_constraints"] = [1, 3, 2]
-    setting["base_site_constraints"] = [
-        [2],  # 2a
-        [2],  # 2a
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-        [0, 1],  # 4f
-    ]
-    se = StructureEnumerator(**setting)
-
-    benchmark.pedantic(se.generate, iterations=1)
+    if method == "direct":
+        se = StructureEnumerator(**setting)
+        benchmark.pedantic(se.generate, kwargs={"output": "poscar"}, iterations=1)
+    else:
+        zse = ZddStructureEnumerator(**setting)
+        if method == "zdd":
+            benchmark.pedantic(zse.generate, kwargs={"output": "poscar"}, iterations=1)
+        elif method == "zdd_count":
+            benchmark.pedantic(zse.count, iterations=1)
