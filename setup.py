@@ -40,6 +40,7 @@ setup(
         "dev": [
             "ipython",
             "notebook",
+            "jupyter_contrib_nbextensions",
             "pytest>=6.0.0",
             "pytest-cov",
             "pytest-benchmark",
@@ -53,6 +54,7 @@ setup(
         "docs": [
             "sphinx",
             "sphinx-autobuild",
+            "nbsphinx==0.8.9",
             "furo",
             "m2r2",
         ],

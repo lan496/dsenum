@@ -3,6 +3,7 @@
    :hidden:
 
    Introduction <self>
+   Examples <examples>
    supercell
    API Reference <api>
    Change Log <changelog>
