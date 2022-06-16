@@ -48,7 +48,7 @@ dstructs = StructureEnumerator(structure, index, num_type).generate()
 print(len(dstructs))  # -> 12
 ```
 
-See `examples/Sn_oxide.py` for more complicated use cases.
+See [docs/examples/constraints.ipynb](docs/examples/constraints.ipynb) for more complicated use cases.
 
 ## How to cite dsenum
 
