@@ -26,7 +26,7 @@ setup(
         "setuptools",
         "setuptools_scm",
         "wheel",
-        "pymatgen>=2020.4.29",
+        "pymatgen>=2021.3.9",
         "numpy",
         "sympy",
         "scipy",
@@ -39,6 +39,7 @@ setup(
     extras_require={
         "dev": [
             "ipython",
+            "notebook",
             "pytest>=6.0.0",
             "pytest-cov",
             "pytest-benchmark",

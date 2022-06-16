@@ -115,7 +115,6 @@ dmypy.json
 .pyre/
 
 *.DS_Store
-*.ipynb
 *.png
 *.cif
 *.joblib

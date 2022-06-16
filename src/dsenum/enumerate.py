@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 from time import time
-from typing import List, Set, Tuple, Union, cast
+from typing import List, Literal, Set, Union, cast
 from warnings import warn
 
 import numpy as np
+from numpy.typing import NDArray
 from pymatgen.core import Structure
 from pymatgen.core.periodic_table import DummySpecie, Element, Specie
+from pymatgen.util.typing import SpeciesLike
 from pyzdd import Permutation, Universe
 from pyzdd.structure import construct_derivative_structures, enumerate_labelings
 from tqdm import tqdm
@@ -27,38 +31,6 @@ from dsenum.utils import get_symmetry_operations
 class AbstractStructureEnumerator(metaclass=ABCMeta):
     """
     Abstract class for enumerating derivative structures.
-
-    Parameters
-    ----------
-    base_structure: pymatgen.core.Structure
-        Aristotype for derivative structures
-    index: int
-        How many times to expand unit cell
-    num_types: int
-        The number of species in derivative structures.
-        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
-    mapping_color_species: optional
-        If specified, use these species in derivative structures.
-        The length of this list should be equal to `num_types`
-    composition_constraints: (Optional) List[int]
-        composition_constraints[i] is the ratio of the i-th species in mapping_color_species.
-        For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with
-        `mapping_color_species = ["Ti", "O"]`.
-    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)
-        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
-    color_exchange: (Optional) bool
-        identify color-exchanging
-    remove_superperiodic: (Optional) bool
-        iff true, discard superperiodic coloring
-    remove_incomplete: (Optional) bool
-
-    Arguments
-    ---------
-    list_reduced_HNF
-    rotations
-    translations
-    site_constraints: site_constraints[i] is a list of allowed species at the i-th site in supercell
-    mapping_color_species
     """
 
     def __init__(
@@ -66,7 +38,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         base_structure: Structure,
         index: int,
         num_types: int,
-        mapping_color_species: List[Union[str, Element, Specie, DummySpecie]] = None,
+        mapping_color_species: list[SpeciesLike] = None,
         composition_constraints=None,
         base_site_constraints=None,
         color_exchange=True,
@@ -90,7 +62,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         self.rotations = rotations
         self.translations = translations
 
-        # site constraints
+        # self.site_constraints[i] is a list of allowed species at the i-th site in supercell
         self.site_constraints = None
         if base_site_constraints:
             assert len(base_site_constraints) == self.num_sites_base
@@ -112,29 +84,35 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
 
     def generate(
         self,
-        return_colorings=False,
-        additional_species=None,
-        additional_frac_coords=None,
-        output="pymatgen",
-    ) -> Union[
-        List[Union[Structure, str]],
-        Tuple[List[Union[Structure, str]], List[np.ndarray], List[List[int]]],
-    ]:
+        return_colorings: bool = False,
+        additional_species: list[SpeciesLike] | None = None,
+        additional_frac_coords: NDArray | None = None,
+        output: Literal["poscar", "pymatgen"] = "pymatgen",
+    ) -> list[Structure | str] | tuple[list[Structure | str], list[NDArray], list[list[int]]]:
         """
+        Generate derivative structures
+
         Parameters
         ----------
         return_colorings: bool, optional
-            if true, return transformation matrices and colorings in addition
-        additional_species: list of pymatgen.core.Species, optional
-            species which are nothing to do with ordering
-        additional_frac_coords: np.ndarray, optional
+            If true, return transformation matrices and colorings in addition
+        additional_species: list[SpeciesLike] | None, optional
+            species which are nothing to do with ordering. If specified, append these species in returned derivative structures.
+        additional_frac_coords: NDArray | None, optional
             fractional coordinates of species which are nothing to do with ordering
+        output: Literal['poscar', 'pymatgen']
+            In default, `pymatgen.core.Structure` objects are returned. If specified `output='poscar'`, POSCAR strings are returned instead.
 
         Returns
         -------
-        list_ds: list of derivative structure
-        list_transformations: list of transformation matrices, optional
-        list_colorings: list of colorings, optional
+        list_ds: list[Structure | str]
+            List of derivative structures
+        list[list[int]]
+
+        list_transformations: list[NDArray], optional
+            List of transformation matrices. Returned if `return_colorings=True`
+        list_colorings: list[list[int]], optional
+            List of colorings. Returned if `return_colorings=True`
         """
         assert (output == "pymatgen") or (output == "poscar")
         start = time()
@@ -185,7 +163,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         ds_permutation: DerivativeStructurePermutation,
         additional_species,
         additional_frac_coords,
-    ) -> List[List[int]]:
+    ) -> list[list[int]]:
         raise NotImplementedError
 
 
@@ -202,31 +180,25 @@ class StructureEnumerator(AbstractStructureEnumerator):
     num_types: int
         The number of species in derivative structures.
         `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
-    mapping_color_species: optional
+    mapping_color_species: list[SpecieLike] | None, optional
         If specified, use these species in derivative structures.
         The length of this list should be equal to `num_types`
-    composition_constraints: (Optional) List[int]
-        composition_constraints[i] is the ratio of the i-th species in mapping_color_species
-    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)
-        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
-    color_exchange: (Optional) bool
-        identify color-exchanging
-    remove_superperiodic: (Optional) bool
-        iff true, discard superperiodic coloring
-    remove_incomplete: (Optional) bool
-    method: (Optional) str
+    composition_constraints: list[int] | None, optional
+        composition_constraints[i] is the ratio of the i-th species in mapping_color_species.
+        For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with
+        `mapping_color_species = ["Ti", "O"]`.
+    base_site_constraints: list[list[int]] | None, optional
+        (num_elements, num_color) e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+    color_exchange: bool, optional
+        Iff true, identify color-exchanging
+    remove_superperiodic: bool, optional
+        Iff true, discard superperiodic coloring
+    remove_incomplete: bool, optional
+        Iff true, discard structures whose number of types are less then `num_types`.
+    method: str, optional
         "direct" or "lexicographic", so far
-    n_jobs: (Optional) int
+    n_jobs: int, optional
         core in lexicographic coset enumeration(only used when method='lexicographic')
-
-    Arguments
-    ---------
-    list_reduced_HNF
-    rotations
-    translations
-    site_constraints
-    mapping_color_species
-    cl_generator
     """
 
     def __init__(
@@ -234,14 +206,14 @@ class StructureEnumerator(AbstractStructureEnumerator):
         base_structure: Structure,
         index: int,
         num_types: int,
-        mapping_color_species: List[Union[str, Element, Specie, DummySpecie]] = None,
-        composition_constraints=None,
-        base_site_constraints=None,
-        color_exchange=True,
-        remove_superperiodic=True,
-        remove_incomplete=True,
-        method="direct",
-        n_jobs=1,
+        mapping_color_species: list[SpeciesLike] | None = None,
+        composition_constraints: list[int] | None = None,
+        base_site_constraints: list[int] | None = None,
+        color_exchange: bool = True,
+        remove_superperiodic: bool = True,
+        remove_incomplete: bool = True,
+        method: Literal["direct", "lexicographic"] = "direct",
+        n_jobs: int = 1,
     ):
         super().__init__(
             base_structure=base_structure,
@@ -291,7 +263,7 @@ class StructureEnumerator(AbstractStructureEnumerator):
         ds_permutation: DerivativeStructurePermutation,
         additional_species,
         additional_frac_coords,
-    ) -> List[List[int]]:
+    ) -> list[list[int]]:
         sc_enum = SiteColoringEnumerator(
             self.num_types,
             ds_permutation,
@@ -309,7 +281,8 @@ class StructureEnumerator(AbstractStructureEnumerator):
 
 class ZddStructureEnumerator(AbstractStructureEnumerator):
     """
-    Enumerate derivative structures.
+    Enumerate derivative structures with ZDD acceleration.
+
     Parameters
     ----------
     base_structure: pymatgen.core.Structure
@@ -319,23 +292,19 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
     num_types: int
         The number of species in derivative structures.
         `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
-    mapping_color_species: optional
+    mapping_color_species: list[int] | None, optional
         If specified, use these species in derivative structures.
         The length of this list should be equal to `num_types`
-    composition_constraints: (Optional) List[int]
-        composition_constraints[i] is the ratio of the i-th species in mapping_color_species
-    base_site_constraints: (Optional) List[List[int]], (num_elements, num_color)
-        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
-    remove_superperiodic: (Optional) bool
-        iff true, discard superperiodic coloring
-    remove_incomplete: (Optional) bool
-    Arguments
-    ---------
-    list_reduced_HNF
-    rotations
-    translations
-    site_constraints
-    mapping_color_species
+    composition_constraints: list[int] | None, optional
+        composition_constraints[i] is the ratio of the i-th species in mapping_color_species.
+        For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with
+        `mapping_color_species = ["Ti", "O"]`.
+    base_site_constraints: list[list[int]] | None, optional
+        (num_elements, num_color) e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+    remove_superperiodic: bool, optional
+        Iff true, discard superperiodic coloring
+    remove_incomplete: bool, optional
+        Iff true, discard structures whose number of types are less then `num_types`.
     """
 
     def __init__(
@@ -343,11 +312,11 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         base_structure: Structure,
         index: int,
         num_types: int,
-        mapping_color_species: List[Union[str, Element, Specie, DummySpecie]] = None,
-        composition_constraints=None,
-        base_site_constraints=None,
-        remove_superperiodic=True,
-        remove_incomplete=True,
+        mapping_color_species: list[SpeciesLike] | None = None,
+        composition_constraints: list[int] | None = None,
+        base_site_constraints: list[int] | None = None,
+        remove_superperiodic: bool = True,
+        remove_incomplete: bool = True,
     ):
         super().__init__(
             base_structure=base_structure,
@@ -362,7 +331,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
 
         self.prohibited_site_constraints = []
         if self.site_constraints is not None:
-            all_species: Set[int] = set()
+            all_species: set[int] = set()
             all_species.update(range(self.num_types))
             for allowed_species in self.site_constraints:
                 prohibited = list(all_species.difference(set(allowed_species)))
@@ -375,7 +344,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         ds_permutation: DerivativeStructurePermutation,
         additional_species,
         additional_frac_coords,
-    ) -> List[List[int]]:
+    ) -> list[list[int]]:
         dd = Universe()
 
         num_sites = ds_permutation.num_sites
@@ -384,7 +353,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         ]
         translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
 
-        composition_constraints_dd: List[int] = []
+        composition_constraints_dd: list[int] = []
         if self.composition_constraints is not None:
             ratio_sum = np.sum(self.composition_constraints)
             if num_sites % ratio_sum != 0:
@@ -412,9 +381,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
 
     def count(self) -> int:
         """
-        Returns
-        -------
-        count: int
+        Count the number of derivative structures
         """
         start = time()
 
@@ -447,7 +414,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         ]
         translations = [Permutation(sigma) for sigma in ds_permutation._prm_t]
 
-        composition_constraints_dd: List[int] = []
+        composition_constraints_dd: list[int] = []
         if self.composition_constraints is not None:
             ratio_sum = np.sum(self.composition_constraints)
             if num_sites % ratio_sum != 0:
@@ -471,56 +438,6 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         )
 
         return int(dd.cardinality())
-
-
-def enumerate_derivative_structures(
-    base_structure,
-    index,
-    num_type,
-    mapping_color_species=None,
-    composition_constraints=None,
-    base_site_constraints=None,
-    color_exchange=True,
-    leave_superperiodic=False,
-    use_all_colors=True,
-    method="direct",
-    n_jobs=1,
-):
-    """
-    Parameters
-    ----------
-    base_structure: Structure
-    index: int
-    num_type: int
-    mapping_color_species: (Optional) if specified, use these species in derivative structures
-    composition_constraints: (Optional) None or list of int
-    base_site_constraints: (Optional) list (num_elements, num_color)
-        e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
-    color_exchange: identify color-exchanging
-    leave_superperiodic: do not discard superperiodic coloring
-    use_all_colors: bool
-    method: "direct" or "lexicographic", so far
-    n_jobs: core in lexicographic coset enumeration(only used when method='lexicographic')
-
-    Returns
-    -------
-    list_ds: list of derivative structure
-    """
-    warn("Deprecated. Use StructureEnumerator instead", DeprecationWarning)
-    se = StructureEnumerator(
-        base_structure,
-        index,
-        num_type,
-        mapping_color_species,
-        composition_constraints,
-        base_site_constraints,
-        color_exchange,
-        leave_superperiodic,
-        use_all_colors,
-        method,
-        n_jobs,
-    )
-    return se.generate()
 
 
 def remove_symmetry_duplicates(
