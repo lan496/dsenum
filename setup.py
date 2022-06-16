@@ -58,6 +58,7 @@ setup(
             "nbsphinx==0.8.9",
             "furo",
             "m2r2",
+            "ipykernel",
         ],
     },
     tests_require=["pytest"],
