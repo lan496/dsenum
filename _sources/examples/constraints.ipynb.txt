@@ -1,0 +1,307 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Enumerate derivative structures with composition and site constraints\n",
+    "\n",
+    "This example shows how to specify a composition of derivative structures and restrict each site to be occupied by only allowed species."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Import modules"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pathlib import Path\n",
+    "\n",
+    "import numpy as np\n",
+    "from pymatgen.core import Lattice, Structure\n",
+    "from pymatgen.core.periodic_table import DummySpecie\n",
+    "\n",
+    "from dsenum import ZddStructureEnumerator\n",
+    "from dsenum.utils import write_cif"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "dsenum 0.3.16.dev19+gc2b1184.d20220615\n"
+     ]
+    }
+   ],
+   "source": [
+    "from dsenum import __version__\n",
+    "print(f\"dsenum {__version__}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Enumerate derivative structures with site constraints\n",
+    "\n",
+    "Here, we enumerate Rutile-like SnO$_{2-x}$ derivative structures."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_rutile_structure():\n",
+    "    # rutile structure taken from mp-856\n",
+    "    a = 4.832\n",
+    "    c = 3.243\n",
+    "    x_4f = 0.3066\n",
+    "\n",
+    "    lattice = Lattice.from_parameters(a, a, c, 90, 90, 90)\n",
+    "    species = [\"Sn\", \"Sn\", \"O\", \"O\", \"O\", \"O\"]\n",
+    "    frac_coords = np.array([\n",
+    "        [0, 0, 0],                      # Sn(2a)\n",
+    "        [0.5, 0.5, 0.5],                # Sn(2a)\n",
+    "        [x_4f, x_4f, 0],                # O(4f)\n",
+    "        [1 - x_4f, 1 - x_4f, 0],        # O(4f)\n",
+    "        [0.5 - x_4f, 0.5 + x_4f, 0.5],  # O(4f)\n",
+    "        [0.5 + x_4f, 0.5 - x_4f, 0.5],  # O(4f)\n",
+    "    ])\n",
+    "    structure = Structure(lattice, species, frac_coords)\n",
+    "    return structure\n",
+    "\n",
+    "base_structure = get_rutile_structure()\n",
+    "mapping_color_species = [DummySpecie(\"X\"), \"O\", \"Sn\"]\n",
+    "\n",
+    "# Only O sites are disordered.\n",
+    "base_site_constraints = [\n",
+    "    [2],  # 2a\n",
+    "    [2],  # 2a\n",
+    "    [0, 1],  # 4f\n",
+    "    [0, 1],  # 4f\n",
+    "    [0, 1],  # 4f\n",
+    "    [0, 1],  # 4f\n",
+    "]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "100%|██████████| 1/1 [00:00<00:00, 33.30it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "total: 6 (Time: 0.03666sec)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "100%|██████████| 5/5 [00:00<00:00, 22.48it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "total: 132 (Time: 0.2258sec)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "100%|██████████| 5/5 [00:00<00:00,  9.69it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "total: 1756 (Time: 0.5191sec)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "100%|██████████| 17/17 [00:09<00:00,  1.81it/s]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "total: 47827 (Time: 9.396sec)\n"
+     ]
+    }
+   ],
+   "source": [
+    "max_index = 4\n",
+    "\n",
+    "# root = Path(\"./SnO2-x\")\n",
+    "# root.mkdir(exist_ok=True)\n",
+    "\n",
+    "for index in range(1, max_index + 1):\n",
+    "    se = ZddStructureEnumerator(\n",
+    "        base_structure,\n",
+    "        index=index,\n",
+    "        num_types=len(mapping_color_species),\n",
+    "        mapping_color_species=mapping_color_species,\n",
+    "        base_site_constraints=base_site_constraints,\n",
+    "        remove_superperiodic=True,\n",
+    "        remove_incomplete=False,\n",
+    "    )\n",
+    "    list_dstructs = se.generate()\n",
+    "\n",
+    "    for i, dstruct in enumerate(list_dstructs):\n",
+    "        # remove void\n",
+    "        dstruct.remove_species([mapping_color_species[0]])\n",
+    "\n",
+    "        # Save structure here\n",
+    "        # filename = root / f\"SnO2-x_{index}_{i}.cif\"\n",
+    "        # write_cif(filename, dstruct, refine_cell=True)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Enumerate derivative structures with composition constraints\n",
+    "\n",
+    "Here, we enumerate oxygen-deficient derivative structures of SrTiO$_{3-x}$ $(0 \\leq x \\leq 1)$ in perovskite prototype."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_perovskite_structure():\n",
+    "    lattice = Lattice(3.945 * np.eye(3))\n",
+    "    species = [\"Sr\", \"Ti\", \"O\", \"O\", \"O\"]\n",
+    "    frac_coords = np.array(\n",
+    "        [[0, 0, 0], [0.5, 0.5, 0.5], [0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]\n",
+    "    )\n",
+    "    return Structure(lattice, species, frac_coords)\n",
+    "\n",
+    "aristo = get_perovskite_structure()\n",
+    "\n",
+    "# Remove cation sites that are nothing to do with oxygen-deficient ordering!\n",
+    "base_structure = aristo.copy()\n",
+    "base_structure.remove_species([\"Sr\", \"Ti\"])\n",
+    "# Later append Sr and Ti sites with `additional_species` and `additional_frac_coords`\n",
+    "additional_species = aristo.species[:2]\n",
+    "additional_frac_coords = aristo.frac_coords[:2]\n",
+    "\n",
+    "mapping_color_species = [DummySpecie(\"X\"), \"O\"]\n",
+    "base_site_constraints = []"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# root = Path(\"./SrTiO3-x\")\n",
+    "# root.mkdir(exist_ok=True)\n",
+    "\n",
+    "max_index = 6\n",
+    "counts = {}\n",
+    "\n",
+    "for index in range(1, max_index + 1):\n",
+    "    # Enumerate possible compositions\n",
+    "    list_compositions = []\n",
+    "    for num_oxygen in range(2 * index, 3 * index + 1):\n",
+    "        num_vacancy = 3 * index - num_oxygen\n",
+    "        list_compositions.append([num_vacancy, num_oxygen])\n",
+    "\n",
+    "    poscars = []\n",
+    "    for composition_constraints in list_compositions:\n",
+    "        zse = ZddStructureEnumerator(\n",
+    "            base_structure,\n",
+    "            index=index,\n",
+    "            num_types=len(mapping_color_species),\n",
+    "            mapping_color_species=mapping_color_species,\n",
+    "            composition_constraints=composition_constraints,\n",
+    "            remove_superperiodic=True,\n",
+    "            remove_incomplete=False,\n",
+    "            verbose=False,\n",
+    "        )\n",
+    "        list_dstructs = zse.generate(\n",
+    "            additional_species=additional_species, additional_frac_coords=additional_frac_coords,\n",
+    "            output='poscar',\n",
+    "        )\n",
+    "        poscars.extend(list_dstructs)\n",
+    "    counts[index] = len(poscars)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "assert counts[1] == 2\n",
+    "assert counts[2] == 11\n",
+    "assert counts[3] == 45\n",
+    "assert counts[4] == 455\n",
+    "assert counts[5] == 1296\n",
+    "assert counts[6] == 17111"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3.10.4 ('dsenum')",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.4"
+  },
+  "orig_nbformat": 4,
+  "vscode": {
+   "interpreter": {
+    "hash": "60477ce4bde1a89b73fb6f7c3289b9759bcded45f3372e32824d6554c6736dbb"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
