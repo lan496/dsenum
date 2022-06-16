@@ -88,7 +88,7 @@ def test_coloring_with_fixed_species(sto_perovskite: Structure):
 
     # check uniqueness by StructureMatcher
     stm = StructureMatcher(ltol=1e-4, stol=1e-4)
-    grouped = stm.group_structures(list_dstructs + list_dstructs2)
+    grouped = stm.group_structures(list_dstructs + list_dstructs2)  # type: ignore
     assert len(grouped) == len(list_dstructs)
     assert all([(len(matched) == 2) for matched in grouped])
 
