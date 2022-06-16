@@ -1,6 +1,4 @@
-import numpy as np
 import pytest
-from pymatgen.core import Lattice, Structure
 
 from dsenum.superlattice import (
     generate_all_superlattices,

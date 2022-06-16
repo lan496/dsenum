@@ -52,7 +52,7 @@ def get_inventory_coefficient(type_of_perm: tuple, didx, num_elements_of_each_co
     return ret
 
 
-# ref: https://stackoverflow.com/questions/46374185/does-python-have-a-function-which-computes-multinomial-coefficients
+# noqa: B950 https://stackoverflow.com/questions/46374185/does-python-have-a-function-which-computes-multinomial-coefficients
 def get_multinomial_coefficient(params):
     if len(params) == 1:
         return 1

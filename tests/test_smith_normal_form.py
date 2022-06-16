@@ -1,4 +1,3 @@
-import numpy as np
 from hsnf import smith_normal_form
 
 from dsenum.superlattice import generate_all_superlattices

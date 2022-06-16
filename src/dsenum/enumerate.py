@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 from time import time
-from typing import List, Literal, Set, Union, cast
-from warnings import warn
+from typing import Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
 from pymatgen.core import Structure
-from pymatgen.core.periodic_table import DummySpecie, Element, Specie
+from pymatgen.core.periodic_table import DummySpecie
 from pymatgen.util.typing import SpeciesLike
 from pyzdd import Permutation, Universe
 from pyzdd.structure import construct_derivative_structures, enumerate_labelings
@@ -100,11 +99,13 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         return_colorings: bool, optional
             If true, return transformation matrices and colorings in addition
         additional_species: list[SpeciesLike] | None, optional
-            species which are nothing to do with ordering. If specified, append these species in returned derivative structures.
+            species which are nothing to do with ordering. If specified, append these species in
+            returned derivative structures.
         additional_frac_coords: NDArray | None, optional
             fractional coordinates of species which are nothing to do with ordering
         output: Literal['poscar', 'pymatgen']
-            In default, `pymatgen.core.Structure` objects are returned. If specified `output='poscar'`, POSCAR strings are returned instead.
+            In default, `pymatgen.core.Structure` objects are returned. If specified
+            `output='poscar'`, POSCAR strings are returned instead.
 
         Returns
         -------
@@ -183,7 +184,8 @@ class StructureEnumerator(AbstractStructureEnumerator):
         How many times to expand unit cell
     num_types: int
         The number of species in derivative structures.
-        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
+        `num_types` may be larger than the number of the kinds of species in
+        `base_structure`: for example, you consider vacancies in derivative structures.
     mapping_color_species: list[SpecieLike] | None, optional
         If specified, use these species in derivative structures.
         The length of this list should be equal to `num_types`
@@ -192,7 +194,8 @@ class StructureEnumerator(AbstractStructureEnumerator):
         For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with
         `mapping_color_species = ["Ti", "O"]`.
     base_site_constraints: list[list[int]] | None, optional
-        (num_elements, num_color) e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+        (num_elements, num_color) e.g. site_constraints[2] = [0, 3, 4] means color of site-2
+        in base_structure must be 0, 3, or 4.
     color_exchange: bool, optional
         Iff true, identify color-exchanging
     remove_superperiodic: bool, optional
@@ -299,7 +302,8 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         How many times to expand unit cell
     num_types: int
         The number of species in derivative structures.
-        `num_types` may be larger than the number of the kinds of species in `base_structure`: for example, you consider vacancies in derivative structures.
+        `num_types` may be larger than the number of the kinds of species
+        in `base_structure`: for example, you consider vacancies in derivative structures.
     mapping_color_species: list[int] | None, optional
         If specified, use these species in derivative structures.
         The length of this list should be equal to `num_types`
@@ -308,7 +312,8 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         For example, set `composition_constraints = [1, 2]` for enumerating TiO2 structures with
         `mapping_color_species = ["Ti", "O"]`.
     base_site_constraints: list[list[int]] | None, optional
-        (num_elements, num_color) e.g. site_constraints[2] = [0, 3, 4] means color of site-2 in base_structure must be 0, 3, or 4.
+        (num_elements, num_color) e.g. site_constraints[2] = [0, 3, 4] means color of site-2
+        in base_structure must be 0, 3, or 4.
     remove_superperiodic: bool, optional
         Iff true, discard superperiodic coloring
     remove_incomplete: bool, optional
