@@ -28,10 +28,8 @@ setup(
         "wheel",
         "pymatgen>=2021.3.9",
         "numpy",
-        "sympy",
-        "scipy",
-        "matplotlib",
-        "joblib",
+        "sympy",  # sympy.utilities.iterables.multiset_permutations
+        "scipy",  # scipy.special.binom
         "tqdm",
         "hsnf==0.3.13",
         "pyzdd @ git+https://github.com/lan496/pyzdd.git@v0.2.3#egg=pyzdd",  # PEP 508
@@ -41,6 +39,9 @@ setup(
             "ipython",
             "notebook",
             "jupyter_contrib_nbextensions",
+            "matplotlib",
+            "seaborn",
+            "pandas",
             "pytest>=6.0.0",
             "pytest-cov",
             "pytest-benchmark",
