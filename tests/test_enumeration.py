@@ -116,7 +116,6 @@ def test_zdd_with_naive(kind, num_types, composition_constraints, site_constrain
 
         count_naive = len(se.generate())
         count_zdd = len(zse.generate())
-        print(count_naive, count_zdd)
         assert count_zdd == count_naive
 
 

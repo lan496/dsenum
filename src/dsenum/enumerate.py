@@ -44,6 +44,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         color_exchange=True,
         remove_superperiodic=True,
         remove_incomplete=True,
+        verbose=True,
     ):
         self.base_structure = base_structure
         self.index = index
@@ -73,6 +74,8 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         if mapping_color_species is None:
             mapping_color_species = [DummySpecie(str(i)) for i in range(1, self.num_types + 1)]
         self.mapping_color_species = mapping_color_species
+
+        self.verbose = verbose
 
     @property
     def num_sites_base(self):
@@ -121,7 +124,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         list_ds = []
         list_transformations = []
         list_colorings = []
-        for hnf in tqdm(self.list_reduced_HNF):
+        for hnf in tqdm(self.list_reduced_HNF, disable=not self.verbose):
             ds_permutation = DerivativeStructurePermutation(
                 hnf, displacement_set, self.rotations, self.translations
             )
@@ -149,7 +152,8 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
                 list_colorings.extend(list_colorings_hnf)
 
         end = time()
-        print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
+        if self.verbose:
+            print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
 
         if return_colorings:
             return list_ds, list_transformations, list_colorings
@@ -199,6 +203,8 @@ class StructureEnumerator(AbstractStructureEnumerator):
         "direct" or "lexicographic", so far
     n_jobs: int, optional
         core in lexicographic coset enumeration(only used when method='lexicographic')
+    verbose: bool, optional
+        If true, print progress and number of enumerated structures.
     """
 
     def __init__(
@@ -214,6 +220,7 @@ class StructureEnumerator(AbstractStructureEnumerator):
         remove_incomplete: bool = True,
         method: Literal["direct", "lexicographic"] = "direct",
         n_jobs: int = 1,
+        verbose: bool = True,
     ):
         super().__init__(
             base_structure=base_structure,
@@ -225,6 +232,7 @@ class StructureEnumerator(AbstractStructureEnumerator):
             color_exchange=color_exchange,
             remove_superperiodic=remove_superperiodic,
             remove_incomplete=remove_incomplete,
+            verbose=verbose,
         )
         self.method = method
         self.n_jobs = n_jobs
@@ -305,6 +313,8 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         Iff true, discard superperiodic coloring
     remove_incomplete: bool, optional
         Iff true, discard structures whose number of types are less then `num_types`.
+    verbose: bool, optional
+        If true, print progress and number of enumerated structures.
     """
 
     def __init__(
@@ -317,6 +327,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
         base_site_constraints: list[int] | None = None,
         remove_superperiodic: bool = True,
         remove_incomplete: bool = True,
+        verbose: bool = True,
     ):
         super().__init__(
             base_structure=base_structure,
@@ -327,6 +338,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             base_site_constraints=base_site_constraints,
             remove_superperiodic=remove_superperiodic,
             remove_incomplete=remove_incomplete,
+            verbose=verbose,
         )
 
         self.prohibited_site_constraints = []
@@ -387,7 +399,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
 
         displacement_set = self.base_structure.frac_coords
         count = 0
-        for hnf in tqdm(self.list_reduced_HNF):
+        for hnf in tqdm(self.list_reduced_HNF, disable=not self.verbose):
             ds_permutation = DerivativeStructurePermutation(
                 hnf, displacement_set, self.rotations, self.translations
             )
@@ -397,7 +409,8 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
             count += count_hnf
 
         end = time()
-        print("total: {} (Time: {:.4}sec)".format(count, end - start))
+        if self.verbose:
+            print("total: {} (Time: {:.4}sec)".format(count, end - start))
 
         return count
 
