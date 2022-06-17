@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+v0.4.1
+------
+
+* Publish ZDD-backend version to PyPI.
+
 v0.4.0
 ------
 

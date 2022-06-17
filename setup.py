@@ -32,7 +32,7 @@ setup(
         "scipy",  # scipy.special.binom
         "tqdm",
         "hsnf==0.3.13",
-        "pyzdd @ git+https://github.com/lan496/pyzdd.git@v0.2.3#egg=pyzdd",  # PEP 508
+        "pyzdd==0.2.4",
     ],
     extras_require={
         "dev": [
