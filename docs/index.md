@@ -1,13 +1,16 @@
-.. toctree::
-   :caption: Contents
-   :hidden:
-
+```{toctree}
+---
+caption: Contents
+hidden:
+---
    Introduction <self>
    Examples <examples>
    supercell
    API Reference <api>
    Change Log <changelog>
    Developer Note <developer_note>
-   genindex
+   genindex <genindex>
+```
 
-.. mdinclude:: ../README.md
+```{include} ../README.md
+```
