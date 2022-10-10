@@ -146,7 +146,7 @@ class LexicographicColoringEnumerator(AbstractEnumerator):
         return colorings
 
 
-class SiteColoringEnumerator(object):
+class SiteColoringEnumerator:
     """
     Parameters
     ----------

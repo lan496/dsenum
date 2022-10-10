@@ -84,8 +84,7 @@ class ListBasedColoringGenerator(BaseColoringGenerator):
         return self.list_colorings, flags
 
     def yield_coloring(self):
-        for cl in self.list_colorings:
-            yield cl
+        yield from self.list_colorings
 
 
 class FixedConcentrationColoringGenerator(BaseColoringGenerator):
