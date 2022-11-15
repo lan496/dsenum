@@ -37,7 +37,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
         base_structure: Structure,
         index: int,
         num_types: int,
-        mapping_color_species: list[SpeciesLike] = None,
+        mapping_color_species: list[SpeciesLike] | None = None,
         composition_constraints=None,
         base_site_constraints=None,
         color_exchange=True,

@@ -31,7 +31,7 @@ setup(
         "sympy",  # sympy.utilities.iterables.multiset_permutations
         "scipy",  # scipy.special.binom
         "tqdm",
-        "hsnf==0.3.15",
+        "hsnf>=0.3.15",
         "pyzdd==0.2.4",
     ],
     extras_require={
