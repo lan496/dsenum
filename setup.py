@@ -27,7 +27,8 @@ setup(
         "setuptools_scm",
         "wheel",
         "pymatgen>=2021.3.9",
-        "numpy",
+        # Blocked until next version of pymatgen>2022.11.7 is released
+        "numpy<1.24",
         "sympy",  # sympy.utilities.iterables.multiset_permutations
         "scipy",  # scipy.special.binom
         "tqdm",
