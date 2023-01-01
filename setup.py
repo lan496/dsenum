@@ -33,7 +33,7 @@ setup(
         "scipy",  # scipy.special.binom
         "tqdm",
         "hsnf>=0.3.15",
-        "pyzdd==0.2.4",
+        "pyzdd==0.2.6",
     ],
     extras_require={
         "dev": [
