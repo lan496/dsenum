@@ -56,7 +56,7 @@ setup(
         "docs": [
             "sphinx",
             "sphinx-autobuild",
-            "nbsphinx==0.8.10",
+            "nbsphinx==0.8.11",
             "myst-parser",
             "sphinx-book-theme",
             "ipykernel",
