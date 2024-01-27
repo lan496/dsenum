@@ -118,5 +118,5 @@ def test_poscar_string(kind):
 
     assert len(list_ds_mg) == len(list_ds_pc)
     for expect, poscar_str in zip(list_ds_mg, list_ds_pc):
-        actual = Poscar.from_string(poscar_str).structure
+        actual = Poscar.from_str(poscar_str).structure
         assert expect == actual
