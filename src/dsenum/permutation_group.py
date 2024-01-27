@@ -141,8 +141,8 @@ class DerivativeStructurePermutation:
         for p1 in self.prm_t:
             for p2 in self.prm_rigid:
                 perm = product_permutations(p1, p2)
-                assert perm not in list_permutations
-                list_permutations.append(perm)
+                if perm not in list_permutations:
+                    list_permutations.append(perm)
 
         # assume list_permutations[0] is identity
         assert is_identity_permutation(list_permutations[0])
