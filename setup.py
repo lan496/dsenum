@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from setuptools import Extension, setup
+from setuptools import Extension, setup, find_packages
 from Cython.Build import cythonize
 
 ext_modules = [Extension("dsenum.core", ["src/dsenum/core.pyx"], extra_compile_args=["-O3"])]
@@ -18,6 +18,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Kohei Shinohara",
     author_email="kohei19950508@gmail.com",
+    packages=find_packages(where="src"),
     package_dir={"": "src"},
     package_data={"dsenum": ["py.typed"]},
     python_requires=">=3.8",
@@ -26,14 +27,13 @@ setup(
         "setuptools",
         "setuptools_scm",
         "wheel",
-        "pymatgen>=2021.3.9",
-        # Blocked until next version of pymatgen>2022.11.7 is released
-        "numpy<1.27",
+        "pymatgen>2022.11.7",
+        "numpy",
         "sympy",  # sympy.utilities.iterables.multiset_permutations
         "scipy",  # scipy.special.binom
         "tqdm",
         "hsnf>=0.3.15",
-        "pyzdd==0.2.6",
+        "pyzdd==0.2.8",
     ],
     extras_require={
         "dev": [
@@ -78,6 +78,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Physics",
