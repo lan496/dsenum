@@ -14,6 +14,8 @@ jobs:
     # https://github.community/t/workflow-run-completed-event-triggered-by-failed-workflow/128001
     if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
