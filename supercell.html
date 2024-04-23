@@ -1,232 +1,347 @@
-<!doctype html>
-<html class="no-js" lang="en">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API Reference" href="api.html" /><link rel="prev" title="Performance comparison between direct and ZDD methods" href="examples/performance.html" />
 
-    <meta name="generator" content="sphinx-5.0.2, furo 2022.06.04.1"/>
-        <title>Supercell Construction - dsenum 0.4.2.dev2+gddb512f documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    
-    
+<!DOCTYPE html>
 
 
-<style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Supercell Construction &#8212; dsenum 0.4</title>
   
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
   
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
   
-      }
-    }
-  }
-</style></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
+    <script src="_static/documentation_options.js?v=fda598b8"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'supercell';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
 
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
-    </div>
-    <div class="header-center">
-      <a href="index.html"><div class="brand">dsenum 0.4.2.dev2+gddb512f documentation</div></a>
-    </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
   
   
-  <span class="sidebar-brand-text">dsenum 0.4.2.dev2+gddb512f documentation</span>
   
-</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+  
+  
+  
+    <p class="title logo__title">dsenum 0.4</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="index.html">   Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">   Examples</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples/basic.html">Basic usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/constraints.html">Enumerate derivative structures with composition and site constraints</a></li>
 <li class="toctree-l2"><a class="reference internal" href="examples/performance.html">Performance comparison between direct and ZDD methods</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Supercell Construction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developer_note.html">Developer Note</a></li>
-<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">   API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">   Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_note.html">   Developer Note</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">   genindex</a></li>
 </ul>
 
-</div>
-</div>
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
 
       </div>
       
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
     </div>
-  </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/supercell.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Supercell Construction</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-supercell-for-a-general-transformation-matrix">Constructing supercell for a general transformation matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convention-in-dsenum">Convention in dsenum</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+            </nav>
         </div>
-        <article role="main">
-          <section id="supercell-construction">
-<h1>Supercell Construction<a class="headerlink" href="#supercell-construction" title="Permalink to this heading">#</a></h1>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="supercell-construction">
+<h1>Supercell Construction<a class="headerlink" href="#supercell-construction" title="Link to this heading">#</a></h1>
 <section id="constructing-supercell-for-a-general-transformation-matrix">
-<h2>Constructing supercell for a general transformation matrix<a class="headerlink" href="#constructing-supercell-for-a-general-transformation-matrix" title="Permalink to this heading">#</a></h2>
+<h2>Constructing supercell for a general transformation matrix<a class="headerlink" href="#constructing-supercell-for-a-general-transformation-matrix" title="Link to this heading">#</a></h2>
 <p>We describe a rigorous way to associate a supercell with its primitive cell.
 In what follows, we explain in a three-dimensional case.</p>
 <p>We put a collection of point coordinates in a primitive cell as <span class="math notranslate nohighlight">\(D\)</span>.
 Any point coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> in the crystallographic pattern are uniquely decomposed as</p>
-<div class="math-wrapper docutils container" id="equation-dsite">
 <div class="math notranslate nohighlight" id="equation-dsite">
-<span class="eqno">(1)<a class="headerlink" href="#equation-dsite" title="Permalink to this equation">#</a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{m},\quad \mathbf{d} \in D,\, \mathbf{m} \in \mathbb{Z}^{3}\]</div>
-</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-dsite" title="Link to this equation">#</a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{m},\quad \mathbf{d} \in D,\, \mathbf{m} \in \mathbb{Z}^{3}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{m}\)</span> indicates indices of a lattice point of a unit cell that the point coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> belongs.
 When we consider translational symmetry of a sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span>, two lattice points <span class="math notranslate nohighlight">\(\mathbf{m}, \mathbf{m}'\)</span> are equivalent if the distance between the two lattice points is a translation of <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span>, that is,</p>
-<div class="math-wrapper docutils container" id="equation-eq-equiv-lattice-points">
 <div class="math notranslate nohighlight" id="equation-eq-equiv-lattice-points">
-<span class="eqno">(2)<a class="headerlink" href="#equation-eq-equiv-lattice-points" title="Permalink to this equation">#</a></span>\[\mathbf{m} - \mathbf{m}' \in \mathbf{M}\mathbb{Z}^{3}.\]</div>
-</div>
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-equiv-lattice-points" title="Link to this equation">#</a></span>\[\mathbf{m} - \mathbf{m}' \in \mathbf{M}\mathbb{Z}^{3}.\]</div>
 <p>The Smith normal form (SNF) of the transformation matrix <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> is useful to concretely write down Eq. <a class="reference internal" href="#equation-eq-equiv-lattice-points">(2)</a>.
 The SNF is one of the decomposition of an integer matrix <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> as</p>
-<div class="math-wrapper docutils container" id="equation-eq-snf">
 <div class="math notranslate nohighlight" id="equation-eq-snf">
-<span class="eqno">(3)<a class="headerlink" href="#equation-eq-snf" title="Permalink to this equation">#</a></span>\[\mathbf{S} = \mathbf{PMQ}\]</div>
-</div>
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-snf" title="Link to this equation">#</a></span>\[\mathbf{S} = \mathbf{PMQ}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{Q}\)</span> are unimodular matrices, and <span class="math notranslate nohighlight">\(\mathbf{S}\)</span> is a diagonal integer matrix,</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{S} =
     \begin{pmatrix}
@@ -234,93 +349,72 @@ The SNF is one of the decomposition of an integer matrix <span class="math notra
         0 &amp; S_{22} &amp; 0 \\
         0 &amp; 0 &amp; S_{33}
     \end{pmatrix}.\end{split}\]</div>
-</div>
 <p>Here <span class="math notranslate nohighlight">\(S_{11}\)</span> is a divisor of <span class="math notranslate nohighlight">\(S_{22}\)</span>, and <span class="math notranslate nohighlight">\(S_{22}\)</span> is a divisor of <span class="math notranslate nohighlight">\(S_{33}\)</span>.
 We can rewrite Eq. <a class="reference internal" href="#equation-eq-equiv-lattice-points">(2)</a> with Eq. <a class="reference internal" href="#equation-eq-snf">(3)</a> as</p>
-<div class="math-wrapper docutils container" id="equation-eq-equiv-represents">
 <div class="math notranslate nohighlight" id="equation-eq-equiv-represents">
-<span class="eqno">(4)<a class="headerlink" href="#equation-eq-equiv-represents" title="Permalink to this equation">#</a></span>\[[\mathbf{Pm}]_{\mathbf{S}} = [\mathbf{Pm}']_{\mathbf{S}}\]</div>
-</div>
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-equiv-represents" title="Link to this equation">#</a></span>\[[\mathbf{Pm}]_{\mathbf{S}} = [\mathbf{Pm}']_{\mathbf{S}}\]</div>
 <p>where <span class="math notranslate nohighlight">\([\cdot]_{\mathbf{S}}\)</span> indicates to take modulus for the <span class="math notranslate nohighlight">\(i\)</span>th row by <span class="math notranslate nohighlight">\(S_{ii}\)</span>.
 We mention that the range of <span class="math notranslate nohighlight">\([\cdot]_{\mathbf{S}}\)</span> is <span class="math notranslate nohighlight">\(\mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}}\)</span> because a value of the <span class="math notranslate nohighlight">\(i\)</span>th row is a remainder by <span class="math notranslate nohighlight">\(S_{ii}\)</span>.
 Using Eq. <a class="reference internal" href="#equation-eq-equiv-represents">(4)</a>, the point coordinates <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> are decomposed with the translation of the sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span> as</p>
-<div class="math-wrapper docutils container" id="equation-eq-site-decomposition">
 <div class="math notranslate nohighlight" id="equation-eq-site-decomposition">
-<span class="eqno">(5)<a class="headerlink" href="#equation-eq-site-decomposition" title="Permalink to this equation">#</a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml} ,\, \quad \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}},\, \mathbf{l} \in \mathbb{Z}^{3}.\]</div>
-</div>
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-site-decomposition" title="Link to this equation">#</a></span>\[\mathbf{x} = \mathbf{d} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml} ,\, \quad \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}},\, \mathbf{l} \in \mathbb{Z}^{3}.\]</div>
 <p>In Eq. <a class="reference internal" href="#equation-eq-site-decomposition">(5)</a>, the terms <span class="math notranslate nohighlight">\(\mathbf{d} + \mathbf{P}^{-1}\mathbf{f}\)</span> denote point coordinates in the supercell and <span class="math notranslate nohighlight">\(\mathbf{l}\)</span> stands for the indices of a supercell.</p>
 <p>The collection of point coordinates in <span class="math notranslate nohighlight">\(D_{\mathbf{M}}\)</span> is the set of sites inside the parallelepiped spanned by the set of basis vectors <span class="math notranslate nohighlight">\(\mathbf{AM}\)</span>,</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[D_{\mathbf{M}} = \left\{ \mathbf{d} + \mathbf{m} \mid \mathbf{d} \in D, \mathbf{m} \in \mathbb{Z}^{3} \right\} \cap \mathbf{M} [0, 1)^{3} .\]</div>
-</div>
 <p>Using Eq. <a class="reference internal" href="#equation-eq-site-decomposition">(5)</a>, we have explicit point coordinates in the supercell:</p>
-<div class="math-wrapper docutils container" id="equation-eq-concrete-supercell">
 <div class="math notranslate nohighlight" id="equation-eq-concrete-supercell">
-<span class="eqno">(6)<a class="headerlink" href="#equation-eq-concrete-supercell" title="Permalink to this equation">#</a></span>\[D_{\mathbf{M}} =
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-concrete-supercell" title="Link to this equation">#</a></span>\[D_{\mathbf{M}} =
 \left\{
     \mathbf{d} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{M} \mathbf{l}_{\mathbf{f}} \mid
     \mathbf{d} \in D,\, \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}}
 \right\}\]</div>
-</div>
 <p>where <span class="math notranslate nohighlight">\(\mathbf{l}_{\mathbf{f}}\)</span> is an offset to locate each site in <span class="math notranslate nohighlight">\(D_{\mathbf{M}}\)</span> inside the parallelepiped.</p>
 <p>Then we define a mapping that embeds any point coordinates <span class="math notranslate nohighlight">\(\mathbf{x} = \mathbf{d} + \mathbf{m} \, (\mathbf{d} \in D, \mathbf{m} \in \mathbb{Z}^{3})\)</span> in the supercell as</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\pi_{\mathbf{M}}(\mathbf{d} + \mathbf{m}) = \mathbf{d} + \mathbf{P}^{-1} [\mathbf{Pm}]_{\mathbf{S}} + \mathbf{M} \mathbf{l}_{[\mathbf{Pm}]_{\mathbf{S}}} \in D_{\mathbf{M}}.\]</div>
-</div>
 <p>In what follows, we label the point coordinates in the supercell as <span class="math notranslate nohighlight">\(D_{\mathbf{M}} = \left\{ \mathbf{d}_{1}, \dots, \mathbf{d}_{|D_{\mathbf{M}}|} \right\}\)</span>.</p>
 <p>Putting a space group of the supercell <span class="math notranslate nohighlight">\((\mathbf{AM}, D_{\mathbf{M}})\)</span> as <span class="math notranslate nohighlight">\(\mathcal{H}_{\mathbf{M}}\)</span> and a space group of its primitive cell as <span class="math notranslate nohighlight">\(\mathcal{G}\)</span>, the space group <span class="math notranslate nohighlight">\(\mathcal{H}_{\mathbf{M}}\)</span> is a subgroup of the space group <span class="math notranslate nohighlight">\(\mathcal{G}\)</span>.
 When <span class="math notranslate nohighlight">\(g = \{ \mathbf{R} \mid \mathbf{\tau} \} \in \mathcal{G}\)</span> is contained in <span class="math notranslate nohighlight">\(\mathcal{H}_{\mathbf{M}}\)</span>, it is required that the sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span> and the rotated one <span class="math notranslate nohighlight">\(L_{\mathbf{RM}}\)</span> are coincided, that is, <span class="math notranslate nohighlight">\(\mathbf{M}^{-1} \mathbf{RM}\)</span> is unimodular.
 By applying each symmetry operation <span class="math notranslate nohighlight">\({ g = \{ \mathbf{R} \mid \mathbf{\tau} \} \in \mathcal{H}_{\mathbf{M}} }\)</span>, point coordinates <span class="math notranslate nohighlight">\(\mathbf{d}_{i}\)</span> are moved to <span class="math notranslate nohighlight">\(g \mathbf{d}_{i} (= \mathbf{R}\mathbf{d}_{i} + \mathbf{\tau})\)</span> and the latter point coordinates are equivalent to <span class="math notranslate nohighlight">\(\pi_{\mathbf{M}} (g \mathbf{d}_{i})\)</span> up to translations in the sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span>.
 Thus a permutation representation <span class="math notranslate nohighlight">\(\sigma_{g}\)</span> of operation <span class="math notranslate nohighlight">\(g\)</span> is obtained by</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{d}_{\sigma_{g}(i)} = \pi_{\mathbf{M}} (g \mathbf{d}_{i}).\]</div>
-</div>
 <p>Although <span class="math notranslate nohighlight">\(\mathcal{H}_{\mathbf{M}}\)</span> is infinite group, its permutation group <span class="math notranslate nohighlight">\(\Sigma_{\mathbf{M}} = \{ \sigma_{g} \mid g \in \mathcal{H}_{\mathbf{M}} \}\)</span> is finite.
 Putting a translation subgroup obtained from a lattice <span class="math notranslate nohighlight">\(L\)</span> as</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[T_{L} = \left\{ \{ \mathbf{I} \mid \mathbf{t} \} \mid \mathbf{t} \in L \right\} \subseteq \mathcal{H}_{\mathbf{M}},\]</div>
-</div>
 <p>we only have to calculate the permutation representation for its factor group <span class="math notranslate nohighlight">\(T_{L} / T_{L_{\mathbf{M}}}\)</span> because translations from the sublattice <span class="math notranslate nohighlight">\(L_{\mathbf{M}}\)</span> trivially return the identity permutation for a collection of point coordinates <span class="math notranslate nohighlight">\(D_{\mathbf{M}}\)</span>.
 We can construct one representative for <span class="math notranslate nohighlight">\(T_{L} / T_{L_{\mathbf{M}}}\)</span> in the same way as Eq. <a class="reference internal" href="#equation-eq-concrete-supercell">(6)</a>,</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[T_{L} / T_{L_{\mathbf{M}}} =
 \left\{
     \{\mathbf{I} \mid \mathbf{P}^{-1} \mathbf{f} \} \mid
     \mathbf{f} \in \mathbb{Z}_{S_{11}} \oplus \mathbb{Z}_{S_{22}} \oplus \mathbb{Z}_{S_{33}}
 \right\}.\]</div>
-</div>
 <p>The permutation group <span class="math notranslate nohighlight">\(\Sigma_{\mathbf{M}}\)</span> is obtained from finite operations in <span class="math notranslate nohighlight">\(\mathcal{H}_{\mathbf{M}} / T_{L}\)</span> and <span class="math notranslate nohighlight">\(T_{L} / T_{L_{\mathbf{M}}}\)</span> as its generators.</p>
 </section>
 <section id="convention-in-dsenum">
-<h2>Convention in dsenum<a class="headerlink" href="#convention-in-dsenum" title="Permalink to this heading">#</a></h2>
+<h2>Convention in dsenum<a class="headerlink" href="#convention-in-dsenum" title="Link to this heading">#</a></h2>
 <p><cite>dsenum.site.DerivativeSite</cite> represents a pair of <span class="math notranslate nohighlight">\(\mathbf{d}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{m}\)</span> in Eq. <a class="reference internal" href="#equation-dsite">(1)</a>.</p>
 <p>The following instance of <cite>DerivativeSite</cite></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dsite</span> <span class="o">=</span> <span class="n">dsenum</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">DerivativeSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="n">jimage</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>corresponds to</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{x} = \mathbf{d}_{\mathrm{site\_index}} + \mathrm{jimage}.\]</div>
-</div>
 <p><cite>dsenum.site.CanonicalSite</cite> represents a pair of <span class="math notranslate nohighlight">\(\mathbf{d}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{f}\)</span> in Eq. <a class="reference internal" href="#equation-eq-site-decomposition">(5)</a>.</p>
 <p>The following instance of <cite>CanonicalSite</cite></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">csite</span> <span class="o">=</span> <span class="n">dsenum</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">CannonicalSite</span><span class="p">(</span><span class="n">site_index</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>corresponds to</p>
-<div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{x} = \mathbf{d}_{\mathrm{site\_index}} + \mathbf{P}^{-1} \mathbf{f} + \mathbf{Ml}\]</div>
-</div>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Permalink to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Gus L. W. Hart and Rodney W. Forcade, “Algorithm for generating derivative structures,” Phys. Rev. B 77 224115, (2008)</p></li>
 <li><p>Gus L. W. Hart and Rodney W. Forcade, “Generating derivative structures from multilattices: Application to hcp alloys,” Phys. Rev. B 80 014120 (2009)</p></li>
@@ -329,85 +423,88 @@ We can construct one representative for <span class="math notranslate nohighligh
 </section>
 </section>
 
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="api.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">API Reference</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="examples/performance.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Performance comparison between direct and ZDD methods</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2022, Kohei Shinohara
-            </div>
-            Made with 
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            <div class="icons">
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
               
             </div>
-          </div>
-        </div>
-        
-      </footer>
-    </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Supercell Construction</a><ul>
-<li><a class="reference internal" href="#constructing-supercell-for-a-general-transformation-matrix">Constructing supercell for a general transformation matrix</a></li>
-<li><a class="reference internal" href="#convention-in-dsenum">Convention in dsenum</a></li>
-<li><a class="reference internal" href="#references">References</a></li>
-</ul>
-</li>
-</ul>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-          </div>
-        </div>
-      </div>
-      
-      
-    </aside>
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/furo.js"></script>
-    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    </body>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-supercell-for-a-general-transformation-matrix">Constructing supercell for a general transformation matrix</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convention-in-dsenum">Convention in dsenum</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Kohei Shinohara
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022, Kohei Shinohara.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
 </html>
