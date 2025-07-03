@@ -1,11 +1,10 @@
-from functools import lru_cache
+from functools import cache
 from itertools import product
-from typing import List
 
 from scipy.special import binom
 
 
-def polya_counting(permutation_group: List[List[int]], num_color: int) -> int:
+def polya_counting(permutation_group: list[list[int]], num_color: int) -> int:
     """
     count the number of coloring with num_color kinds of colors and permutations
 
@@ -29,7 +28,7 @@ def polya_counting(permutation_group: List[List[int]], num_color: int) -> int:
     return cnt
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_inventory_coefficient(type_of_perm: tuple, didx, num_elements_of_each_color: tuple):
     # termination
     if didx == 0:
@@ -62,7 +61,7 @@ def get_multinomial_coefficient(params):
 
 
 def polya_fixed_degrees_counting(
-    permutation_group: List[List[int]], num_color: int, num_elements_of_each_color: List[int]
+    permutation_group: list[list[int]], num_color: int, num_elements_of_each_color: list[int]
 ):
     """
     count the number of coloring with num_color kinds of colors and permutations.
@@ -95,7 +94,7 @@ def polya_fixed_degrees_counting(
     return coeffs
 
 
-def get_type_of_permutation(permutation: List[int]):
+def get_type_of_permutation(permutation: list[int]):
     num_elements = len(permutation)
     type_of_perm = [0 for _ in range(num_elements)]
 

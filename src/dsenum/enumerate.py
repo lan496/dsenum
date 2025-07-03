@@ -154,7 +154,7 @@ class AbstractStructureEnumerator(metaclass=ABCMeta):
 
         end = time()
         if self.verbose:
-            print("total: {} (Time: {:.4}sec)".format(len(list_ds), end - start))
+            print(f"total: {len(list_ds)} (Time: {end - start:.4}sec)")
 
         if return_colorings:
             return list_ds, list_transformations, list_colorings
@@ -415,7 +415,7 @@ class ZddStructureEnumerator(AbstractStructureEnumerator):
 
         end = time()
         if self.verbose:
-            print("total: {} (Time: {:.4}sec)".format(count, end - start))
+            print(f"total: {count} (Time: {end - start:.4}sec)")
 
         return count
 

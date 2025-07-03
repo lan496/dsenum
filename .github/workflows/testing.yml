@@ -2,7 +2,7 @@ name: testing
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
@@ -35,10 +35,10 @@ jobs:
 
       - name: Test with pytest
         run: |
-          python -m pytest -v --cov=dsenum --cov-config=setup.cfg --cov-report=xml tests/
+          python -m pytest -v --cov=dsenum --cov-report=xml tests/
 
       - name: Upload coverage to Codecov
-        if: matrix.python-version == '3.9'
+        if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v5
         with:
           file: ./coverage.xml
@@ -53,11 +53,12 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y pandoc
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: pandoc
+          version: 1.0
 
       - name: Install
         run: |

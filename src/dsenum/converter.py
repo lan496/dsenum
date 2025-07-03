@@ -1,5 +1,5 @@
 from itertools import product
-from typing import List, Optional, Tuple, Union, cast
+from typing import Optional, Union, cast
 
 import numpy as np
 from hsnf import smith_normal_form
@@ -72,7 +72,7 @@ class DerivativeMultiLatticeHash:
 
     def hash_derivative_site(
         self, dsite: DerivativeSite, return_image: bool = False
-    ) -> Union[CanonicalSite, Tuple[CanonicalSite, np.ndarray]]:
+    ) -> Union[CanonicalSite, tuple[CanonicalSite, np.ndarray]]:
         """
         Returns
         -------
@@ -109,7 +109,7 @@ class DerivativeMultiLatticeHash:
                 return csite
         return None
 
-    def get_canonical_sites_list(self) -> List[CanonicalSite]:
+    def get_canonical_sites_list(self) -> list[CanonicalSite]:
         list_csites = []
         for site_index in range(len(self.displacement_set)):
             for factor in product(*[range(f) for f in self.invariant_factors]):
@@ -119,14 +119,14 @@ class DerivativeMultiLatticeHash:
         assert all([self.ravel_canonical_site(csite) == i for i, csite in enumerate(list_csites)])
         return list_csites
 
-    def get_distinct_derivative_sites_list(self) -> List[DerivativeSite]:
+    def get_distinct_derivative_sites_list(self) -> list[DerivativeSite]:
         list_csites = self.get_canonical_sites_list()
         list_dsites = [self.embed_to_derivative_site(csite) for csite in list_csites]
         return list_dsites
 
     def get_canonical_and_derivative_sites_list(
         self,
-    ) -> List[Tuple[CanonicalSite, DerivativeSite]]:
+    ) -> list[tuple[CanonicalSite, DerivativeSite]]:
         list_csites_dsites = []
         for site_index in range(len(self.displacement_set)):
             for factor in product(*[range(f) for f in self.invariant_factors]):
@@ -136,7 +136,7 @@ class DerivativeMultiLatticeHash:
 
         return list_csites_dsites
 
-    def get_lattice_points(self) -> List[np.ndarray]:
+    def get_lattice_points(self) -> list[np.ndarray]:
         """
         return list of lattice points with the supercell
         Note that the returned lattice points are not guaranteed to be "within" the supercell
@@ -147,7 +147,7 @@ class DerivativeMultiLatticeHash:
             lattice_points.append(lp)
         return lattice_points
 
-    def get_all_factors(self) -> List[Tuple[int, ...]]:
+    def get_all_factors(self) -> list[tuple[int, ...]]:
         list_factors = list(product(*[range(f) for f in self.invariant_factors]))
         return list_factors
 
@@ -181,7 +181,7 @@ class DerivativeMultiLatticeHash:
         return dsite
 
 
-def get_species_list(index: int, list_species: List[str]) -> List[str]:
+def get_species_list(index: int, list_species: list[str]) -> list[str]:
     """
     tile list of species for derivative structure
     """
@@ -192,8 +192,8 @@ def get_species_list(index: int, list_species: List[str]) -> List[str]:
 
 
 def convert_site_constraints(
-    base_site_constraints: List[List[int]], index: int
-) -> List[List[int]]:
+    base_site_constraints: list[list[int]], index: int
+) -> list[list[int]]:
     site_constraints = []
     for sc in base_site_constraints:
         for _ in range(index):

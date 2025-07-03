@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from itertools import permutations
 from multiprocessing import Pool, cpu_count
-from typing import List, Tuple, cast
+from typing import cast
 
 from dsenum.coloring_generator import BaseColoringGenerator
 from dsenum.core import act_permutation, hash_in_all_configuration  # type: ignore
@@ -10,7 +10,7 @@ from dsenum.permutation_group import DerivativeStructurePermutation
 
 class AbstractEnumerator(metaclass=ABCMeta):
     @abstractmethod
-    def coset_enumerate(self) -> List[List[int]]:
+    def coset_enumerate(self) -> list[list[int]]:
         raise NotImplementedError
 
 
@@ -26,7 +26,7 @@ class DirectColoringEnumerator(AbstractEnumerator):
 
     def __init__(
         self,
-        permutation_group: List[List[int]],
+        permutation_group: list[list[int]],
         num_color: int,
         cl_generator: BaseColoringGenerator,
         color_exchange: bool = True,
@@ -38,10 +38,10 @@ class DirectColoringEnumerator(AbstractEnumerator):
 
         self.list_colorings, self.flags = self.cl_generator.generate_all_colorings()
 
-    def _hash(self, coloring: List[int]) -> int:
+    def _hash(self, coloring: list[int]) -> int:
         return hash_in_all_configuration(coloring, self.num_color)
 
-    def _walk_orbit(self, coloring: List[int], include_identity: bool = False) -> None:
+    def _walk_orbit(self, coloring: list[int], include_identity: bool = False) -> None:
         offset = 0 if include_identity else 1
         # assume self.permutation_group[0] is identity
         for prm in self.permutation_group[offset:]:
@@ -49,7 +49,7 @@ class DirectColoringEnumerator(AbstractEnumerator):
             acted_cl_hash = self._hash(acted_cl)
             self.flags[acted_cl_hash] = False
 
-    def coset_enumerate(self) -> List[List[int]]:
+    def coset_enumerate(self) -> list[list[int]]:
         colorings = []
 
         for cl in self.list_colorings:
@@ -88,7 +88,7 @@ class LexicographicColoringEnumerator(AbstractEnumerator):
 
     def __init__(
         self,
-        permutation_group: List[List[int]],
+        permutation_group: list[list[int]],
         num_color: int,
         cl_generator: BaseColoringGenerator,
         color_exchange: bool = True,
@@ -103,10 +103,10 @@ class LexicographicColoringEnumerator(AbstractEnumerator):
         else:
             self.n_jobs = n_jobs
 
-    def _hash(self, coloring: List[int]) -> int:
+    def _hash(self, coloring: list[int]) -> int:
         return hash_in_all_configuration(coloring, self.num_color)
 
-    def _is_champion_coloring(self, coloring: List[int]) -> bool:
+    def _is_champion_coloring(self, coloring: list[int]) -> bool:
         cl_hash = self._hash(coloring)
 
         if self.color_exchange:
@@ -125,10 +125,10 @@ class LexicographicColoringEnumerator(AbstractEnumerator):
                     return False
         return True
 
-    def _is_champion_coloring_parallel(self, coloring: List[int]) -> Tuple[List[int], bool]:
+    def _is_champion_coloring_parallel(self, coloring: list[int]) -> tuple[list[int], bool]:
         return coloring, self._is_champion_coloring(coloring)
 
-    def coset_enumerate(self) -> List[List[int]]:
+    def coset_enumerate(self) -> list[list[int]]:
         if self.n_jobs != 1:
             with Pool(self.n_jobs) as pool:
                 colorings = [
@@ -206,13 +206,13 @@ class SiteColoringEnumerator:
             raise ValueError("Unknown method: ", self.method)
 
     @property
-    def translation_permutations(self) -> List[List[int]]:
+    def translation_permutations(self) -> list[list[int]]:
         return self.ds_permutation.prm_t
 
-    def _hash(self, coloring: List[int]) -> int:
+    def _hash(self, coloring: list[int]) -> int:
         return hash_in_all_configuration(coloring, self.num_color)
 
-    def unique_colorings(self) -> List[List[int]]:
+    def unique_colorings(self) -> list[list[int]]:
         symmetry_uniqued_coloring = self.clenum.coset_enumerate()
         colorings = []
 
@@ -225,13 +225,13 @@ class SiteColoringEnumerator:
 
         return colorings
 
-    def _has_all_colors(self, coloring: List[int]) -> bool:
+    def _has_all_colors(self, coloring: list[int]) -> bool:
         if len(set(coloring)) == self.num_color:
             return True
         else:
             return False
 
-    def _is_superperiodic(self, coloring: List[int]) -> bool:
+    def _is_superperiodic(self, coloring: list[int]) -> bool:
         # assume self.translation_permutations[0] is identity
         if any(
             [

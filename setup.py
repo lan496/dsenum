@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from setuptools import Extension, setup, find_packages
 from Cython.Build import cythonize
+from setuptools import Extension, find_packages, setup
 
 ext_modules = [Extension("dsenum.core", ["src/dsenum/core.pyx"], extra_compile_args=["-O3"])]
 
@@ -17,11 +17,11 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Kohei Shinohara",
-    author_email="kohei19950508@gmail.com",
+    author_email="kshinohara0508@gmail.com",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     package_data={"dsenum": ["py.typed"]},
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     setup_requires=["setuptools_scm", "numpy", "Cython>=0.29.1"],
     install_requires=[
         "setuptools",
@@ -37,6 +37,7 @@ setup(
     ],
     extras_require={
         "dev": [
+            "pre-commit",
             "ipython",
             "notebook",
             "jupyter_contrib_nbextensions",
@@ -75,10 +76,10 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Physics",

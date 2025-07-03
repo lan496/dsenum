@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 
 import numpy as np
 from pymatgen.core import Lattice, Structure
@@ -14,7 +14,7 @@ class ColoringToStructure:
         self,
         base_structure: Structure,
         dshash: DerivativeMultiLatticeHash,
-        mapping_color_to_species: List[Union[str, Element, Specie, DummySpecie]],
+        mapping_color_to_species: list[Union[str, Element, Specie, DummySpecie]],
         additional_species=None,
         additional_frac_coords=None,
     ):
@@ -164,7 +164,7 @@ class ColoringToStructure:
 
 
 def prepare_poscar_string(
-    head_lines: List[str], list_species: List[str], list_coords_str: List[str]
+    head_lines: list[str], list_species: list[str], list_coords_str: list[str]
 ) -> str:
     # ref: https://www.vasp.at/wiki/index.php/POSCAR
     lines = head_lines
