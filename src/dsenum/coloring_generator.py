@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
 from itertools import product
-from typing import List
 
 import numpy as np
 from sympy.utilities.iterables import multiset_permutations
@@ -101,7 +100,7 @@ class FixedConcentrationColoringGenerator(BaseColoringGenerator):
     """
 
     def __init__(
-        self, num_elements: int, num_color: int, color_ratio: List[float], site_constraints=None
+        self, num_elements: int, num_color: int, color_ratio: list[float], site_constraints=None
     ):
         self.num_elements = num_elements
         self.num_color = num_color

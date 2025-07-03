@@ -5,26 +5,6 @@ build-backend = "setuptools.build_meta"
 # Enable version inference
 [tool.setuptools_scm]
 
-[tool.black]
-line-length = 99
-target-version = ['py38', 'py39', 'py310', 'py311']
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  | docs
-)/
-'''
-
 [tool.pytest.ini_options]
 addopts = "--benchmark-skip"
 testpaths = ["tests"]
@@ -37,3 +17,30 @@ filterwarnings = [
     "ignore::PendingDeprecationWarning:monty:",
     "ignore::DeprecationWarning:past:",
 ]
+
+[tool.ruff]
+line-length = 99
+[tool.ruff.lint]
+extend-select = [
+    "F",           # pyflakes
+    "E",           # pycodestyle-errors
+    "I",           # isort
+    # "D",           # pydocstyle
+    "UP",          # pyupgrade
+]
+extend-ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D203",  # Conflict with D211
+    "D205",
+    "D213",  # Conflict with D212
+    "E501",
+]
+
+[tool.mypy]
+exclude = [
+  'docs',
+]
+warn_no_return = false

@@ -1,12 +1,10 @@
-from typing import List
-
 import numpy as np
 from pymatgen.core import Structure
 
 from dsenum.utils import get_symmetry_operations
 
 
-def generate_all_superlattices(index: int) -> List[np.ndarray]:
+def generate_all_superlattices(index: int) -> list[np.ndarray]:
     """
     enumerate 3-by-3 Hermite normal form which determinant is equal to `index`
 
@@ -40,8 +38,8 @@ def generate_all_superlattices(index: int) -> List[np.ndarray]:
 
 
 def reduce_HNF_list_by_parent_lattice_symmetry(
-    list_HNF: List[np.ndarray], list_rotation_matrix: np.ndarray
-) -> List[np.ndarray]:
+    list_HNF: list[np.ndarray], list_rotation_matrix: np.ndarray
+) -> list[np.ndarray]:
     """
     reduce equivalent HNF with parent lattice symmetry
 

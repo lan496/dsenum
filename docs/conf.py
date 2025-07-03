@@ -22,7 +22,7 @@ copyright = "2022, Kohei Shinohara"
 author = "Kohei Shinohara"
 
 # https://github.com/pypa/setuptools_scm/
-from importlib.metadata import version
+from importlib.metadata import version  # noqa: E402
 
 release = version("dsenum")
 # for example take major/minor

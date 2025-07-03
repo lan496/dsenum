@@ -1,7 +1,6 @@
 from copy import deepcopy
 from dataclasses import astuple, dataclass
 from itertools import combinations
-from typing import List, Tuple
 
 import numpy as np
 from pymatgen.core import Structure
@@ -20,7 +19,7 @@ class PointCluster:
     points: list of Point
     """
 
-    points: List[DerivativeSite]
+    points: list[DerivativeSite]
 
     def __str__(self):
         points_str = [f"site_index={p.site_index}, jimage={p.jimage}" for p in self.points]
@@ -118,7 +117,7 @@ class EquivalentPointClusterGenerator:
             new_points.append(new_point)
         return PointCluster(new_points)
 
-    def find_equivalent_point_clusters(self, point_cluster: PointCluster) -> List[PointCluster]:
+    def find_equivalent_point_clusters(self, point_cluster: PointCluster) -> list[PointCluster]:
         # (rotations, translations) should contain identity operation
         equiv_clusters = {
             self.normalize_point_cluster(self.operate_point_cluster(point_cluster, R, tau))
@@ -157,7 +156,7 @@ class EquivalentPointClusterGenerator:
 
     def get_distinct_point_clusters(
         self, structure: Structure, cutoff: float, order=2, eps=1e-8
-    ) -> List[PointCluster]:
+    ) -> list[PointCluster]:
         """
         return all distinct `order`-sites point-clusters
 
@@ -174,7 +173,7 @@ class EquivalentPointClusterGenerator:
             returned list of point clusters are sorted by cluster size in the ascending order.
         """
         # search neighbor points whose distnace from some site in the unit cell is less than cutoff.
-        list_points: List[DerivativeSite] = []
+        list_points: list[DerivativeSite] = []
         for site in structure:
             neighbors = structure.get_neighbors(site, cutoff)
             for s in neighbors:
@@ -185,7 +184,7 @@ class EquivalentPointClusterGenerator:
         list_points = list(set(list_points))
 
         # Find distinct singlet clusters
-        distinct_point_clusters: List[PointCluster] = []
+        distinct_point_clusters: list[PointCluster] = []
         found_singlets = set()
         for site_index in range(len(self.frac_coords)):
             cluster = PointCluster([DerivativeSite(site_index, (0, 0, 0))])
@@ -197,12 +196,12 @@ class EquivalentPointClusterGenerator:
 
         # grow pairs to triplet, quadruple, ...
         for num_nn in range(2, order + 1):
-            next_distinct_point_clusters: List[PointCluster] = []
+            next_distinct_point_clusters: list[PointCluster] = []
             found = set()
 
             for added_point in list_points:
                 for precluster in distinct_point_clusters:
-                    points: List[DerivativeSite] = list(precluster.points) + [added_point]
+                    points: list[DerivativeSite] = list(precluster.points) + [added_point]
                     point_cluster: PointCluster = self.normalize_point_cluster(
                         PointCluster(points)
                     )
@@ -235,7 +234,7 @@ class EquivalentPointClusterGenerator:
 
     def get_all_clusters(
         self, structure: Structure, cutoff: float, order: int = 2, eps: float = 1e-8
-    ) -> Tuple[List[List[PointCluster]], List[float]]:
+    ) -> tuple[list[list[PointCluster]], list[float]]:
         """
         return all `order`-sites clusters
 
